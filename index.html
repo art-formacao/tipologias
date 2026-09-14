@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Tipologias de Reboques</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --primary: #0071e3;
+      --primary-light: #e8f2fc;
+      --border: #d2d2d7;
+      --text: #1d1d1f;
+      --text-muted: #86868b;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); margin: 0; padding: 30px 20px; }
+
+    /* Topbar */
+    .top-bar {
+      max-width: 900px; margin: 0 auto 20px; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    .header h1 { font-size: 26px; margin: 0 0 4px 0; font-weight: 600; }
+    .header p { color: var(--text-muted); margin: 0; font-size: 14px; }
+
+    .hamburger-btn {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 10px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      font-weight: 600; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: 0.2s;
+    }
+    .hamburger-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* Filtros */
+    .filters { display: flex; gap: 8px; max-width: 900px; margin: 0 auto 20px; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 8px 18px; border-radius: 20px; border: none; background: #e5e5ea;
+      color: var(--text); font-weight: 500; font-size: 14px; cursor: pointer; transition: 0.2s;
+    }
+    .filter-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+
+    /* Canvas / Contentor dos Nós */
+    .canvas {
+      max-width: 900px; background: #efeff4; border-radius: 16px; padding: 30px 20px;
+      margin: 0 auto; display: flex; flex-direction: column; align-items: center;
+    }
+    .node {
+      background: var(--card-bg); border: 2px solid var(--border); border-radius: 20px;
+      padding: 14px 28px; text-align: center; cursor: pointer; transition: all 0.2s;
+      min-width: 260px; margin-bottom: 6px;
+    }
+    .node:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .arrow { color: var(--primary); font-size: 16px; margin-bottom: 6px; }
+
+    /* Drawer / Form Hambúrguer */
+    .drawer-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.3); display: none; opacity: 0; transition: opacity 0.3s; z-index: 100;
+    }
+    .drawer {
+      position: fixed; top: 0; right: -440px; width: 420px; height: 100%;
+      background: #fff; box-shadow: -4px 0 20px rgba(0,0,0,0.15); transition: right 0.3s ease;
+      padding: 30px; display: flex; flex-direction: column; z-index: 101; overflow-y: auto;
+    }
+    .drawer.open { right: 0; }
+    .drawer-overlay.open { display: block; opacity: 1; }
+
+    /* Tabs no Hambúrguer */
+    .tab-bar { display: flex; background: #e5e5ea; border-radius: 10px; padding: 3px; margin-bottom: 20px; }
+    .tab-btn { flex: 1; padding: 8px; border: none; background: none; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; }
+    .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 14px; background: var(--bg); outline: none;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn-submit {
+      width: 100%; padding: 12px; background: var(--primary); color: white; border: none;
+      border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 10px; font-size: 15px;
+    }
+
+    /* Modal Visualização */
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 200;
+    }
+    .modal { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 420px; }
+    .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .spec-card { background: var(--bg); padding: 10px; border-radius: 8px; text-align: center; }
+    .spec-card span { font-size: 10px; color: var(--text-muted); font-weight: bold; display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="header">
+      <h1>Tipos de Reboque</h1>
+      <p>Selecione um equipamento para ver os detalhes ou edite no menu</p>
+    </div>
+    <button class="hamburger-btn" onclick="toggleDrawer()">
+      <span>☰</span> <span>Menu de Gestão</span>
+    </button>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterCategory('Todos')">Todos</button>
+    <button class="filter-btn" onclick="filterCategory('Lona')">Lona</button>
+    <button class="filter-btn" onclick="filterCategory('Frigorífico')">Frigorífico</button>
+    <button class="filter-btn" onclick="filterCategory('Cisterna')">Cisterna</button>
+    <button class="filter-btn" onclick="filterCategory('Especiais')">Especiais</button>
+  </div>
+
+  <div class="canvas">
+    <div id="nodesContainer" style="display:flex; flex-direction:column; align-items:center; width: 100%;"></div>
+  </div>
+
+  <!-- Form Hambúrguer com Tabs -->
+  <div class="drawer-overlay" id="overlay" onclick="toggleDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="margin:0; color:var(--primary);">Gestão de Reboques</h3>
+      <button onclick="toggleDrawer()" style="border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Navegação de Abas -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('add')">+ Adicionar Tipo</button>
+      <button class="tab-btn" onclick="switchTab('edit')">Editar Dados</button>
+    </div>
+
+    <!-- ABA 1: ADICIONAR NOVA TIPOLOGIA -->
+    <form id="formAdd" onsubmit="addNewVehicle(event)">
+      <div class="form-group">
+        <label>CATEGORIA</label>
+        <select id="addCat">
+          <option value="Lona">Lona</option>
+          <option value="Frigorífico">Frigorífico</option>
+          <option value="Cisterna">Cisterna</option>
+          <option value="Especiais">Especiais</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>NOME DA TIPOLOGIA</label>
+        <input type="text" id="addTitle" placeholder="Ex: Cisterna Alimentar" required>
+      </div>
+
+      <div class="form-group">
+        <label>DESCRIÇÃO</label>
+        <textarea id="addDesc" rows="2" placeholder="Breve descrição da tipologia..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>COMPRIMENTO (m)</label><input type="text" id="addComp" placeholder="Ex: 13.6"></div>
+        <div class="form-group"><label>LARGURA (m)</label><input type="text" id="addLarg" placeholder="Ex: 2.55"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>ALTURA (m)</label><input type="text" id="addAlt" placeholder="Ex: 2.70"></div>
+        <div class="form-group"><label>PESO BRUTO (t)</label><input type="text" id="addPeso" placeholder="Ex: 35"></div>
+      </div>
+
+      <div class="form-group">
+        <label>N.º DE EIXOS</label>
+        <input type="text" id="addEixos" placeholder="Ex: 3">
+      </div>
+
+      <button type="submit" class="btn-submit">Criar Tipologia</button>
+    </form>
+
+    <!-- ABA 2: EDITAR TIPOLOGIA EXISTENTE -->
+    <form id="formEdit" onsubmit="saveData(event)" style="display:none;">
+      <div class="form-group">
+        <label>SELECCIONAR EQUIPAMENTO</label>
+        <select id="selectVehicle" onchange="loadVehicleData()"></select>
+      </div>
+
+      <div class="form-group">
+        <label>DESCRIÇÃO</label>
+        <textarea id="inDesc" rows="3"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>COMPRIMENTO (m)</label><input type="text" id="inComp"></div>
+        <div class="form-group"><label>LARGURA (m)</label><input type="text" id="inLarg"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>ALTURA (m)</label><input type="text" id="inAlt"></div>
+        <div class="form-group"><label>PESO BRUTO (t)</label><input type="text" id="inPeso"></div>
+      </div>
+
+      <div class="form-group">
+        <label>N.º DE EIXOS</label>
+        <input type="text" id="inEixos">
+      </div>
+
+      <button type="submit" class="btn-submit">Guardar Dados</button>
+    </form>
+  </div>
+
+  <!-- Modal Visualização -->
+  <div class="modal-backdrop" id="viewModal" onclick="closeModal(event)">
+    <div class="modal">
+      <h3 id="vTitle" style="margin-top:0; color:var(--primary);">--</h3>
+      <p id="vDesc" style="color:var(--text-muted); font-size:14px;">--</p>
+      <div class="spec-grid">
+        <div class="spec-card"><span>COMPRIMENTO</span><strong id="vComp">--</strong></div>
+        <div class="spec-card"><span>LARGURA</span><strong id="vLarg">--</strong></div>
+        <div class="spec-card"><span>ALTURA</span><strong id="vAlt">--</strong></div>
+        <div class="spec-card"><span>PESO BRUTO</span><strong id="vPeso">--</strong></div>
+        <div class="spec-card" style="grid-column: span 2;"><span>EIXOS</span><strong id="vEixos">--</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dataset = [
+      // Lona
+      { id: 1, cat: 'Lona', title: 'Lonas standard / deslizantes', desc: 'Semirreboque normal com laterais de lona que podem deslizar.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 2, cat: 'Lona', title: 'Mega Trailer', desc: 'Semirreboque de maior altura interior.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 3, cat: 'Lona', title: 'Duplo piso', desc: 'Tem dois níveis para colocar mercadoria.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      // Frigorífico
+      { id: 4, cat: 'Frigorífico', title: 'Mono temperatura', desc: 'Uma única temperatura em todo o compartimento.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 5, cat: 'Frigorífico', title: 'Bi Temperatura', desc: 'Permite ter duas zonas com temperaturas diferentes.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 6, cat: 'Frigorífico', title: 'Duplo piso', desc: 'Tem dois níveis de carga sobrepostos.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 7, cat: 'Frigorífico', title: 'City Trailer', desc: 'Semirreboque frigorífico adaptado para distribuição urbana.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      // Cisterna
+      { id: 8, cat: 'Cisterna', title: 'Químicos', desc: 'Cisterna para transporte de produtos químicos.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 9, cat: 'Cisterna', title: 'Combustíveis', desc: 'Cisterna para combustível líquido.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 10, cat: 'Cisterna', title: 'Gás', desc: 'Cisterna para transporte de gás liquefeito.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 11, cat: 'Cisterna', title: 'Bebidas', desc: 'Cisterna alimentar para transporte de líquidos.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 12, cat: 'Cisterna', title: 'Transporte a Quente', desc: 'Cisterna isotérmica para materiais a quente.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 13, cat: 'Cisterna', title: 'Basculante', desc: 'Cisterna equipada com sistema basculante.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      // Especiais
+      { id: 14, cat: 'Especiais', title: 'Porta-Contentor', desc: 'Chassi para transporte de contentores.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 15, cat: 'Especiais', title: 'Piso Móvel', desc: 'Piso hidráulico de descarga automática.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 16, cat: 'Especiais', title: 'Estrado', desc: 'Plataforma aberta para cargas diversas.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 17, cat: 'Especiais', title: 'Banheira', desc: 'Semirreboque basculante para obras/inertes.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 18, cat: 'Especiais', title: 'Porta-Veículos Ligeiros', desc: 'Transporte especializado de ligeiros.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 19, cat: 'Especiais', title: 'Porta-Veículos Pesados', desc: 'Prancha para transporte de pesados.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
+      { id: 20, cat: 'Especiais', title: 'Isotérmico', desc: 'Caixa isolada sem frio ativo.', comp: '', larg: '', alt: '', peso: '', eixos: '' }
+    ];
+
+    let currentCat = 'Todos';
+
+    function renderTree() {
+      const container = document.getElementById('nodesContainer');
+      container.innerHTML = '';
+
+      let list = currentCat === 'Todos' ? dataset : dataset.filter(x => x.cat === currentCat);
+
+      list.forEach((item, idx) => {
+        const node = document.createElement('div');
+        node.className = 'node';
+        node.innerHTML = `<div style="font-weight:600;">${item.title}</div>`;
+        node.onclick = () => openViewModal(item);
+        container.appendChild(node);
+
+        if(idx < list.length - 1) {
+          const arrow = document.createElement('div');
+          arrow.className = 'arrow'; arrow.innerText = '↓';
+          container.appendChild(arrow);
+        }
+      });
+
+      populateSelect();
+    }
+
+    function filterCategory(c) {
+      currentCat = c;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.innerText === c));
+      renderTree();
+    }
+
+    function toggleDrawer() {
+      document.getElementById('overlay').classList.toggle('open');
+      document.getElementById('drawer').classList.toggle('open');
+      loadVehicleData();
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (tab === 'add' && i === 0) || (tab === 'edit' && i === 1)));
+      document.getElementById('formAdd').style.display = tab === 'add' ? 'block' : 'none';
+      document.getElementById('formEdit').style.display = tab === 'edit' ? 'block' : 'none';
+    }
+
+    function addNewVehicle(e) {
+      e.preventDefault();
+      const newObj = {
+        id: Date.now(),
+        cat: document.getElementById('addCat').value,
+        title: document.getElementById('addTitle').value,
+        desc: document.getElementById('addDesc').value,
+        comp: document.getElementById('addComp').value,
+        larg: document.getElementById('addLarg').value,
+        alt: document.getElementById('addAlt').value,
+        peso: document.getElementById('addPeso').value,
+        eixos: document.getElementById('addEixos').value
+      };
+
+      dataset.push(newObj);
+      alert('Nova tipologia criada com sucesso!');
+      
+      // Limpar formulário
+      document.getElementById('addTitle').value = '';
+      document.getElementById('addDesc').value = '';
+      document.getElementById('addComp').value = '';
+      document.getElementById('addLarg').value = '';
+      document.getElementById('addAlt').value = '';
+      document.getElementById('addPeso').value = '';
+      document.getElementById('addEixos').value = '';
+
+      toggleDrawer();
+      renderTree();
+    }
+
+    function populateSelect() {
+      const sel = document.getElementById('selectVehicle');
+      sel.innerHTML = dataset.map(v => `<option value="${v.id}">[${v.cat}] ${v.title}</option>`).join('');
+    }
+
+    function loadVehicleData() {
+      const id = document.getElementById('selectVehicle').value;
+      const v = dataset.find(x => x.id == id);
+      if(v) {
+        document.getElementById('inDesc').value = v.desc || '';
+        document.getElementById('inComp').value = v.comp || '';
+        document.getElementById('inLarg').value = v.larg || '';
+        document.getElementById('inAlt').value = v.alt || '';
+        document.getElementById('inPeso').value = v.peso || '';
+        document.getElementById('inEixos').value = v.eixos || '';
+      }
+    }
+
+    function saveData(e) {
+      e.preventDefault();
+      const id = document.getElementById('selectVehicle').value;
+      const v = dataset.find(x => x.id == id);
+      if(v) {
+        v.desc = document.getElementById('inDesc').value;
+        v.comp = document.getElementById('inComp').value;
+        v.larg = document.getElementById('inLarg').value;
+        v.alt = document.getElementById('inAlt').value;
+        v.peso = document.getElementById('inPeso').value;
+        v.eixos = document.getElementById('inEixos').value;
+        alert('Dados atualizados com sucesso!');
+        toggleDrawer();
+        renderTree();
+      }
+    }
+
+    function openViewModal(v) {
+      document.getElementById('vTitle').innerText = v.title;
+      document.getElementById('vDesc').innerText = v.desc || 'Sem descrição definida.';
+      document.getElementById('vComp').innerText = (v.comp || '--') + ' m';
+      document.getElementById('vLarg').innerText = (v.larg || '--') + ' m';
+      document.getElementById('vAlt').innerText = (v.alt || '--') + ' m';
+      document.getElementById('vPeso').innerText = (v.peso || '--') + ' t';
+      document.getElementById('vEixos').innerText = v.eixos || '--';
+      document.getElementById('viewModal').style.display = 'flex';
+    }
+
+    function closeModal(e) {
+      if(e.target.id === 'viewModal') document.getElementById('viewModal').style.display = 'none';
+    }
+
+    renderTree();
+  </script>
+</body>
+</html>
