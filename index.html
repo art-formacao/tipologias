@@ -15,58 +15,125 @@
       --text-muted: #86868b;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); margin: 0; padding: 30px 20px; }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-    /* Topbar */
+    /* Container Principal Full Width */
+    .app-container {
+      width: 100%;
+      min-height: 100vh;
+      padding: 20px 30px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Topbar alinhada à esquerda */
     .top-bar {
-      max-width: 900px; margin: 0 auto 20px; display: flex;
-      justify-content: space-between; align-items: center;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
     }
     .header h1 { font-size: 26px; margin: 0 0 4px 0; font-weight: 600; }
     .header p { color: var(--text-muted); margin: 0; font-size: 14px; }
 
     .hamburger-btn {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
-      padding: 10px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px;
-      font-weight: 600; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: 0.2s;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--text);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: 0.2s;
+      white-space: nowrap;
     }
     .hamburger-btn:hover { border-color: var(--primary); color: var(--primary); }
 
-    /* Filtros */
-    .filters { display: flex; gap: 8px; max-width: 900px; margin: 0 auto 20px; flex-wrap: wrap; }
+    /* Filtros à esquerda */
+    .filters {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
     .filter-btn {
-      padding: 8px 18px; border-radius: 20px; border: none; background: #e5e5ea;
-      color: var(--text); font-weight: 500; font-size: 14px; cursor: pointer; transition: 0.2s;
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: none;
+      background: #e5e5ea;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
     }
     .filter-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
 
-    /* Canvas / Contentor dos Nós */
+    /* Canvas Occupies Full Width with Internal Scroll */
     .canvas {
-      max-width: 900px; background: #efeff4; border-radius: 16px; padding: 30px 20px;
-      margin: 0 auto; display: flex; flex-direction: column; align-items: center;
+      width: 100%;
+      flex: 1;
+      background: #efeff4;
+      border-radius: 16px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      overflow-y: auto;
+      max-height: calc(100vh - 160px);
     }
-    .node {
-      background: var(--card-bg); border: 2px solid var(--border); border-radius: 20px;
-      padding: 14px 28px; text-align: center; cursor: pointer; transition: all 0.2s;
-      min-width: 260px; margin-bottom: 6px;
-    }
-    .node:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .arrow { color: var(--primary); font-size: 16px; margin-bottom: 6px; }
 
-    /* Drawer / Form Hambúrguer */
+    .node-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .node {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 28px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 320px;
+      max-width: 450px;
+      margin-bottom: 4px;
+    }
+    .node:hover { transform: translateX(4px); border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .arrow { color: var(--primary); font-size: 18px; margin: 4px 0 4px 24px; }
+
+    /* Drawer / Form Hambúrguer à direita */
     .drawer-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.3); display: none; opacity: 0; transition: opacity 0.3s; z-index: 100;
     }
     .drawer {
-      position: fixed; top: 0; right: -440px; width: 420px; height: 100%;
+      position: fixed; top: 0; right: -450px; width: 440px; height: 100%;
       background: #fff; box-shadow: -4px 0 20px rgba(0,0,0,0.15); transition: right 0.3s ease;
       padding: 30px; display: flex; flex-direction: column; z-index: 101; overflow-y: auto;
     }
     .drawer.open { right: 0; }
     .drawer-overlay.open { display: block; opacity: 1; }
 
-    /* Tabs no Hambúrguer */
+    /* Tabs */
     .tab-bar { display: flex; background: #e5e5ea; border-radius: 10px; padding: 3px; margin-bottom: 20px; }
     .tab-btn { flex: 1; padding: 8px; border: none; background: none; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; }
     .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -88,7 +155,7 @@
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 200;
     }
-    .modal { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 420px; }
+    .modal { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 440px; }
     .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
     .spec-card { background: var(--bg); padding: 10px; border-radius: 8px; text-align: center; }
     .spec-card span { font-size: 10px; color: var(--text-muted); font-weight: bold; display: block; }
@@ -96,29 +163,31 @@
 </head>
 <body>
 
-  <div class="top-bar">
-    <div class="header">
-      <h1>Tipos de Reboque</h1>
-      <p>Selecione um equipamento para ver os detalhes ou edite no menu</p>
+  <div class="app-container">
+    <div class="top-bar">
+      <div class="header">
+        <h1>Tipos de Reboque</h1>
+        <p>Selecione um equipamento para ver os detalhes ou edite no menu</p>
+      </div>
+      <button class="hamburger-btn" onclick="toggleDrawer()">
+        <span>☰</span> <span>Menu de Gestão</span>
+      </button>
     </div>
-    <button class="hamburger-btn" onclick="toggleDrawer()">
-      <span>☰</span> <span>Menu de Gestão</span>
-    </button>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterCategory('Todos')">Todos</button>
+      <button class="filter-btn" onclick="filterCategory('Lona')">Lona</button>
+      <button class="filter-btn" onclick="filterCategory('Frigorífico')">Frigorífico</button>
+      <button class="filter-btn" onclick="filterCategory('Cisterna')">Cisterna</button>
+      <button class="filter-btn" onclick="filterCategory('Especiais')">Especiais</button>
+    </div>
+
+    <div class="canvas">
+      <div id="nodesContainer" class="node-wrapper"></div>
+    </div>
   </div>
 
-  <div class="filters">
-    <button class="filter-btn active" onclick="filterCategory('Todos')">Todos</button>
-    <button class="filter-btn" onclick="filterCategory('Lona')">Lona</button>
-    <button class="filter-btn" onclick="filterCategory('Frigorífico')">Frigorífico</button>
-    <button class="filter-btn" onclick="filterCategory('Cisterna')">Cisterna</button>
-    <button class="filter-btn" onclick="filterCategory('Especiais')">Especiais</button>
-  </div>
-
-  <div class="canvas">
-    <div id="nodesContainer" style="display:flex; flex-direction:column; align-items:center; width: 100%;"></div>
-  </div>
-
-  <!-- Form Hambúrguer com Tabs -->
+  <!-- Form Hambúrguer com Tabs à Direita -->
   <div class="drawer-overlay" id="overlay" onclick="toggleDrawer()"></div>
   <div class="drawer" id="drawer">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -126,7 +195,6 @@
       <button onclick="toggleDrawer()" style="border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
     </div>
 
-    <!-- Navegação de Abas -->
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('add')">+ Adicionar Tipo</button>
       <button class="tab-btn" onclick="switchTab('edit')">Editar Dados</button>
@@ -220,23 +288,19 @@
 
   <script>
     const dataset = [
-      // Lona
       { id: 1, cat: 'Lona', title: 'Lonas standard / deslizantes', desc: 'Semirreboque normal com laterais de lona que podem deslizar.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 2, cat: 'Lona', title: 'Mega Trailer', desc: 'Semirreboque de maior altura interior.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 3, cat: 'Lona', title: 'Duplo piso', desc: 'Tem dois níveis para colocar mercadoria.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
-      // Frigorífico
       { id: 4, cat: 'Frigorífico', title: 'Mono temperatura', desc: 'Uma única temperatura em todo o compartimento.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 5, cat: 'Frigorífico', title: 'Bi Temperatura', desc: 'Permite ter duas zonas com temperaturas diferentes.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 6, cat: 'Frigorífico', title: 'Duplo piso', desc: 'Tem dois níveis de carga sobrepostos.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 7, cat: 'Frigorífico', title: 'City Trailer', desc: 'Semirreboque frigorífico adaptado para distribuição urbana.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
-      // Cisterna
       { id: 8, cat: 'Cisterna', title: 'Químicos', desc: 'Cisterna para transporte de produtos químicos.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 9, cat: 'Cisterna', title: 'Combustíveis', desc: 'Cisterna para combustível líquido.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 10, cat: 'Cisterna', title: 'Gás', desc: 'Cisterna para transporte de gás liquefeito.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 11, cat: 'Cisterna', title: 'Bebidas', desc: 'Cisterna alimentar para transporte de líquidos.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 12, cat: 'Cisterna', title: 'Transporte a Quente', desc: 'Cisterna isotérmica para materiais a quente.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 13, cat: 'Cisterna', title: 'Basculante', desc: 'Cisterna equipada com sistema basculante.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
-      // Especiais
       { id: 14, cat: 'Especiais', title: 'Porta-Contentor', desc: 'Chassi para transporte de contentores.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 15, cat: 'Especiais', title: 'Piso Móvel', desc: 'Piso hidráulico de descarga automática.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
       { id: 16, cat: 'Especiais', title: 'Estrado', desc: 'Plataforma aberta para cargas diversas.', comp: '', larg: '', alt: '', peso: '', eixos: '' },
@@ -306,7 +370,6 @@
       dataset.push(newObj);
       alert('Nova tipologia criada com sucesso!');
       
-      // Limpar formulário
       document.getElementById('addTitle').value = '';
       document.getElementById('addDesc').value = '';
       document.getElementById('addComp').value = '';
