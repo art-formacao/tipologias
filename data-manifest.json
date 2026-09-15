@@ -1,0 +1,190 @@
+{
+  "generatedAt": "2026-09-15T11:17:38.812Z",
+  "profiles": [
+    {
+      "kind": "Reboque",
+      "cat": "Lona",
+      "folder": "",
+      "shortTitle": "",
+      "title": "Lonas standard",
+      "sourcePath": "./Tipo de Reboque/Lona/Lonas standard",
+      "photos": [],
+      "equipment": [],
+      "specifications": [
+        {
+          "name": "COMPRIMENTO",
+          "value": "13.6 m"
+        },
+        {
+          "name": "LARGURA",
+          "value": "2.55 m"
+        },
+        {
+          "name": "ALTURA",
+          "value": "2.70 m"
+        },
+        {
+          "name": "PESO BRUTO",
+          "value": "35 t"
+        },
+        {
+          "name": "N.º DE EIXOS",
+          "value": "3"
+        },
+        {
+          "name": "ALTURA INTERIOR",
+          "value": ""
+        },
+        {
+          "name": "LARGURA INTERIOR",
+          "value": ""
+        }
+      ],
+      "description": "Semirreboque normal com laterais de lona que podem deslizar."
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Bi Temperatura 1 eixo",
+      "shortTitle": "9t",
+      "title": "Bi Temperatura 1 eixo — 9t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Bi Temperatura 1 eixo/9t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Bi Temperatura 1 eixo",
+      "shortTitle": "12t",
+      "title": "Bi Temperatura 1 eixo — 12t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Bi Temperatura 1 eixo/12t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Bi Temperatura 1 eixo",
+      "shortTitle": "18t",
+      "title": "Bi Temperatura 1 eixo — 18t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Bi Temperatura 1 eixo/18t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Bi Temperatura 2 eixos",
+      "shortTitle": "9t",
+      "title": "Bi Temperatura 2 eixos — 9t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Bi Temperatura 2 eixos/9t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Bi Temperatura 2 eixos",
+      "shortTitle": "12t",
+      "title": "Bi Temperatura 2 eixos — 12t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Bi Temperatura 2 eixos/12t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Bi Temperatura 2 eixos",
+      "shortTitle": "18t",
+      "title": "Bi Temperatura 2 eixos — 18t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Bi Temperatura 2 eixos/18t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Mono temperatura 1 eixo",
+      "shortTitle": "9t",
+      "title": "Mono temperatura 1 eixo — 9t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Mono temperatura 1 eixo/9t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Mono temperatura 1 eixo",
+      "shortTitle": "12t",
+      "title": "Mono temperatura 1 eixo — 12t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Mono temperatura 1 eixo/12t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Mono temperatura 1 eixo",
+      "shortTitle": "18t",
+      "title": "Mono temperatura 1 eixo — 18t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Mono temperatura 1 eixo/18t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Mono temperatura 2 eixos",
+      "shortTitle": "9t",
+      "title": "Mono temperatura 2 eixos — 9t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Mono temperatura 2 eixos/9t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Mono temperatura 2 eixos",
+      "shortTitle": "12t",
+      "title": "Mono temperatura 2 eixos — 12t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Mono temperatura 2 eixos/12t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    },
+    {
+      "kind": "Rígido",
+      "cat": "Frigorífico",
+      "folder": "Mono temperatura 2 eixos",
+      "shortTitle": "18t",
+      "title": "Mono temperatura 2 eixos — 18t",
+      "sourcePath": "./Tipo de Rígido/Frigorífico/Mono temperatura 2 eixos/18t",
+      "photos": [],
+      "equipment": [],
+      "specifications": [],
+      "description": ""
+    }
+  ]
+}

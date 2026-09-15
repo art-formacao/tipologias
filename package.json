@@ -1,0 +1,11 @@
+{
+  "name": "tipologias-tja",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-data-manifest.mjs"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
