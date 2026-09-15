@@ -272,11 +272,6 @@
 
   <header class="brand-header">
     <img class="brand-logo" src="Logo-TJA_Pri.png" alt="TJA Transportes">
-    <button class="header-menu-btn" type="button" onclick="toggleDrawer()" aria-label="Abrir menu de gestão" title="Menu de Gestão">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-      </svg>
-    </button>
     <div class="header-search">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
@@ -290,7 +285,7 @@
     <div class="top-bar">
       <div class="header">
         <div class="vehicle-type-switch" id="vehicleTypeSwitch" role="tablist" aria-label="Tipologias"></div>
-        <p id="dataStatus">A carregar as tipologias das pastas…</p>
+        <p id="dataStatus" hidden></p>
       </div>
     </div>
 
@@ -365,6 +360,7 @@
     let searchQuery = '';
     let activeGallery = [];
     let activeImageIndex = 0;
+    let activeProfile = null;
     let galleryScrollTimer;
 
     function renderTree() {
@@ -478,6 +474,9 @@
         sourcePath: profile.sourcePath,
         desc: profile.description || '',
         specifications: profile.specifications || [],
+        excelPath: profile.excelPath || '',
+        detailsLoaded: !profile.excelPath || Boolean(profile.detailsLoaded) || Boolean(profile.description) || Boolean(profile.specifications?.length),
+        detailsPromise: null,
         img: photos[0] || '',
         imgs: photos,
         equipmentItems,
@@ -605,7 +604,7 @@
       let workbook;
       try {
         const XLSX = await loadSheetJs();
-        const response = await fetch(githubRawUrl(filePath), { cache: 'no-store' });
+        const response = await fetch(githubRawUrl(filePath), { cache: 'default' });
         if (!response.ok) throw new Error(`resposta HTTP ${response.status}`);
         workbook = XLSX.read(await response.arrayBuffer(), { type: 'array', cellDates: false });
         const firstSheetName = workbook.SheetNames?.[0];
@@ -694,9 +693,6 @@
         const excel = scopedEntries
           .filter(entry => entry.type === 'blob' && pathParent(entry.path) === profilePath && isSpreadsheetFile(entry.path))
           .sort((a, b) => compareNaturalPaths(a.path, b.path))[0];
-        const spreadsheet = excel
-          ? await readGithubSpreadsheet(excel.path)
-          : { specifications: [], description: '' };
         profiles.push({
           kind: typeName,
           cat: category,
@@ -709,8 +705,10 @@
             name: pathName(photo.path).replace(/\.[^.]+$/, ''),
             image: `./${photo.path}`
           })),
-          specifications: spreadsheet.specifications,
-          description: spreadsheet.description
+          excelPath: excel?.path || '',
+          specifications: [],
+          description: '',
+          detailsLoaded: !excel
         });
       }
 
@@ -719,7 +717,7 @@
 
     async function loadGithubManifest() {
       const response = await fetch(GITHUB_TREE_URL, {
-        cache: 'no-store',
+        cache: 'default',
         headers: { Accept: 'application/vnd.github+json' }
       });
       if (!response.ok) {
@@ -729,46 +727,59 @@
       return buildGithubManifest(payload);
     }
 
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v2';
+
+    function applyManifest(manifest) {
+      availableTypes = Array.isArray(manifest?.types) ? manifest.types : [];
+      dataset = Array.isArray(manifest?.profiles) ? manifest.profiles.map(mapFolderProfile) : [];
+      if (!availableTypes.length && dataset.length) {
+        const typeMap = new Map();
+        dataset.forEach(item => {
+          if (!typeMap.has(item.kind)) typeMap.set(item.kind, new Set());
+          typeMap.get(item.kind).add(item.cat);
+        });
+        availableTypes = Array.from(typeMap, ([name, categories]) => ({ name, categories: Array.from(categories) }));
+      }
+      renderNavigation();
+      renderTree();
+    }
+
     async function loadFolderData() {
-      const status = document.getElementById('dataStatus');
-      let manifest;
+      let hasCachedData = false;
       try {
-        let localManifest;
+        const cached = JSON.parse(localStorage.getItem(MANIFEST_CACHE_KEY) || 'null');
+        if (cached && Array.isArray(cached.profiles) && cached.profiles.length) {
+          applyManifest(cached);
+          hasCachedData = true;
+        }
+      } catch (error) {
+        localStorage.removeItem(MANIFEST_CACHE_KEY);
+      }
+
+      try {
+        let manifest;
         try {
-          const response = await fetch('./data-manifest.json', { cache: 'no-store' });
-          if (response.ok) localManifest = await response.json();
+          const response = await fetch('./data-manifest.json', { cache: 'default' });
+          if (response.ok) {
+            const localManifest = await response.json();
+            if (Array.isArray(localManifest.profiles) && localManifest.profiles.length) manifest = localManifest;
+          }
         } catch (error) {
           console.warn('Manifesto local indisponível; será utilizada a árvore pública.', error);
         }
 
-        if (localManifest && Array.isArray(localManifest.profiles) && localManifest.profiles.length) {
-          manifest = localManifest;
-        } else {
-          status.textContent = 'A consultar as tipologias publicadas no GitHub…';
-          manifest = await loadGithubManifest();
-        }
-
-        availableTypes = Array.isArray(manifest.types) ? manifest.types : [];
-        dataset = Array.isArray(manifest.profiles) ? manifest.profiles.map(mapFolderProfile) : [];
-        if (!availableTypes.length && dataset.length) {
-          const typeMap = new Map();
-          dataset.forEach(item => {
-            if (!typeMap.has(item.kind)) typeMap.set(item.kind, new Set());
-            typeMap.get(item.kind).add(item.cat);
-          });
-          availableTypes = Array.from(typeMap, ([name, categories]) => ({ name, categories: Array.from(categories) }));
-        }
-        status.textContent = dataset.length
-          ? 'Selecione uma tipologia para consultar a ficha completa.'
-          : 'Ainda não existem perfis dentro da pasta Tipologias.';
+        if (!manifest) manifest = await loadGithubManifest();
+        applyManifest(manifest);
+        try { localStorage.setItem(MANIFEST_CACHE_KEY, JSON.stringify(manifest)); } catch (error) {}
       } catch (error) {
-        availableTypes = [];
-        dataset = [];
-        status.textContent = `Não foi possível carregar a pasta Tipologias. ${error.message || 'Confirme a API do GitHub e a publicação.'}`;
-        console.error(error);
+        if (!hasCachedData) {
+          availableTypes = [];
+          dataset = [];
+          renderNavigation();
+          renderTree();
+        }
+        console.error('Não foi possível atualizar a pasta Tipologias.', error);
       }
-      renderNavigation();
-      renderTree();
     }
 
     function renderTechnicalSpecs(vehicle) {
@@ -1039,11 +1050,35 @@
       }
     }
 
-    function openFullModal(v) {
+    async function ensureProfileDetails(v) {
+      if (v.detailsLoaded || !v.excelPath) return;
+      if (!v.detailsPromise) {
+        v.detailsPromise = readGithubSpreadsheet(v.excelPath)
+          .then(spreadsheet => {
+            v.specifications = spreadsheet.specifications || [];
+            v.desc = spreadsheet.description || '';
+            v.detailsLoaded = true;
+          })
+          .catch(error => {
+            v.detailsLoaded = true;
+            console.error(error);
+          })
+          .finally(() => { v.detailsPromise = null; });
+      }
+      await v.detailsPromise;
+    }
+
+    async function openFullModal(v) {
+      activeProfile = v;
       document.getElementById('fvCat').innerText = v.cat;
       document.getElementById('fvTitle').innerText = v.title;
-      document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
-      renderTechnicalSpecs(v);
+      if (v.detailsLoaded || !v.excelPath) {
+        document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
+        renderTechnicalSpecs(v);
+      } else {
+        document.getElementById('fvDesc').innerText = '';
+        document.getElementById('specGrid').innerHTML = '';
+      }
 
       activeGallery = getVehicleImages(v);
       activeImageIndex = 0;
@@ -1081,6 +1116,14 @@
       }
 
       document.getElementById('fullModal').style.display = 'flex';
+
+      if (!v.detailsLoaded && v.excelPath) {
+        await ensureProfileDetails(v);
+        if (activeProfile === v) {
+          document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
+          renderTechnicalSpecs(v);
+        }
+      }
     }
 
     function renderGallery() {
@@ -1167,6 +1210,7 @@
     });
 
     function closeFullModal() {
+      activeProfile = null;
       document.getElementById('fullModal').style.display = 'none';
     }
 
