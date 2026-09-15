@@ -3,114 +3,192 @@ import path from 'node:path';
 import * as XLSX from 'xlsx';
 
 const root = process.cwd();
-const typologiesRoot = path.join(root, 'Tipologias');
+const tipologiasRoot = path.join(root, 'Tipologias');
 const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']);
+const spreadsheetExtensions = new Set(['.xlsx', '.xls', '.xlsm']);
 const natural = new Intl.Collator('pt', { numeric: true, sensitivity: 'base' });
 
 function normalize(value) {
-  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
 }
-function toWebPath(absolutePath) {
-  return './' + path.relative(root, absolutePath).split(path.sep).join('/');
+
+function toWebPath(absolutePath, withDot = true) {
+  const relative = path.relative(root, absolutePath).split(path.sep).join('/');
+  return withDot ? `./${relative}` : relative;
 }
+
 async function entriesAt(directory) {
-  try { return await fs.readdir(directory, { withFileTypes: true }); } catch { return []; }
+  try {
+    return await fs.readdir(directory, { withFileTypes: true });
+  } catch {
+    return [];
+  }
 }
+
 async function directoriesAt(directory) {
-  return (await entriesAt(directory)).filter(entry => entry.isDirectory()).map(entry => ({
-    name: entry.name, absolute: path.join(directory, entry.name)
-  })).sort((a, b) => natural.compare(a.name, b.name));
-}
-async function filesAt(directory) {
-  return (await entriesAt(directory)).filter(entry => entry.isFile()).map(entry => ({
-    name: entry.name, absolute: path.join(directory, entry.name)
-  }));
-}
-async function findNamedDirectory(directory, name) {
-  return (await directoriesAt(directory)).find(item => normalize(item.name) === normalize(name));
-}
-async function readImages(directory) {
-  if (!directory) return [];
-  return (await filesAt(directory.absolute))
-    .filter(file => imageExtensions.has(path.extname(file.name).toLowerCase()))
+  return (await entriesAt(directory))
+    .filter(entry => entry.isDirectory())
+    .map(entry => ({ name: entry.name, absolute: path.join(directory, entry.name) }))
     .sort((a, b) => natural.compare(a.name, b.name));
 }
-async function findExcel(directory) {
-  return (await filesAt(directory)).find(file => {
-    const extension = path.extname(file.name).toLowerCase();
-    return ['.xlsx', '.xls', '.xlsm'].includes(extension) &&
-      normalize(path.basename(file.name, extension)) === 'especificacoes tecnicas e descricao';
-  });
-}
-async function readSpreadsheet(directory) {
-  const excel = await findExcel(directory);
-  if (!excel) return { specifications: [], description: '' };
-  const buffer = await fs.readFile(excel.absolute);
-  const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: false });
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
-  const specifications = [];
-  let description = '';
-  for (const row of rows) {
-    const name = String(row[0] ?? '').trim();
-    const value = String(row[1] ?? '').trim();
-    if (!name) continue;
-    if (normalize(name) === 'descricao') description = value;
-    else specifications.push({ name, value });
-  }
-  return { specifications, description };
-}
-async function isProfile(directory) {
-  const folders = await directoriesAt(directory);
-  return folders.some(folder => ['fotos', 'equipamentos associados'].includes(normalize(folder.name))) || Boolean(await findExcel(directory));
+
+async function filesAt(directory) {
+  return (await entriesAt(directory))
+    .filter(entry => entry.isFile())
+    .map(entry => ({ name: entry.name, absolute: path.join(directory, entry.name) }))
+    .sort((a, b) => natural.compare(a.name, b.name));
 }
 
-const types = [];
-const profiles = [];
-for (const typeDirectory of await directoriesAt(typologiesRoot)) {
-  const categories = (await directoriesAt(typeDirectory.absolute)).map(category => category.name);
-  types.push({ name: typeDirectory.name, categories });
+function isImage(fileName) {
+  return imageExtensions.has(path.extname(fileName).toLowerCase());
+}
+
+function isSpreadsheet(fileName) {
+  const extension = path.extname(fileName).toLowerCase();
+  return spreadsheetExtensions.has(extension) &&
+    normalize(path.basename(fileName, extension)) === 'especificacoes tecnicas e descricao';
+}
+
+async function findNamedDirectory(directory, expectedName) {
+  const expected = normalize(expectedName);
+  return (await directoriesAt(directory)).find(item => normalize(item.name) === expected);
+}
+
+async function readImages(directory) {
+  if (!directory) return [];
+  return (await filesAt(directory.absolute)).filter(file => isImage(file.name));
+}
+
+async function findTypeIcon(typeDirectory) {
+  return (await filesAt(typeDirectory))
+    .find(file => isImage(file.name) && normalize(path.basename(file.name, path.extname(file.name))) === 'icone');
+}
+
+async function findSpreadsheet(profileDirectory) {
+  return (await filesAt(profileDirectory)).find(file => isSpreadsheet(file.name));
+}
+
+async function readSpreadsheet(excel) {
+  if (!excel) return { specifications: [], description: '' };
+  try {
+    const workbook = XLSX.readFile(excel.absolute, { cellDates: false });
+    const firstSheetName = workbook.SheetNames?.[0];
+    if (!firstSheetName) return { specifications: [], description: '' };
+    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {
+      header: 1,
+      raw: false,
+      defval: ''
+    });
+    const specifications = [];
+    let description = '';
+    for (const row of rows) {
+      const name = String(row?.[0] ?? '').trim();
+      const value = String(row?.[1] ?? '').trim();
+      if (!name) continue;
+      if (normalize(name) === 'descricao') description = value;
+      else specifications.push({ name, value });
+    }
+    return { specifications, description };
+  } catch (error) {
+    console.warn(`Não foi possível ler "${toWebPath(excel.absolute, false)}": ${error.message}`);
+    return { specifications: [], description: '' };
+  }
+}
+
+async function isProfileDirectory(directory) {
+  const directories = await directoriesAt(directory);
+  const files = await filesAt(directory);
+  return directories.some(item => ['fotos', 'equipamentos associados'].includes(normalize(item.name))) ||
+    files.some(file => isSpreadsheet(file.name));
+}
+
+async function scanType(typeDirectory) {
+  const categories = (await directoriesAt(typeDirectory.absolute)).map(directory => directory.name);
+  const iconFile = await findTypeIcon(typeDirectory.absolute);
+  const profiles = [];
 
   async function walk(directory) {
-    if (await isProfile(directory)) {
+    if (await isProfileDirectory(directory)) {
       const parts = path.relative(typeDirectory.absolute, directory).split(path.sep).filter(Boolean);
       if (parts.length < 2) return;
-      const cat = parts[0];
+
+      const category = parts[0];
       const profileName = parts.at(-1);
       const hierarchy = parts.slice(1, -1);
       const folder = hierarchy.join(' / ');
-      const photosFolder = await findNamedDirectory(directory, 'Fotos');
-      const equipmentFolder = await findNamedDirectory(directory, 'Equipamentos Associados');
-      const photos = await readImages(photosFolder);
-      const equipmentPhotos = await readImages(equipmentFolder);
-      const excel = await readSpreadsheet(directory);
+      const photosDirectory = await findNamedDirectory(directory, 'Fotos');
+      const equipmentDirectory = await findNamedDirectory(directory, 'Equipamentos Associados');
+      const photos = await readImages(photosDirectory);
+      const equipmentImages = await readImages(equipmentDirectory);
+      const excel = await findSpreadsheet(directory);
+      const excelData = await readSpreadsheet(excel);
+
       profiles.push({
         kind: typeDirectory.name,
-        cat,
+        cat: category,
         folder,
         shortTitle: folder ? profileName : '',
         title: folder ? `${folder} — ${profileName}` : profileName,
         sourcePath: toWebPath(directory),
-        photos: photos.map(photo => toWebPath(photo.absolute)),
-        equipment: equipmentPhotos.map(photo => ({
-          name: path.basename(photo.name, path.extname(photo.name)),
-          image: toWebPath(photo.absolute)
+        photos: photos.map(file => toWebPath(file.absolute)),
+        equipment: equipmentImages.map(file => ({
+          name: path.basename(file.name, path.extname(file.name)),
+          image: toWebPath(file.absolute)
         })),
-        specifications: excel.specifications,
-        description: excel.description
+        excelPath: excel ? toWebPath(excel.absolute, false) : '',
+        specifications: excelData.specifications,
+        description: excelData.description,
+        detailsLoaded: true
       });
       return;
     }
-    for (const child of await directoriesAt(directory)) await walk(child.absolute);
+
+    for (const child of await directoriesAt(directory)) {
+      await walk(child.absolute);
+    }
   }
-  for (const category of await directoriesAt(typeDirectory.absolute)) await walk(category.absolute);
+
+  for (const category of await directoriesAt(typeDirectory.absolute)) {
+    await walk(category.absolute);
+  }
+
+  return {
+    type: {
+      name: typeDirectory.name,
+      categories,
+      icon: iconFile ? toWebPath(iconFile.absolute) : ''
+    },
+    profiles
+  };
 }
 
-profiles.sort((a, b) => natural.compare(
-  `${a.kind}/${a.cat}/${a.folder}/${a.title}`,
-  `${b.kind}/${b.cat}/${b.folder}/${b.title}`
-));
-await fs.writeFile(path.join(root, 'data-manifest.json'), JSON.stringify({
-  generatedAt: new Date().toISOString(), types, profiles
-}, null, 2) + '\n', 'utf8');
-console.log(`Manifesto criado: ${types.length} tipologias principais e ${profiles.length} perfis.`);
+const typeDirectories = await directoriesAt(tipologiasRoot);
+const scanned = await Promise.all(typeDirectories.map(scanType));
+const types = scanned.map(result => result.type);
+const profiles = scanned
+  .flatMap(result => result.profiles)
+  .sort((a, b) => natural.compare(
+    `${a.kind}/${a.cat}/${a.folder}/${a.title}`,
+    `${b.kind}/${b.cat}/${b.folder}/${b.title}`
+  ));
+
+const manifest = {
+  generatedAt: new Date().toISOString(),
+  types,
+  profiles
+};
+
+await fs.writeFile(
+  path.join(root, 'data-manifest.json'),
+  `${JSON.stringify(manifest, null, 2)}\n`,
+  'utf8'
+);
+
+console.log(
+  `data-manifest.json criado com ${types.length} tipos, ` +
+  `${profiles.length} perfis e ${types.filter(type => type.icon).length} ícones.`
+);
