@@ -100,10 +100,30 @@
 
     .canvas {
       width: 100%; flex: 1; background: #efeff4; border-radius: 16px; padding: 30px;
-      display: flex; flex-direction: column; align-items: flex-start; overflow-y: auto; max-height: calc(100vh - 160px);
+      display: flex; flex-direction: column; align-items: flex-start; overflow-y: auto;
+      max-height: calc(100vh - 160px); position: relative;
     }
 
-    .node-wrapper { display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
+    .node-wrapper {
+      display: flex; flex-direction: column; align-items: flex-start;
+      width: calc(50% - 24px); min-height: 100%; position: relative; z-index: 1;
+    }
+    .type-icon-panel {
+      position: absolute; top: 16px; right: 16px; bottom: 16px;
+      width: calc(50% - 24px); display: none; align-items: center; justify-content: center;
+      pointer-events: none; overflow: hidden;
+    }
+    .type-icon-panel.visible { display: flex; }
+    .type-icon-panel img {
+      display: block; width: 100%; height: 100%; object-fit: contain;
+    }
+    @media (max-width: 850px) {
+      .canvas { gap: 24px; }
+      .node-wrapper { width: 100%; min-height: auto; }
+      .type-icon-panel {
+        position: static; width: 100%; height: min(52vw, 320px); flex: 0 0 auto;
+      }
+    }
 
     .node {
       background: var(--card-bg); border: 2px solid var(--border); border-radius: 16px;
@@ -293,6 +313,9 @@
 
     <div class="canvas">
       <div id="nodesContainer" class="node-wrapper"></div>
+      <div id="typeIconPanel" class="type-icon-panel" aria-hidden="true">
+        <img id="typeIconImage" alt="">
+      </div>
     </div>
   </div>
 
@@ -491,6 +514,7 @@
       if (!availableTypes.length) {
         currentKind = '';
         document.getElementById('categoryFilters').innerHTML = '';
+        renderTypeIcon();
         return;
       }
       if (!availableTypes.some(type => type.name === currentKind)) currentKind = availableTypes[0].name;
@@ -503,6 +527,24 @@
         typeContainer.appendChild(button);
       });
       renderCategoryFilters();
+      renderTypeIcon();
+    }
+
+    function renderTypeIcon() {
+      const panel = document.getElementById('typeIconPanel');
+      const image = document.getElementById('typeIconImage');
+      const type = availableTypes.find(item => item.name === currentKind);
+      const icon = type?.icon || '';
+      if (!icon) {
+        panel.classList.remove('visible');
+        image.removeAttribute('src');
+        image.alt = '';
+        return;
+      }
+      image.src = icon;
+      image.alt = `Ícone de ${currentKind}`;
+      image.onerror = () => panel.classList.remove('visible');
+      panel.classList.add('visible');
     }
 
     function renderCategoryFilters() {
@@ -647,13 +689,20 @@
         .filter(entry => pathParent(entry.path) === rootPath)
         .sort((a, b) => compareNaturalPaths(a.path, b.path));
       const typePaths = new Set(typeEntries.map(entry => entry.path));
-      const types = typeEntries.map(type => ({
-        name: pathName(type.path),
-        categories: directories
-          .filter(entry => pathParent(entry.path) === type.path)
-          .map(entry => pathName(entry.path))
-          .sort(compareNaturalPaths)
-      }));
+      const types = typeEntries.map(type => {
+        const iconEntry = scopedEntries.find(entry =>
+          entry.type === 'blob' && pathParent(entry.path) === type.path && isImageFile(entry.path) &&
+          normalizeFolderText(pathName(entry.path).replace(/\.[^.]+$/, '')) === 'icone'
+        );
+        return {
+          name: pathName(type.path),
+          categories: directories
+            .filter(entry => pathParent(entry.path) === type.path)
+            .map(entry => pathName(entry.path))
+            .sort(compareNaturalPaths),
+          icon: iconEntry ? `./${iconEntry.path}` : ''
+        };
+      });
 
       const profilePaths = new Set();
       for (const entry of scopedEntries) {
@@ -727,10 +776,12 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v2';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v3';
 
     function applyManifest(manifest) {
-      availableTypes = Array.isArray(manifest?.types) ? manifest.types : [];
+      availableTypes = Array.isArray(manifest?.types)
+        ? manifest.types.map(type => ({ ...type, icon: type.icon ? assetUrl(type.icon) : '' }))
+        : [];
       dataset = Array.isArray(manifest?.profiles) ? manifest.profiles.map(mapFolderProfile) : [];
       if (!availableTypes.length && dataset.length) {
         const typeMap = new Map();
@@ -745,34 +796,36 @@
     }
 
     async function loadFolderData() {
-      let hasCachedData = false;
+      let hasInitialData = false;
       try {
         const cached = JSON.parse(localStorage.getItem(MANIFEST_CACHE_KEY) || 'null');
         if (cached && Array.isArray(cached.profiles) && cached.profiles.length) {
           applyManifest(cached);
-          hasCachedData = true;
+          hasInitialData = true;
         }
       } catch (error) {
         localStorage.removeItem(MANIFEST_CACHE_KEY);
       }
 
       try {
-        let manifest;
-        try {
-          const response = await fetch('./data-manifest.json', { cache: 'default' });
-          if (response.ok) {
-            const localManifest = await response.json();
-            if (Array.isArray(localManifest.profiles) && localManifest.profiles.length) manifest = localManifest;
+        const response = await fetch('./data-manifest.json', { cache: 'default' });
+        if (response.ok) {
+          const localManifest = await response.json();
+          if (Array.isArray(localManifest.profiles) && localManifest.profiles.length) {
+            applyManifest(localManifest);
+            hasInitialData = true;
           }
-        } catch (error) {
-          console.warn('Manifesto local indisponível; será utilizada a árvore pública.', error);
         }
-
-        if (!manifest) manifest = await loadGithubManifest();
-        applyManifest(manifest);
-        try { localStorage.setItem(MANIFEST_CACHE_KEY, JSON.stringify(manifest)); } catch (error) {}
       } catch (error) {
-        if (!hasCachedData) {
+        console.warn('Manifesto local indisponível; será utilizada a árvore pública.', error);
+      }
+
+      try {
+        const freshManifest = await loadGithubManifest();
+        applyManifest(freshManifest);
+        try { localStorage.setItem(MANIFEST_CACHE_KEY, JSON.stringify(freshManifest)); } catch (error) {}
+      } catch (error) {
+        if (!hasInitialData) {
           availableTypes = [];
           dataset = [];
           renderNavigation();
@@ -818,6 +871,7 @@
         button.classList.toggle('active', button.textContent === kind)
       );
       renderCategoryFilters();
+      renderTypeIcon();
       closeFullModal();
       renderTree();
     }
