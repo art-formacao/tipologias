@@ -162,7 +162,7 @@
       background: var(--bg); display: none; flex-direction: column; z-index: 300; overflow-y: auto;
     }
     .fullscreen-header {
-      background: white; padding: 20px 40px; display: flex; justify-content: space-between;
+      background: white; padding: 7px 40px; display: flex; justify-content: space-between;
       align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10;
     }
     .fullscreen-body {
@@ -222,7 +222,7 @@
     .lightbox-counter { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); color: #fff; }
     @media (max-width: 680px) {
       .fullscreen-modal { top: 64px; height: calc(100vh - 64px); }
-      .fullscreen-header { padding: 16px; }
+      .fullscreen-header { padding: 7px 16px; }
       .fullscreen-body { grid-template-columns: 1fr; padding: 22px 14px; gap: 24px; }
       .vehicle-img-container { height: 280px; }
     }
@@ -320,10 +320,10 @@
   <div class="fullscreen-modal" id="fullModal">
     <div class="fullscreen-header">
       <div>
-        <span id="fvCat" style="color:var(--primary); font-weight:bold; font-size:12px; text-transform:uppercase;">--</span>
-        <h2 id="fvTitle" style="margin:4px 0 0 0; font-size:28px;">--</h2>
+        <span id="fvCat" style="color:var(--primary); font-weight:bold; font-size:10px; line-height:1; text-transform:uppercase;">--</span>
+        <h2 id="fvTitle" style="margin:2px 0 0 0; font-size:21px; line-height:1.1;">--</h2>
       </div>
-      <button onclick="closeFullModal()" style="border:none; background:#e5e5ea; padding:10px 20px; border-radius:10px; font-weight:600; cursor:pointer;">Fechar (✕)</button>
+      <button onclick="closeFullModal()" style="border:none; background:#e5e5ea; padding:7px 16px; border-radius:9px; font-weight:600; cursor:pointer;">Fechar (✕)</button>
     </div>
 
     <div class="fullscreen-body">
@@ -361,7 +361,7 @@
     let dataset = [];
     let availableTypes = [];
     let currentKind = '';
-    let currentCat = 'Todos';
+    let currentCat = '';
     let searchQuery = '';
     let activeGallery = [];
     let activeImageIndex = 0;
@@ -371,7 +371,7 @@
       const container = document.getElementById('nodesContainer');
       container.innerHTML = '';
       let list = dataset.filter(item => getVehicleKind(item) === currentKind);
-      if (currentCat !== 'Todos') list = list.filter(item => item.cat === currentCat);
+      if (currentCat) list = list.filter(item => item.cat === currentCat);
 
       if (searchQuery) {
         list = list.filter(item => {
@@ -510,9 +510,9 @@
       const container = document.getElementById('categoryFilters');
       const type = availableTypes.find(item => item.name === currentKind);
       const categories = type ? type.categories : [];
-      if (currentCat !== 'Todos' && !categories.includes(currentCat)) currentCat = 'Todos';
+      if (!categories.includes(currentCat)) currentCat = categories[0] || '';
       container.innerHTML = '';
-      ['Todos', ...categories].forEach(category => {
+      categories.forEach(category => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'filter-btn' + (category === currentCat ? ' active' : '');
@@ -802,7 +802,7 @@
 
     function switchVehicleKind(kind) {
       currentKind = kind;
-      currentCat = 'Todos';
+      currentCat = '';
       document.querySelectorAll('.vehicle-type-btn').forEach(button =>
         button.classList.toggle('active', button.textContent === kind)
       );
