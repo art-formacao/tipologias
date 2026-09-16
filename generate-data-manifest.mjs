@@ -77,6 +77,7 @@ async function readSpreadsheet(excel) {
     specifications: [],
     description: '',
     careBeforeAfter: '',
+    attentionPoints: '',
     serviceConsiderations: ''
   };
   if (!excel) return emptyData;
@@ -92,6 +93,7 @@ async function readSpreadsheet(excel) {
     const specifications = [];
     let description = '';
     let careBeforeAfter = '';
+    let attentionPoints = '';
     let serviceConsiderations = '';
     for (const row of rows) {
       const name = String(row?.[0] ?? '').trim();
@@ -100,10 +102,11 @@ async function readSpreadsheet(excel) {
       const normalizedName = normalize(name).replace(/:\s*$/, '').replace(/\s+/g, ' ');
       if (normalizedName === 'descricao') description = value;
       else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') careBeforeAfter = value;
+      else if (normalizedName === 'pontos de atencao') attentionPoints = value;
       else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') serviceConsiderations = value;
       else specifications.push({ name, value });
     }
-    return { specifications, description, careBeforeAfter, serviceConsiderations };
+    return { specifications, description, careBeforeAfter, attentionPoints, serviceConsiderations };
   } catch (error) {
     console.warn(`Não foi possível ler "${toWebPath(excel.absolute, false)}": ${error.message}`);
     return emptyData;
@@ -160,6 +163,7 @@ async function scanType(typeDirectory) {
         specifications: excelData.specifications,
         description: excelData.description,
         careBeforeAfter: excelData.careBeforeAfter,
+        attentionPoints: excelData.attentionPoints,
         serviceConsiderations: excelData.serviceConsiderations,
         detailsLoaded: true
       });

@@ -267,6 +267,12 @@
     .profile-note-section { margin-top: 30px; }
     .profile-note-section h3 { margin: 0 0 1em; }
     .profile-note-section p { margin: 0; }
+    .attention-section {
+      margin-top: 22px; padding: 15px 16px; border-radius: 12px;
+      background: #efeee9;
+    }
+    .attention-section h3 { margin: 0 0 10px; }
+    .attention-section p { margin: 0; }
     .equipment-list { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px; margin-top: 12px; }
     .equipment-card {
       width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -381,6 +387,11 @@
           <h3>Cuidados a ter antes e depois da utilização</h3>
           <p id="fvCareBeforeAfter" class="profile-note">--</p>
         </section>
+
+        <section class="attention-section">
+          <h3>PONTOS DE ATENÇÃO</h3>
+          <p id="fvAttentionPoints" class="profile-note">--</p>
+        </section>
       </div>
 
       <div>
@@ -428,7 +439,7 @@
           const searchableText = [
             getVehicleKind(item), item.cat, item.folder, item.shortTitle, item.title, item.desc, item.sourcePath, item.comp, item.larg,
             item.alt, item.altInterior, item.largInterior, item.peso, item.eixos, item.equips,
-            item.careBeforeAfter, item.serviceConsiderations,
+            item.careBeforeAfter, item.attentionPoints, item.serviceConsiderations,
             getAssociatedEquipments(item).map(eq => eq.name).join(' ')
           ].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
           return searchableText.includes(searchQuery);
@@ -529,10 +540,11 @@
         sourcePath: profile.sourcePath,
         desc: profile.description || '',
         careBeforeAfter: profile.careBeforeAfter || '',
+        attentionPoints: profile.attentionPoints || '',
         serviceConsiderations: profile.serviceConsiderations || '',
         specifications: profile.specifications || [],
         excelPath: profile.excelPath || '',
-        detailsLoaded: !profile.excelPath || Boolean(profile.detailsLoaded) || Boolean(profile.description) || Boolean(profile.careBeforeAfter) || Boolean(profile.serviceConsiderations) || Boolean(profile.specifications?.length),
+        detailsLoaded: !profile.excelPath || Boolean(profile.detailsLoaded) || Boolean(profile.description) || Boolean(profile.careBeforeAfter) || Boolean(profile.attentionPoints) || Boolean(profile.serviceConsiderations) || Boolean(profile.specifications?.length),
         detailsPromise: null,
         img: photos[0] || '',
         imgs: photos,
@@ -687,7 +699,7 @@
         workbook = XLSX.read(await response.arrayBuffer(), { type: 'array', cellDates: false });
         const firstSheetName = workbook.SheetNames?.[0];
         if (!firstSheetName) return {
-          specifications: [], description: '', careBeforeAfter: '', serviceConsiderations: ''
+          specifications: [], description: '', careBeforeAfter: '', attentionPoints: '', serviceConsiderations: ''
         };
         const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {
           header: 1, raw: false, defval: ''
@@ -695,6 +707,7 @@
         const specifications = [];
         let description = '';
         let careBeforeAfter = '';
+        let attentionPoints = '';
         let serviceConsiderations = '';
         for (const row of rows) {
           const name = String(row?.[0] ?? '').trim();
@@ -703,10 +716,11 @@
           const normalizedName = normalizeFolderText(name).replace(/:\s*$/, '').replace(/\s+/g, ' ');
           if (normalizedName === 'descricao') description = value;
           else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') careBeforeAfter = value;
+          else if (normalizedName === 'pontos de atencao') attentionPoints = value;
           else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') serviceConsiderations = value;
           else specifications.push({ name, value });
         }
-        return { specifications, description, careBeforeAfter, serviceConsiderations };
+        return { specifications, description, careBeforeAfter, attentionPoints, serviceConsiderations };
       } catch (error) {
         throw new Error(`Falha ao ler o Excel "${filePath}": ${error.message}`);
       }
@@ -810,6 +824,7 @@
           specifications: [],
           description: '',
           careBeforeAfter: '',
+          attentionPoints: '',
           serviceConsiderations: '',
           detailsLoaded: !excel
         });
@@ -830,7 +845,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v5';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v6';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
@@ -1173,6 +1188,7 @@
             v.specifications = spreadsheet.specifications || [];
             v.desc = spreadsheet.description || '';
             v.careBeforeAfter = spreadsheet.careBeforeAfter || '';
+            v.attentionPoints = spreadsheet.attentionPoints || '';
             v.serviceConsiderations = spreadsheet.serviceConsiderations || '';
             v.detailsLoaded = true;
           })
@@ -1192,11 +1208,13 @@
       if (v.detailsLoaded || !v.excelPath) {
         document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
         document.getElementById('fvCareBeforeAfter').innerText = v.careBeforeAfter || 'Sem cuidados registados.';
+        document.getElementById('fvAttentionPoints').innerText = v.attentionPoints || 'Sem pontos de atenção registados.';
         document.getElementById('fvServiceConsiderations').innerText = v.serviceConsiderations || 'Sem aspetos registados.';
         renderTechnicalSpecs(v);
       } else {
         document.getElementById('fvDesc').innerText = '';
         document.getElementById('fvCareBeforeAfter').innerText = '';
+        document.getElementById('fvAttentionPoints').innerText = '';
         document.getElementById('fvServiceConsiderations').innerText = '';
         document.getElementById('specGrid').innerHTML = '';
       }
@@ -1243,6 +1261,7 @@
         if (activeProfile === v) {
           document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
           document.getElementById('fvCareBeforeAfter').innerText = v.careBeforeAfter || 'Sem cuidados registados.';
+          document.getElementById('fvAttentionPoints').innerText = v.attentionPoints || 'Sem pontos de atenção registados.';
           document.getElementById('fvServiceConsiderations').innerText = v.serviceConsiderations || 'Sem aspetos registados.';
           renderTechnicalSpecs(v);
         }
