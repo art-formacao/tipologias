@@ -279,13 +279,17 @@
       text-align: center; color: var(--primary); font-weight: 600; font-size: 13px;
     }
     .equipment-photo {
-      width: 76px; height: 76px; border-radius: 50%; border: 3px solid #fff;
+      width: 76px; height: 76px; padding: 0; flex: 0 0 76px;
+      border-radius: 50%; border: 3px solid #fff;
       background: var(--primary-light); box-shadow: 0 2px 10px rgba(0,0,0,0.14);
       overflow: hidden; display: flex; align-items: center; justify-content: center;
       color: var(--primary); font-size: 24px; cursor: zoom-in; position: relative;
       transform-origin: center; transition: transform 0.22s ease, box-shadow 0.22s ease; z-index: 1;
     }
-    .equipment-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .equipment-photo img {
+      display: block; width: 100%; height: 100%; max-width: none;
+      object-fit: cover; border-radius: 50%;
+    }
     .equipment-photo.enlarged {
       transform: scale(3); z-index: 50; cursor: zoom-out;
       box-shadow: 0 8px 30px rgba(0,0,0,0.36);
@@ -389,7 +393,7 @@
         </section>
 
         <section class="attention-section">
-          <h3>Pontos de atenção</h3>
+          <h3>PONTOS DE ATENÇÃO</h3>
           <p id="fvAttentionPoints" class="profile-note">--</p>
         </section>
       </div>
