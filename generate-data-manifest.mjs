@@ -63,8 +63,8 @@ async function readImages(directory) {
   return (await filesAt(directory.absolute)).filter(file => isImage(file.name));
 }
 
-async function findTypeIcon(typeDirectory) {
-  return (await filesAt(typeDirectory))
+async function findFolderIcon(directory) {
+  return (await filesAt(directory))
     .find(file => isImage(file.name) && normalize(path.basename(file.name, path.extname(file.name))) === 'icone');
 }
 
@@ -107,8 +107,13 @@ async function isProfileDirectory(directory) {
 }
 
 async function scanType(typeDirectory) {
-  const categories = (await directoriesAt(typeDirectory.absolute)).map(directory => directory.name);
-  const iconFile = await findTypeIcon(typeDirectory.absolute);
+  const categoryDirectories = await directoriesAt(typeDirectory.absolute);
+  const categories = categoryDirectories.map(directory => directory.name);
+  const categoryIcons = {};
+  for (const category of categoryDirectories) {
+    const iconFile = await findFolderIcon(category.absolute);
+    if (iconFile) categoryIcons[category.name] = toWebPath(iconFile.absolute);
+  }
   const profiles = [];
 
   async function walk(directory) {
@@ -152,7 +157,7 @@ async function scanType(typeDirectory) {
     }
   }
 
-  for (const category of await directoriesAt(typeDirectory.absolute)) {
+  for (const category of categoryDirectories) {
     await walk(category.absolute);
   }
 
@@ -160,7 +165,7 @@ async function scanType(typeDirectory) {
     type: {
       name: typeDirectory.name,
       categories,
-      icon: iconFile ? toWebPath(iconFile.absolute) : ''
+      categoryIcons
     },
     profiles
   };
@@ -190,5 +195,5 @@ await fs.writeFile(
 
 console.log(
   `data-manifest.json criado com ${types.length} tipos, ` +
-  `${profiles.length} perfis e ${types.filter(type => type.icon).length} ícones.`
+  `${profiles.length} perfis e ${types.reduce((total, type) => total + Object.keys(type.categoryIcons).length, 0)} ícones de categoria.`
 );

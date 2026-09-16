@@ -121,13 +121,14 @@
     .node-wrapper::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 8px; }
     .type-icon-panel {
       position: static; flex: 1 1 auto; width: auto; min-width: 0; min-height: 0;
-      padding: 24px; display: none; align-items: center; justify-content: center;
+      padding: 24px; display: flex; align-items: center; justify-content: center;
       pointer-events: none; overflow: hidden;
     }
-    .type-icon-panel.visible { display: flex; }
     .type-icon-panel img {
-      display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain;
+      display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%;
+      object-fit: contain; visibility: hidden; opacity: 0; transition: opacity 0.2s ease;
     }
+    .type-icon-panel.visible img { visibility: visible; opacity: 1; }
     @media (max-width: 850px) {
       html, body { height: auto; min-height: 100%; overflow-y: auto; }
       .app-container { height: auto; min-height: calc(100vh - 64px); overflow: visible; }
@@ -405,8 +406,8 @@
     function renderTree() {
       const container = document.getElementById('nodesContainer');
       container.innerHTML = '';
-      let list = dataset.filter(item => getVehicleKind(item) === currentKind);
-      if (currentCat) list = list.filter(item => item.cat === currentCat);
+      if (!currentCat) return;
+      let list = dataset.filter(item => getVehicleKind(item) === currentKind && item.cat === currentCat);
 
       if (searchQuery) {
         list = list.filter(item => {
@@ -550,7 +551,7 @@
       const panel = document.getElementById('typeIconPanel');
       const image = document.getElementById('typeIconImage');
       const type = availableTypes.find(item => item.name === currentKind);
-      const icon = type?.icon || '';
+      const icon = currentCat ? (type?.categoryIcons?.[currentCat] || '') : '';
       if (!icon) {
         panel.classList.remove('visible');
         image.removeAttribute('src');
@@ -558,7 +559,7 @@
         return;
       }
       image.src = icon;
-      image.alt = `Ícone de ${currentKind}`;
+      image.alt = `Ícone de ${currentCat}`;
       image.onerror = () => panel.classList.remove('visible');
       panel.classList.add('visible');
     }
@@ -567,7 +568,7 @@
       const container = document.getElementById('categoryFilters');
       const type = availableTypes.find(item => item.name === currentKind);
       const categories = type ? type.categories : [];
-      if (!categories.includes(currentCat)) currentCat = categories[0] || '';
+      if (!categories.includes(currentCat)) currentCat = '';
       container.innerHTML = '';
       categories.forEach(category => {
         const button = document.createElement('button');
@@ -706,17 +707,21 @@
         .sort((a, b) => compareNaturalPaths(a.path, b.path));
       const typePaths = new Set(typeEntries.map(entry => entry.path));
       const types = typeEntries.map(type => {
-        const iconEntry = scopedEntries.find(entry =>
-          entry.type === 'blob' && pathParent(entry.path) === type.path && isImageFile(entry.path) &&
-          normalizeFolderText(pathName(entry.path).replace(/\.[^.]+$/, '')) === 'icone'
-        );
+        const categoryEntries = directories
+          .filter(entry => pathParent(entry.path) === type.path)
+          .sort((a, b) => compareNaturalPaths(a.path, b.path));
+        const categoryIcons = {};
+        categoryEntries.forEach(category => {
+          const iconEntry = scopedEntries.find(entry =>
+            entry.type === 'blob' && pathParent(entry.path) === category.path && isImageFile(entry.path) &&
+            normalizeFolderText(pathName(entry.path).replace(/\.[^.]+$/, '')) === 'icone'
+          );
+          if (iconEntry) categoryIcons[pathName(category.path)] = `./${iconEntry.path}`;
+        });
         return {
           name: pathName(type.path),
-          categories: directories
-            .filter(entry => pathParent(entry.path) === type.path)
-            .map(entry => pathName(entry.path))
-            .sort(compareNaturalPaths),
-          icon: iconEntry ? `./${iconEntry.path}` : ''
+          categories: categoryEntries.map(entry => pathName(entry.path)),
+          categoryIcons
         };
       });
 
@@ -792,11 +797,16 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v3';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v4';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
-        ? manifest.types.map(type => ({ ...type, icon: type.icon ? assetUrl(type.icon) : '' }))
+        ? manifest.types.map(type => ({
+            ...type,
+            categoryIcons: Object.fromEntries(
+              Object.entries(type.categoryIcons || {}).map(([category, icon]) => [category, assetUrl(icon)])
+            )
+          }))
         : [];
       dataset = Array.isArray(manifest?.profiles) ? manifest.profiles.map(mapFolderProfile) : [];
       if (!availableTypes.length && dataset.length) {
@@ -897,6 +907,7 @@
       document.querySelectorAll('.filter-btn').forEach(button =>
         button.classList.toggle('active', button.dataset.cat === category)
       );
+      renderTypeIcon();
       renderTree();
     }
 
