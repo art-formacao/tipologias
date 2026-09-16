@@ -107,6 +107,7 @@ async function isProfileDirectory(directory) {
 }
 
 async function scanType(typeDirectory) {
+  const typeIconFile = await findFolderIcon(typeDirectory.absolute);
   const categoryDirectories = await directoriesAt(typeDirectory.absolute);
   const categories = categoryDirectories.map(directory => directory.name);
   const categoryIcons = {};
@@ -165,6 +166,7 @@ async function scanType(typeDirectory) {
     type: {
       name: typeDirectory.name,
       categories,
+      icon: typeIconFile ? toWebPath(typeIconFile.absolute) : '',
       categoryIcons
     },
     profiles
@@ -193,7 +195,13 @@ await fs.writeFile(
   'utf8'
 );
 
+const typeIconCount = types.filter(type => type.icon).length;
+const categoryIconCount = types.reduce(
+  (total, type) => total + Object.keys(type.categoryIcons).length,
+  0
+);
+
 console.log(
-  `data-manifest.json criado com ${types.length} tipos, ` +
-  `${profiles.length} perfis e ${types.reduce((total, type) => total + Object.keys(type.categoryIcons).length, 0)} ícones de categoria.`
+  `data-manifest.json criado com ${types.length} tipos, ${profiles.length} perfis, ` +
+  `${typeIconCount} ícones principais e ${categoryIconCount} ícones de categoria.`
 );

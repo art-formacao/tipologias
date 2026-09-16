@@ -551,7 +551,9 @@
       const panel = document.getElementById('typeIconPanel');
       const image = document.getElementById('typeIconImage');
       const type = availableTypes.find(item => item.name === currentKind);
-      const icon = currentCat ? (type?.categoryIcons?.[currentCat] || '') : '';
+      const icon = currentCat
+        ? (type?.categoryIcons?.[currentCat] || '')
+        : (type?.icon || '');
       if (!icon) {
         panel.classList.remove('visible');
         image.removeAttribute('src');
@@ -559,7 +561,7 @@
         return;
       }
       image.src = icon;
-      image.alt = `Ícone de ${currentCat}`;
+      image.alt = currentCat ? `Ícone de ${currentCat}` : `Ícone de ${currentKind}`;
       image.onerror = () => panel.classList.remove('visible');
       panel.classList.add('visible');
     }
@@ -707,6 +709,10 @@
         .sort((a, b) => compareNaturalPaths(a.path, b.path));
       const typePaths = new Set(typeEntries.map(entry => entry.path));
       const types = typeEntries.map(type => {
+        const typeIconEntry = scopedEntries.find(entry =>
+          entry.type === 'blob' && pathParent(entry.path) === type.path && isImageFile(entry.path) &&
+          normalizeFolderText(pathName(entry.path).replace(/\.[^.]+$/, '')) === 'icone'
+        );
         const categoryEntries = directories
           .filter(entry => pathParent(entry.path) === type.path)
           .sort((a, b) => compareNaturalPaths(a.path, b.path));
@@ -721,6 +727,7 @@
         return {
           name: pathName(type.path),
           categories: categoryEntries.map(entry => pathName(entry.path)),
+          icon: typeIconEntry ? `./${typeIconEntry.path}` : '',
           categoryIcons
         };
       });
@@ -803,6 +810,7 @@
       availableTypes = Array.isArray(manifest?.types)
         ? manifest.types.map(type => ({
             ...type,
+            icon: type.icon ? assetUrl(type.icon) : '',
             categoryIcons: Object.fromEntries(
               Object.entries(type.categoryIcons || {}).map(([category, icon]) => [category, assetUrl(icon)])
             )

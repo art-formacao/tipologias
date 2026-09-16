@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-16T08:42:49.977818Z",
+  "generatedAt": "2026-09-16T10:00:06.683802Z",
   "types": [
     {
       "name": "Tipos de Furgão",
@@ -7,6 +7,7 @@
         "Frigorifico",
         "Furgão de carga geral"
       ],
+      "icon": "./Tipologias/Tipos de Furgão/icone.png",
       "categoryIcons": {
         "Frigorifico": "./Tipologias/Tipos de Furgão/Frigorifico/icone.png",
         "Furgão de carga geral": "./Tipologias/Tipos de Furgão/Furgão de carga geral/icone.png"
@@ -20,6 +21,7 @@
         "Frigorifico",
         "Lona"
       ],
+      "icon": "./Tipologias/Tipos de Reboque/icone.png",
       "categoryIcons": {
         "Cisterna": "./Tipologias/Tipos de Reboque/Cisterna/icone.png",
         "Especiais": "./Tipologias/Tipos de Reboque/Especiais/icone.png",
@@ -35,6 +37,7 @@
         "Frigorifico",
         "Lona"
       ],
+      "icon": "./Tipologias/Tipos de Rígido/icone.png",
       "categoryIcons": {
         "Cisterna": "./Tipologias/Tipos de Rígido/Cisterna/icone.png",
         "Especiais": "./Tipologias/Tipos de Rígido/Especiais/icone.png",
