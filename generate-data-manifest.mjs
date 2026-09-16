@@ -73,11 +73,17 @@ async function findSpreadsheet(profileDirectory) {
 }
 
 async function readSpreadsheet(excel) {
-  if (!excel) return { specifications: [], description: '' };
+  const emptyData = {
+    specifications: [],
+    description: '',
+    careBeforeAfter: '',
+    serviceConsiderations: ''
+  };
+  if (!excel) return emptyData;
   try {
     const workbook = XLSX.readFile(excel.absolute, { cellDates: false });
     const firstSheetName = workbook.SheetNames?.[0];
-    if (!firstSheetName) return { specifications: [], description: '' };
+    if (!firstSheetName) return emptyData;
     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {
       header: 1,
       raw: false,
@@ -85,17 +91,22 @@ async function readSpreadsheet(excel) {
     });
     const specifications = [];
     let description = '';
+    let careBeforeAfter = '';
+    let serviceConsiderations = '';
     for (const row of rows) {
       const name = String(row?.[0] ?? '').trim();
       const value = String(row?.[1] ?? '').trim();
       if (!name) continue;
-      if (normalize(name) === 'descricao') description = value;
+      const normalizedName = normalize(name).replace(/:\s*$/, '').replace(/\s+/g, ' ');
+      if (normalizedName === 'descricao') description = value;
+      else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') careBeforeAfter = value;
+      else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') serviceConsiderations = value;
       else specifications.push({ name, value });
     }
-    return { specifications, description };
+    return { specifications, description, careBeforeAfter, serviceConsiderations };
   } catch (error) {
     console.warn(`Não foi possível ler "${toWebPath(excel.absolute, false)}": ${error.message}`);
-    return { specifications: [], description: '' };
+    return emptyData;
   }
 }
 
@@ -148,6 +159,8 @@ async function scanType(typeDirectory) {
         excelPath: excel ? toWebPath(excel.absolute, false) : '',
         specifications: excelData.specifications,
         description: excelData.description,
+        careBeforeAfter: excelData.careBeforeAfter,
+        serviceConsiderations: excelData.serviceConsiderations,
         detailsLoaded: true
       });
       return;

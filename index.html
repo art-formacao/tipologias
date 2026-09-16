@@ -263,6 +263,10 @@
       .fullscreen-body { grid-template-columns: 1fr; padding: 22px 14px; gap: 24px; }
       .vehicle-img-container { height: 280px; }
     }
+    .profile-note { color: var(--text-muted); line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+    .profile-note-section { margin-top: 30px; }
+    .profile-note-section h3 { margin: 0 0 1em; }
+    .profile-note-section p { margin: 0; }
     .equipment-list { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px; margin-top: 12px; }
     .equipment-card {
       width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -371,7 +375,12 @@
           <span class="gallery-counter" id="galleryCounter"></span>
         </div>
         <h3 style="margin-top:25px;">Descrição</h3>
-        <p id="fvDesc" style="color:var(--text-muted); line-height:1.6;">--</p>
+        <p id="fvDesc" class="profile-note">--</p>
+
+        <section class="profile-note-section">
+          <h3>Cuidados a ter antes e depois da utilização</h3>
+          <p id="fvCareBeforeAfter" class="profile-note">--</p>
+        </section>
       </div>
 
       <div>
@@ -380,6 +389,11 @@
 
         <h3 style="margin-top:30px;">Equipamentos Associados</h3>
         <div class="equipment-list" id="fvEquips"></div>
+
+        <section class="profile-note-section">
+          <h3>Aspetos a ter em conta durante o serviço com este tipo de veículo</h3>
+          <p id="fvServiceConsiderations" class="profile-note">--</p>
+        </section>
       </div>
     </div>
   </div>
@@ -414,6 +428,7 @@
           const searchableText = [
             getVehicleKind(item), item.cat, item.folder, item.shortTitle, item.title, item.desc, item.sourcePath, item.comp, item.larg,
             item.alt, item.altInterior, item.largInterior, item.peso, item.eixos, item.equips,
+            item.careBeforeAfter, item.serviceConsiderations,
             getAssociatedEquipments(item).map(eq => eq.name).join(' ')
           ].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
           return searchableText.includes(searchQuery);
@@ -513,9 +528,11 @@
         title: profile.title,
         sourcePath: profile.sourcePath,
         desc: profile.description || '',
+        careBeforeAfter: profile.careBeforeAfter || '',
+        serviceConsiderations: profile.serviceConsiderations || '',
         specifications: profile.specifications || [],
         excelPath: profile.excelPath || '',
-        detailsLoaded: !profile.excelPath || Boolean(profile.detailsLoaded) || Boolean(profile.description) || Boolean(profile.specifications?.length),
+        detailsLoaded: !profile.excelPath || Boolean(profile.detailsLoaded) || Boolean(profile.description) || Boolean(profile.careBeforeAfter) || Boolean(profile.serviceConsiderations) || Boolean(profile.specifications?.length),
         detailsPromise: null,
         img: photos[0] || '',
         imgs: photos,
@@ -669,20 +686,27 @@
         if (!response.ok) throw new Error(`resposta HTTP ${response.status}`);
         workbook = XLSX.read(await response.arrayBuffer(), { type: 'array', cellDates: false });
         const firstSheetName = workbook.SheetNames?.[0];
-        if (!firstSheetName) return { specifications: [], description: '' };
+        if (!firstSheetName) return {
+          specifications: [], description: '', careBeforeAfter: '', serviceConsiderations: ''
+        };
         const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {
           header: 1, raw: false, defval: ''
         });
         const specifications = [];
         let description = '';
+        let careBeforeAfter = '';
+        let serviceConsiderations = '';
         for (const row of rows) {
           const name = String(row?.[0] ?? '').trim();
           const value = String(row?.[1] ?? '').trim();
           if (!name) continue;
-          if (normalizeFolderText(name) === 'descricao') description = value;
+          const normalizedName = normalizeFolderText(name).replace(/:\s*$/, '').replace(/\s+/g, ' ');
+          if (normalizedName === 'descricao') description = value;
+          else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') careBeforeAfter = value;
+          else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') serviceConsiderations = value;
           else specifications.push({ name, value });
         }
-        return { specifications, description };
+        return { specifications, description, careBeforeAfter, serviceConsiderations };
       } catch (error) {
         throw new Error(`Falha ao ler o Excel "${filePath}": ${error.message}`);
       }
@@ -785,6 +809,8 @@
           excelPath: excel?.path || '',
           specifications: [],
           description: '',
+          careBeforeAfter: '',
+          serviceConsiderations: '',
           detailsLoaded: !excel
         });
       }
@@ -804,7 +830,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v4';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v5';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
@@ -1146,6 +1172,8 @@
           .then(spreadsheet => {
             v.specifications = spreadsheet.specifications || [];
             v.desc = spreadsheet.description || '';
+            v.careBeforeAfter = spreadsheet.careBeforeAfter || '';
+            v.serviceConsiderations = spreadsheet.serviceConsiderations || '';
             v.detailsLoaded = true;
           })
           .catch(error => {
@@ -1163,9 +1191,13 @@
       document.getElementById('fvTitle').innerText = v.title;
       if (v.detailsLoaded || !v.excelPath) {
         document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
+        document.getElementById('fvCareBeforeAfter').innerText = v.careBeforeAfter || 'Sem cuidados registados.';
+        document.getElementById('fvServiceConsiderations').innerText = v.serviceConsiderations || 'Sem aspetos registados.';
         renderTechnicalSpecs(v);
       } else {
         document.getElementById('fvDesc').innerText = '';
+        document.getElementById('fvCareBeforeAfter').innerText = '';
+        document.getElementById('fvServiceConsiderations').innerText = '';
         document.getElementById('specGrid').innerHTML = '';
       }
 
@@ -1210,6 +1242,8 @@
         await ensureProfileDetails(v);
         if (activeProfile === v) {
           document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
+          document.getElementById('fvCareBeforeAfter').innerText = v.careBeforeAfter || 'Sem cuidados registados.';
+          document.getElementById('fvServiceConsiderations').innerText = v.serviceConsiderations || 'Sem aspetos registados.';
           renderTechnicalSpecs(v);
         }
       }

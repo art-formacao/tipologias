@@ -59,6 +59,8 @@
       "excelPath": "Tipologias/Tipos de Furgão/Frigorifico/Bi Temperatura/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -73,6 +75,8 @@
       "excelPath": "Tipologias/Tipos de Furgão/Frigorifico/Mono temperatura/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -92,6 +96,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Cisterna/Basculante/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -106,6 +112,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Cisterna/Bebidas/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -120,6 +128,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Cisterna/Combustíveis/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -134,6 +144,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Cisterna/Gás/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -148,6 +160,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Cisterna/Químicos/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -162,6 +176,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Cisterna/Transporte a Quente/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -176,6 +192,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Especiais/Banheira/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -190,6 +208,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Especiais/Estrado/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -204,6 +224,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Especiais/Isotérmico/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -238,6 +260,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Especiais/Piso Móvel/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -252,6 +276,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Especiais/Porta-Contentor/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -266,6 +292,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Especiais/Porta-Veículos Ligeiros/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -280,6 +308,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Especiais/Porta-Veículos Pesados/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -294,6 +324,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Frigorifico/Bi Temperatura/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -308,6 +340,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Frigorifico/City Trailer (Tartaruga)/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -322,6 +356,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Frigorifico/Double Deck (Duplo piso)/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -338,6 +374,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Frigorifico/Link Trailer/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -352,6 +390,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Frigorifico/Mono temperatura/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -366,6 +406,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Lona/Duplo piso/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -380,6 +422,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Lona/Link Trailer/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -416,6 +460,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Lona/Lona standard/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -430,6 +476,8 @@
       "excelPath": "Tipologias/Tipos de Reboque/Lona/Mega Trailer/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -444,6 +492,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Cisterna/Bebidas/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -458,6 +508,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Cisterna/Combustíveis/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -472,6 +524,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Cisterna/Gás/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -486,6 +540,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Especiais/Gancho/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -500,6 +556,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Especiais/Grua/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -514,6 +572,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Bi Temperatura 1 eixo/12t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -528,6 +588,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Bi Temperatura 1 eixo/18t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -542,6 +604,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Bi Temperatura 1 eixo/9t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -556,6 +620,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Bi Temperatura 2 eixos/12t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -570,6 +636,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Bi Temperatura 2 eixos/18t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -584,6 +652,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Bi Temperatura 2 eixos/9t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -598,6 +668,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Mono temperatura 1 eixo/12t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -612,6 +684,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Mono temperatura 1 eixo/18t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -626,6 +700,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Mono temperatura 1 eixo/9t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -640,6 +716,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Mono temperatura 2 eixos/12t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -654,6 +732,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Mono temperatura 2 eixos/18t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -668,6 +748,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Frigorifico/Mono temperatura 2 eixos/9t/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -682,6 +764,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Lona/Lonas standard 1 eixo/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     },
     {
@@ -696,6 +780,8 @@
       "excelPath": "Tipologias/Tipos de Rígido/Lona/Lonas standard 2 eixos/Especificações Técnicas e Descrição.xlsx",
       "specifications": [],
       "description": "",
+      "careBeforeAfter": "",
+      "serviceConsiderations": "",
       "detailsLoaded": false
     }
   ]
