@@ -317,6 +317,146 @@
       .btn-remove-equipment { width: 100%; }
       .equipment-photo.enlarged { transform: scale(2.5); }
     }
+
+    /* Adaptação compacta para tablets — mantém a estrutura da versão de computador */
+    @media (max-width: 1024px) {
+      .app-container { padding: 16px 18px; }
+      .vehicle-type-switch { gap: 16px; }
+      .vehicle-type-btn { font-size: 21px; }
+      .filters { margin-bottom: 12px; }
+      .canvas { gap: 14px; }
+      .node-wrapper { flex-basis: 39%; width: 39%; padding: 14px; }
+      .type-icon-panel { padding: 14px; }
+      .type-icon-panel img { width: 90%; height: 90%; }
+      .node { padding: 13px 18px; border-radius: 13px; font-size: 14px; }
+      .arrow { margin: 3px 0 3px 18px; font-size: 16px; }
+
+      .fullscreen-body { max-width: none; padding: 24px 16px; gap: 24px; }
+      .vehicle-img-container { height: clamp(230px, 33vw, 330px); border-radius: 16px; }
+      .spec-grid { gap: 8px; }
+      .spec-card { padding: 11px; border-radius: 10px; }
+      .spec-card.compact { padding: 10px; }
+      .spec-label { font-size: 9px; }
+      .spec-value { font-size: 15px; }
+      .equipment-list { gap: 10px; }
+      .equipment-card { width: 82px; font-size: 11px; }
+      .equipment-photo { width: 60px; height: 60px; flex-basis: 60px; }
+      .profile-note { font-size: 13px; }
+    }
+
+    /* Telemóveis e tablets estreitos: duas áreas lado a lado, mas mais compactas */
+    @media (max-width: 850px) {
+      html, body { height: 100%; min-height: 100%; overflow: hidden; }
+      .app-container { height: calc(100vh - 64px); min-height: 0; overflow: hidden; }
+      .canvas { flex-direction: row; align-items: stretch; overflow: hidden; }
+      .node-wrapper {
+        flex: 0 0 42%; width: 42%; min-height: 0; max-height: none; padding: 10px;
+      }
+      .type-icon-panel {
+        flex: 1 1 auto; width: auto; height: auto; min-height: 0; padding: 10px;
+      }
+      .type-icon-panel img { width: 88%; height: 88%; }
+      .fullscreen-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+    }
+
+    @media (max-width: 680px) {
+      .brand-header { height: 54px; padding: 0 8px; gap: 7px; }
+      .brand-logo { width: 118px; max-width: 34vw; }
+      .header-search { height: 32px; }
+      .header-search svg { left: 10px; width: 15px; height: 15px; }
+      .header-search input { padding: 0 10px 0 31px; font-size: 11px; }
+      .app-container {
+        height: calc(100vh - 54px); min-height: 0; padding: 10px 8px;
+        overflow: hidden;
+      }
+      .top-bar { margin-bottom: 8px; }
+      .header p { font-size: 9px; }
+      .vehicle-type-switch { gap: 7px; flex-wrap: nowrap; margin-bottom: 3px; }
+      .vehicle-type-btn {
+        min-width: 0; padding-bottom: 3px; border-bottom-width: 2px;
+        font-size: clamp(10px, 3.1vw, 13px); white-space: nowrap;
+      }
+      .filters { gap: 5px; margin-bottom: 8px; flex-wrap: nowrap; }
+      .filter-btn { min-width: 0; padding: 5px 8px; font-size: 9px; white-space: nowrap; }
+      .canvas { gap: 7px; }
+      .node-wrapper {
+        flex-basis: 43%; width: 43%; padding: 7px; border-radius: 11px;
+        scrollbar-gutter: auto;
+      }
+      .type-icon-panel { padding: 6px; border-radius: 11px; }
+      .type-icon-panel img { width: 86%; height: 86%; }
+      .node {
+        padding: 9px 9px; border-width: 1px; border-radius: 9px;
+        margin-bottom: 2px; font-size: 10px;
+      }
+      .node:hover { transform: none; }
+      .arrow { margin: 1px 0 1px 10px; font-size: 11px; }
+      .type-folder { margin-bottom: 6px; }
+      .folder-node .folder-icon { font-size: 13px; }
+      .folder-children { margin: 4px 0 0 7px; padding: 2px 0 1px 7px; border-left-width: 1px; }
+      .folder-children .node { padding: 7px 8px; font-size: 9px; }
+      .folder-children .arrow { margin-left: 7px; }
+
+      .fullscreen-modal { top: 54px; height: calc(100vh - 54px); }
+      .fullscreen-header { padding: 5px 8px; gap: 6px; }
+      #fvCat { font-size: 7px !important; }
+      #fvTitle { font-size: 13px !important; }
+      .fullscreen-header button { padding: 5px 8px !important; border-radius: 7px !important; font-size: 9px; white-space: nowrap; }
+      .fullscreen-body {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 8px; padding: 11px 8px 18px;
+      }
+      .fullscreen-body h3 { font-size: 11px; line-height: 1.25; }
+      .vehicle-img-container { height: clamp(125px, 39vw, 185px); border-radius: 11px; }
+      .gallery-btn { width: 24px; height: 34px; border-radius: 7px; font-size: 23px; }
+      .gallery-btn.prev { left: 2px; }
+      .gallery-btn.next { right: 2px; }
+      .gallery-counter { right: 5px; bottom: 5px; padding: 3px 5px; font-size: 8px; }
+      .spec-grid { gap: 5px; }
+      .spec-card, .spec-card.compact { padding: 6px; border-radius: 7px; }
+      .spec-label { display: block; font-size: 6.5px; line-height: 1.15; }
+      .spec-value { margin-top: 2px; font-size: 11px; }
+      .profile-note { font-size: 9px; line-height: 1.45; }
+      .profile-note-section { margin-top: 15px; }
+      .profile-note-section h3 { margin-bottom: 7px; }
+      .attention-section { margin-top: 12px; padding: 8px; border-radius: 8px; }
+      .attention-section h3 { margin-bottom: 6px; }
+      .equipment-list { gap: 5px; margin-top: 6px; }
+      .equipment-card { width: 42px; gap: 4px; font-size: 7.5px; }
+      .equipment-photo {
+        width: 38px; height: 38px; flex-basis: 38px; border-width: 2px;
+        font-size: 15px;
+      }
+      .equipment-photo.enlarged { transform: scale(2.2); }
+      .equipment-name { line-height: 1.15; }
+    }
+
+    @media (max-width: 520px) {
+      .spec-card, .spec-card.compact { grid-column: span 3; }
+    }
+
+    @media (max-width: 420px) {
+      .brand-logo { width: 105px; }
+      .vehicle-type-switch { gap: 5px; }
+      .vehicle-type-btn { font-size: clamp(9px, 2.9vw, 11px); }
+      .filter-btn { padding: 4px 6px; font-size: 8px; }
+      .app-container { padding: 8px 6px; }
+      .canvas { gap: 5px; }
+      .node-wrapper { padding: 5px; }
+      .type-icon-panel { padding: 4px; }
+      .node { padding: 7px 6px; font-size: 9px; }
+      .fullscreen-body { gap: 6px; padding: 9px 6px 16px; }
+      .vehicle-img-container { height: clamp(115px, 38vw, 155px); }
+      .fullscreen-body h3 { font-size: 10px; }
+      .profile-note { font-size: 8px; }
+      .spec-grid { gap: 4px; }
+      .spec-card, .spec-card.compact { padding: 5px; }
+      .spec-label { font-size: 6px; }
+      .spec-value { font-size: 10px; }
+      .equipment-list { gap: 4px; }
+      .equipment-card { width: 37px; font-size: 6.5px; }
+      .equipment-photo { width: 34px; height: 34px; flex-basis: 34px; }
+    }
   </style>
 </head>
 <body>
