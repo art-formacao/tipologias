@@ -457,6 +457,77 @@
       .equipment-card { width: 37px; font-size: 6.5px; }
       .equipment-photo { width: 34px; height: 34px; flex-basis: 34px; }
     }
+
+
+    /* Navegação principal por grandes categorias */
+    .app-container { overflow-y: auto; }
+    .top-bar { margin-bottom: 18px; }
+    .vehicle-type-switch { gap: 14px; width: 100%; }
+    .vehicle-type-btn {
+      flex: 1 1 210px; min-height: 68px; padding: 14px 22px;
+      border: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      border-radius: 15px; background: var(--card-bg); color: var(--text-muted);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;
+    }
+    .vehicle-type-btn:hover { transform: translateY(-2px); border-color: var(--primary); }
+    .vehicle-type-btn.active { color: var(--primary); border: 2px solid var(--primary); background: var(--primary-light); box-shadow: 0 5px 15px rgba(28,94,172,0.12); }
+    #categoryFilters, #typeIconPanel { display: none !important; }
+    .category-showcase {
+      width: 100%; flex: 1 1 auto; min-height: 0; display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px; align-content: stretch; overflow-y: auto; padding: 2px 4px 8px;
+    }
+    .category-card {
+      min-width: 0; min-height: 260px; padding: 0; overflow: hidden;
+      border: 1px solid var(--border); border-radius: 18px; background: #efeff4;
+      display: flex; flex-direction: column; cursor: pointer; color: var(--text);
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06); transition: 0.2s ease;
+    }
+    .category-card:hover, .category-card:focus-visible { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 8px 22px rgba(28,94,172,0.14); outline: none; }
+    .category-card-title { flex: 0 0 auto; padding: 16px 18px; background: #fff; border-bottom: 1px solid var(--border); font-size: 20px; line-height: 1.2; font-weight: 700; text-align: center; }
+    .category-card-image { flex: 1 1 auto; min-height: 0; padding: 18px; display: flex; align-items: center; justify-content: center; }
+    .category-card-image img { width: 100%; height: 100%; max-height: 300px; object-fit: contain; display: block; }
+    .category-card-placeholder { color: var(--text-muted); font-size: 14px; }
+    .category-card-count { padding: 0 16px 13px; color: var(--text-muted); font-size: 12px; text-align: center; }
+    .category-card.unavailable { opacity: 0.58; cursor: default; }
+    .category-card.unavailable:hover { transform: none; border-color: var(--border); box-shadow: 0 3px 12px rgba(0,0,0,0.06); }
+
+    /* Escolha da variante dentro do perfil */
+    .fullscreen-header { gap: 18px; }
+    .profile-heading { flex: 0 0 auto; min-width: 170px; }
+    .profile-variant-area { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .profile-variant-label { color: var(--text-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .profile-variant-selector { width: 100%; display: flex; justify-content: flex-end; gap: 7px; overflow-x: auto; padding: 1px 2px 4px; scrollbar-width: thin; }
+    .profile-variant-btn { flex: 0 0 auto; border: 1px solid var(--border); border-radius: 9px; background: #f1f1f4; color: var(--text); padding: 7px 11px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.18s ease; }
+    .profile-variant-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .profile-variant-btn.active { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .profile-close-btn { flex: 0 0 auto; }
+
+    @media (max-width: 1024px) {
+      .vehicle-type-btn { min-height: 58px; padding: 11px 14px; font-size: 18px; }
+      .category-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .category-card { min-height: 220px; }
+      .category-card-title { padding: 12px; font-size: 17px; }
+      .category-card-image { padding: 12px; }
+      .fullscreen-header { align-items: flex-start; }
+    }
+    @media (max-width: 680px) {
+      .app-container { overflow-y: auto; }
+      .vehicle-type-switch { gap: 6px; }
+      .vehicle-type-btn { flex: 1 1 0; min-height: 43px; padding: 7px 5px; border-radius: 9px; font-size: clamp(9px, 3vw, 12px); white-space: normal; }
+      .category-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; overflow-y: auto; }
+      .category-card { min-height: 150px; border-radius: 10px; }
+      .category-card-title { padding: 8px 5px; font-size: 11px; }
+      .category-card-image { padding: 6px; }
+      .category-card-count { padding: 0 5px 6px; font-size: 7px; }
+      .fullscreen-header { align-items: center; gap: 6px; flex-wrap: wrap; }
+      .profile-heading { min-width: 0; max-width: 42%; }
+      .profile-variant-area { order: 3; flex: 1 0 100%; align-items: stretch; }
+      .profile-variant-label { font-size: 7px; }
+      .profile-variant-selector { justify-content: flex-start; }
+      .profile-variant-btn { padding: 5px 7px; border-radius: 6px; font-size: 8px; }
+      .profile-close-btn { margin-left: auto; }
+    }
   </style>
 </head>
 <body>
@@ -480,14 +551,9 @@
       </div>
     </div>
 
-    <div class="filters" id="categoryFilters"></div>
-
-    <div class="canvas">
-      <div id="nodesContainer" class="node-wrapper"></div>
-      <div id="typeIconPanel" class="type-icon-panel" aria-hidden="true">
-        <img id="typeIconImage" alt="">
-      </div>
-    </div>
+    <div id="categoryFilters" aria-hidden="true"></div>
+    <div id="nodesContainer" class="category-showcase" aria-label="Categorias de veículos"></div>
+    <div id="typeIconPanel" aria-hidden="true"><img id="typeIconImage" alt=""></div>
   </div>
 
   <!-- Menu Hambúrguer / Informação de Gestão -->
@@ -508,11 +574,15 @@
   <!-- Janela Fullscreen de Detalhes -->
   <div class="fullscreen-modal" id="fullModal">
     <div class="fullscreen-header">
-      <div>
+      <div class="profile-heading">
         <span id="fvCat" style="color:var(--primary); font-weight:bold; font-size:10px; line-height:1; text-transform:uppercase;">--</span>
         <h2 id="fvTitle" style="margin:2px 0 0 0; font-size:21px; line-height:1.1;">--</h2>
       </div>
-      <button onclick="closeFullModal()" style="border:none; background:#e5e5ea; padding:7px 16px; border-radius:9px; font-weight:600; cursor:pointer;">Fechar (✕)</button>
+      <div class="profile-variant-area">
+        <span class="profile-variant-label" id="profileVariantLabel">Selecionar variante</span>
+        <div class="profile-variant-selector" id="profileVariantSelector"></div>
+      </div>
+      <button class="profile-close-btn" onclick="closeFullModal()" style="border:none; background:#e5e5ea; padding:7px 16px; border-radius:9px; font-weight:600; cursor:pointer;">Fechar (✕)</button>
     </div>
 
     <div class="fullscreen-body">
@@ -572,84 +642,77 @@
     let activeProfile = null;
     let galleryScrollTimer;
 
+    function normalizedSearchText(value) {
+      return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    function getProfilesForCategory(kind, category) {
+      return dataset.filter(item => getVehicleKind(item) === kind && item.cat === category);
+    }
+
+    function chooseInitialProfile(profiles) {
+      if (!profiles.length) return null;
+      return profiles.find(item => /\bstandard\b/i.test(normalizedSearchText(item.shortTitle || item.title))) || profiles[0];
+    }
+
+    function profileMatchesSearch(item) {
+      if (!searchQuery) return true;
+      const searchableText = [
+        getVehicleKind(item), item.cat, item.folder, item.shortTitle, item.title, item.desc, item.sourcePath,
+        item.comp, item.larg, item.alt, item.altInterior, item.largInterior, item.peso, item.eixos, item.equips,
+        item.careBeforeAfter, item.attentionPoints, item.serviceConsiderations,
+        getAssociatedEquipments(item).map(eq => eq.name).join(' ')
+      ].join(' ');
+      return normalizedSearchText(searchableText).includes(searchQuery);
+    }
+
     function renderTree() {
       const container = document.getElementById('nodesContainer');
       container.innerHTML = '';
-      if (!currentCat) return;
-      let list = dataset.filter(item => getVehicleKind(item) === currentKind && item.cat === currentCat);
-
-      if (searchQuery) {
-        list = list.filter(item => {
-          const searchableText = [
-            getVehicleKind(item), item.cat, item.folder, item.shortTitle, item.title, item.desc, item.sourcePath, item.comp, item.larg,
-            item.alt, item.altInterior, item.largInterior, item.peso, item.eixos, item.equips,
-            item.careBeforeAfter, item.attentionPoints, item.serviceConsiderations,
-            getAssociatedEquipments(item).map(eq => eq.name).join(' ')
-          ].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-          return searchableText.includes(searchQuery);
-        });
-      }
-
-      if (list.length === 0) {
+      const type = availableTypes.find(item => item.name === currentKind);
+      if (!type) return;
+      let visibleCount = 0;
+      (type.categories || []).forEach(category => {
+        const allProfiles = getProfilesForCategory(currentKind, category);
+        const matchingProfiles = allProfiles.filter(profileMatchesSearch);
+        const categoryMatches = normalizedSearchText(`${currentKind} ${category}`).includes(searchQuery);
+        if (searchQuery && !categoryMatches && !matchingProfiles.length) return;
+        visibleCount++;
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'category-card' + (allProfiles.length ? '' : ' unavailable');
+        card.disabled = !allProfiles.length;
+        card.setAttribute('aria-label', allProfiles.length ? `Abrir ${category}` : `${category}: sem perfis disponíveis`);
+        const title = document.createElement('div');
+        title.className = 'category-card-title';
+        title.textContent = category;
+        const imageArea = document.createElement('div');
+        imageArea.className = 'category-card-image';
+        const icon = type.categoryIcons?.[category] || '';
+        if (icon) {
+          const image = document.createElement('img');
+          image.src = icon;
+          image.alt = `Ícone de ${category}`;
+          image.onerror = () => { image.remove(); imageArea.innerHTML = '<span class="category-card-placeholder">Sem ícone</span>'; };
+          imageArea.appendChild(image);
+        } else imageArea.innerHTML = '<span class="category-card-placeholder">Sem ícone</span>';
+        const count = document.createElement('div');
+        count.className = 'category-card-count';
+        count.textContent = allProfiles.length ? `${allProfiles.length} ${allProfiles.length === 1 ? 'variante' : 'variantes'}` : 'Sem perfis disponíveis';
+        card.append(title, imageArea, count);
+        if (allProfiles.length) card.onclick = () => {
+          currentCat = category;
+          const candidates = searchQuery && matchingProfiles.length ? matchingProfiles : allProfiles;
+          openFullModal(chooseInitialProfile(candidates));
+        };
+        container.appendChild(card);
+      });
+      if (!visibleCount) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'width:100%; padding:40px 20px; text-align:center; color:var(--text-muted);';
-        empty.textContent = searchQuery
-          ? 'Nenhum resultado encontrado.'
-          : (currentKind ? 'Não existem perfis nesta pasta/categoria.' : 'A pasta Tipologias ainda não contém perfis.');
+        empty.style.cssText = 'grid-column:1/-1; padding:50px 20px; text-align:center; color:var(--text-muted);';
+        empty.textContent = 'Nenhum resultado encontrado.';
         container.appendChild(empty);
       }
-
-      const folderItems = list.filter(item => item.folder);
-      const regularItems = list.filter(item => !item.folder);
-      const groups = new Map();
-      folderItems.forEach(item => {
-        if (!groups.has(item.folder)) groups.set(item.folder, []);
-        groups.get(item.folder).push(item);
-      });
-
-      groups.forEach((items, folderName) => {
-        const folder = document.createElement('div');
-        folder.className = 'type-folder' + (searchQuery ? ' open' : '');
-
-        const folderButton = document.createElement('button');
-        folderButton.type = 'button';
-        folderButton.className = 'node folder-node';
-        folderButton.innerHTML = `<span>${folderName}</span><span class="folder-icon">›</span>`;
-        folderButton.onclick = () => folder.classList.toggle('open');
-
-        const children = document.createElement('div');
-        children.className = 'folder-children';
-        items.forEach((item, idx) => {
-          const node = document.createElement('div');
-          node.className = 'node';
-          node.innerHTML = `<div style="font-weight:600;">${item.shortTitle || item.title}</div>`;
-          node.onclick = () => openFullModal(item);
-          children.appendChild(node);
-          if (idx < items.length - 1) {
-            const arrow = document.createElement('div');
-            arrow.className = 'arrow';
-            arrow.innerText = '↓';
-            children.appendChild(arrow);
-          }
-        });
-
-        folder.append(folderButton, children);
-        container.appendChild(folder);
-      });
-
-      regularItems.forEach((item, idx) => {
-        const node = document.createElement('div');
-        node.className = 'node';
-        node.innerHTML = `<div style="font-weight:600;">${item.title}</div>`;
-        node.onclick = () => openFullModal(item);
-        container.appendChild(node);
-        if (idx < regularItems.length - 1) {
-          const arrow = document.createElement('div');
-          arrow.className = 'arrow';
-          arrow.innerText = '↓';
-          container.appendChild(arrow);
-        }
-      });
     }
 
     function getVehicleKind(vehicle) {
@@ -741,19 +804,7 @@
 
     function renderCategoryFilters() {
       const container = document.getElementById('categoryFilters');
-      const type = availableTypes.find(item => item.name === currentKind);
-      const categories = type ? type.categories : [];
-      if (!categories.includes(currentCat)) currentCat = '';
-      container.innerHTML = '';
-      categories.forEach(category => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'filter-btn' + (category === currentCat ? ' active' : '');
-        button.dataset.cat = category;
-        button.textContent = category;
-        button.onclick = () => filterCategory(category);
-        container.appendChild(button);
-      });
+      if (container) container.innerHTML = '';
     }
 
     const PUBLIC_REPOSITORY = 'art-formacao/tipologias';
@@ -1089,23 +1140,20 @@
       document.querySelectorAll('.vehicle-type-btn').forEach(button =>
         button.classList.toggle('active', button.textContent === kind)
       );
-      renderCategoryFilters();
-      renderTypeIcon();
       closeFullModal();
       renderTree();
     }
 
     function filterCategory(category) {
+      const profiles = getProfilesForCategory(currentKind, category);
+      if (!profiles.length) return;
       currentCat = category;
-      document.querySelectorAll('.filter-btn').forEach(button =>
-        button.classList.toggle('active', button.dataset.cat === category)
-      );
-      renderTypeIcon();
-      renderTree();
+      openFullModal(chooseInitialProfile(profiles));
     }
 
     function searchApp(value) {
-      searchQuery = value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      searchQuery = normalizedSearchText(value.trim());
+      closeFullModal();
       renderTree();
     }
 
@@ -1345,8 +1393,32 @@
       await v.detailsPromise;
     }
 
+    function renderProfileVariantSelector(activeVehicle) {
+      const selector = document.getElementById('profileVariantSelector');
+      const label = document.getElementById('profileVariantLabel');
+      const profiles = getProfilesForCategory(getVehicleKind(activeVehicle), activeVehicle.cat);
+      selector.innerHTML = '';
+      label.textContent = `Selecionar tipo de ${activeVehicle.cat}`;
+      profiles.forEach(profile => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'profile-variant-btn' + (profile === activeVehicle ? ' active' : '');
+        button.textContent = profile.shortTitle || profile.title;
+        button.title = profile.title;
+        button.onclick = () => openFullModal(profile);
+        selector.appendChild(button);
+      });
+      selector.style.display = profiles.length > 1 ? 'flex' : 'none';
+      label.style.display = profiles.length > 1 ? 'block' : 'none';
+      requestAnimationFrame(() => selector.querySelector('.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+    }
+
     async function openFullModal(v) {
+      if (!v) return;
       activeProfile = v;
+      currentKind = getVehicleKind(v);
+      currentCat = v.cat;
+      renderProfileVariantSelector(v);
       document.getElementById('fvCat').innerText = v.cat;
       document.getElementById('fvTitle').innerText = v.title;
       if (v.detailsLoaded || !v.excelPath) {
