@@ -462,12 +462,13 @@
     /* Navegação principal por grandes categorias */
     .app-container { overflow-y: auto; }
     .top-bar { margin-bottom: 18px; }
-    .vehicle-type-switch { gap: 14px; width: 100%; }
+    .vehicle-type-switch { gap: 14px; width: 100%; flex-wrap: nowrap; align-items: stretch; }
     .vehicle-type-btn {
-      flex: 1 1 210px; min-height: 68px; padding: 14px 22px;
+      flex: 1 1 0; width: 0; min-width: 0; height: 68px; min-height: 68px; padding: 14px 22px;
       border: 1px solid var(--border); border-bottom: 1px solid var(--border);
       border-radius: 15px; background: var(--card-bg); color: var(--text-muted);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; white-space: nowrap;
+      display: flex; align-items: center; justify-content: center; line-height: 1;
     }
     .vehicle-type-btn:hover { transform: translateY(-2px); border-color: var(--primary); }
     .vehicle-type-btn.active { color: var(--primary); border: 2px solid var(--primary); background: var(--primary-light); box-shadow: 0 5px 15px rgba(28,94,172,0.12); }
@@ -504,7 +505,7 @@
     .profile-close-btn { flex: 0 0 auto; }
 
     @media (max-width: 1024px) {
-      .vehicle-type-btn { min-height: 58px; padding: 11px 14px; font-size: 18px; }
+      .vehicle-type-btn { height: 58px; min-height: 58px; padding: 11px 14px; font-size: 18px; }
       .category-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
       .category-card { min-height: 220px; }
       .category-card-title { padding: 12px; font-size: 17px; }
@@ -514,7 +515,7 @@
     @media (max-width: 680px) {
       .app-container { overflow-y: auto; }
       .vehicle-type-switch { gap: 6px; }
-      .vehicle-type-btn { flex: 1 1 0; min-height: 43px; padding: 7px 5px; border-radius: 9px; font-size: clamp(9px, 3vw, 12px); white-space: normal; }
+      .vehicle-type-btn { flex: 1 1 0; width: 0; min-width: 0; height: 43px; min-height: 43px; padding: 7px 3px; border-radius: 9px; font-size: clamp(8px, 2.75vw, 12px); white-space: nowrap; }
       .category-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; overflow-y: auto; }
       .category-card { min-height: 150px; border-radius: 10px; }
       .category-card-title { padding: 8px 5px; font-size: 11px; }
