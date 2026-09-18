@@ -298,7 +298,7 @@
     }
     .video-player-frame { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; }
     .video-player-close {
-      position: absolute; top: 8px; right: 8px; z-index: 2; width: 38px; height: 38px;
+      position: absolute; top: 8px; left: 8px; z-index: 2; width: 38px; height: 38px;
       border: 0; border-radius: 50%; background: rgba(0,0,0,0.68); color: #fff;
       font-size: 20px; line-height: 1; cursor: pointer;
     }
@@ -312,9 +312,21 @@
       .profile-video-card { width: 38px; height: 38px; border-width: 1px; border-radius: 5px; }
       .video-play-icon { border-top-width: 6px; border-bottom-width: 6px; border-left-width: 10px; }
       .profile-description-title { margin-top: 12px; }
-      .video-player-modal { padding: 10px; }
-      .video-player-panel { width: 96vw; border-radius: 9px; }
-      .video-player-close { width: 30px; height: 30px; font-size: 16px; }
+      .video-player-modal {
+        padding: 8px; background: rgba(0,0,0,0.68);
+      }
+      .video-player-panel {
+        width: 96vw; max-height: 76vh; padding-top: 38px;
+        border-radius: 9px; background: #111;
+      }
+      .video-player-frame {
+        width: 100%; height: min(68vh, 74vw); min-height: 235px;
+        aspect-ratio: auto; background: #111;
+      }
+      .video-player-close {
+        top: 7px; left: 7px; width: 30px; height: 30px; font-size: 16px;
+        background: rgba(0,0,0,0.78);
+      }
     }
     .profile-note { color: var(--text-muted); line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
     .profile-note-section { margin-top: 30px; }
@@ -687,7 +699,7 @@
   <div class="video-player-modal" id="videoPlayerModal" onclick="closeProfileVideo(event)">
     <div class="video-player-panel" onclick="event.stopPropagation()">
       <button class="video-player-close" type="button" onclick="closeProfileVideo()" aria-label="Fechar vídeo">✕</button>
-      <iframe class="video-player-frame" id="videoPlayerFrame" src="" title="Leitor de vídeo" allow="autoplay; fullscreen" allowfullscreen></iframe>
+      <iframe class="video-player-frame" id="videoPlayerFrame" src="" title="Leitor de vídeo" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
     </div>
   </div>
 
@@ -1529,7 +1541,8 @@
       const previewUrl = googleDrivePreviewUrl(link);
       if (!previewUrl) return;
       const frame = document.getElementById('videoPlayerFrame');
-      frame.src = previewUrl;
+      const mobileAutoplay = window.matchMedia('(max-width: 680px)').matches ? '?autoplay=1' : '';
+      frame.src = `${previewUrl}${mobileAutoplay}`;
       frame.title = `Vídeo ${index + 1} de ${activeProfile?.title || 'tipologia'}`;
       document.getElementById('videoPlayerModal').classList.add('open');
     }
