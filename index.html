@@ -644,6 +644,74 @@
       .profile-variant-btn { padding: 5px 7px; border-radius: 6px; font-size: 8px; }
       .profile-close-btn { margin-left: auto; }
     }
+    /* Alinhamentos finais do perfil */
+    .profile-variant-row {
+      width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    }
+    .profile-variant-row .profile-variant-selector {
+      flex: 1 1 auto; width: auto; min-width: 0; padding-bottom: 0;
+    }
+    .profile-variant-row .profile-close-btn {
+      align-self: center; margin: 0; width: 34px; height: 34px; flex: 0 0 34px;
+    }
+
+    .profile-video-grid {
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      column-gap: 8px; row-gap: 12px;
+    }
+    .profile-video-card { flex: 0 0 76px; }
+
+    .equipment-list {
+      width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;
+      align-items: flex-start; column-gap: 12px; row-gap: 18px;
+    }
+    .equipment-card {
+      width: calc((100% - 48px) / 5); max-width: 104px; flex: 0 0 calc((100% - 48px) / 5);
+    }
+    .equipment-photo {
+      width: min(76px, 100%); height: auto; aspect-ratio: 1 / 1; flex-basis: auto;
+    }
+
+    @media (max-width: 1024px) {
+      .profile-video-grid { column-gap: 6px; row-gap: 9px; }
+      .profile-video-card { flex-basis: 60px; }
+      .equipment-list { column-gap: 8px; row-gap: 10px; }
+      .equipment-card {
+        width: calc((100% - 32px) / 5); max-width: 82px; flex-basis: calc((100% - 32px) / 5);
+      }
+      .equipment-photo { width: min(60px, 100%); }
+    }
+
+    @media (max-width: 680px) {
+      .profile-variant-area { max-width: 100%; }
+      .profile-variant-row { gap: 6px; }
+      .profile-variant-row .profile-close-btn {
+        width: 30px; height: 30px; flex-basis: 30px; font-size: 19px;
+      }
+      .profile-video-grid { column-gap: 4px; row-gap: 5px; }
+      .profile-video-card {
+        width: calc((100% - 20px) / 6); max-width: 38px; height: auto;
+        flex: 0 0 calc((100% - 20px) / 6); aspect-ratio: 1 / 1;
+      }
+      .equipment-list { column-gap: 4px; row-gap: 6px; }
+      .equipment-card {
+        width: calc((100% - 16px) / 5); max-width: 42px; flex-basis: calc((100% - 16px) / 5);
+      }
+      .equipment-photo { width: min(38px, 100%); }
+    }
+
+    @media (max-width: 420px) {
+      .profile-video-grid { column-gap: 3px; row-gap: 4px; }
+      .profile-video-card {
+        width: calc((100% - 15px) / 6); max-width: 34px; height: auto;
+        flex-basis: calc((100% - 15px) / 6);
+      }
+      .equipment-list { column-gap: 3px; }
+      .equipment-card {
+        width: calc((100% - 12px) / 5); max-width: 37px; flex-basis: calc((100% - 12px) / 5);
+      }
+      .equipment-photo { width: min(34px, 100%); }
+    }
   </style>
 </head>
 <body>
@@ -696,9 +764,11 @@
       </div>
       <div class="profile-variant-area">
         <span class="profile-variant-label" id="profileVariantLabel">Selecionar variante</span>
-        <div class="profile-variant-selector" id="profileVariantSelector"></div>
+        <div class="profile-variant-row">
+          <div class="profile-variant-selector" id="profileVariantSelector"></div>
+          <button class="profile-close-btn" type="button" onclick="closeFullModal()" aria-label="Fechar perfil" title="Fechar perfil">✕</button>
+        </div>
       </div>
-      <button class="profile-close-btn" type="button" onclick="closeFullModal()" aria-label="Fechar perfil" title="Fechar perfil">✕</button>
     </div>
 
     <div class="fullscreen-body">
@@ -1557,7 +1627,7 @@
       const grid = document.getElementById('profileVideoGrid');
       const videos = Array.isArray(vehicle?.videos) ? vehicle.videos.filter(Boolean) : [];
       grid.innerHTML = '';
-      grid.style.display = videos.length ? 'grid' : 'none';
+      grid.style.display = videos.length ? 'flex' : 'none';
       videos.forEach((link, index) => {
         const card = document.createElement('button');
         card.type = 'button';
