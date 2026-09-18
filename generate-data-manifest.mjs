@@ -47,10 +47,19 @@ function isImage(fileName) {
   return imageExtensions.has(path.extname(fileName).toLowerCase());
 }
 
-function isSpreadsheet(fileName) {
+function spreadsheetStem(fileName) {
   const extension = path.extname(fileName).toLowerCase();
-  return spreadsheetExtensions.has(extension) &&
-    normalize(path.basename(fileName, extension)) === 'especificacoes tecnicas e descricao';
+  return spreadsheetExtensions.has(extension)
+    ? normalize(path.basename(fileName, extension))
+    : '';
+}
+
+function isSpreadsheet(fileName) {
+  return spreadsheetStem(fileName) === 'especificacoes tecnicas e descricao';
+}
+
+function isLinkSpreadsheet(fileName) {
+  return spreadsheetStem(fileName) === 'link';
 }
 
 async function findNamedDirectory(directory, expectedName) {
@@ -70,6 +79,35 @@ async function findFolderIcon(directory) {
 
 async function findSpreadsheet(profileDirectory) {
   return (await filesAt(profileDirectory)).find(file => isSpreadsheet(file.name));
+}
+
+async function findLinkSpreadsheet(profileDirectory) {
+  return (await filesAt(profileDirectory)).find(file => isLinkSpreadsheet(file.name));
+}
+
+function isWebLink(value) {
+  return /^https?:\/\//i.test(String(value || '').trim());
+}
+
+async function readVideoLinks(excel) {
+  if (!excel) return [];
+  try {
+    const workbook = XLSX.readFile(excel.absolute, { cellDates: false });
+    const firstSheetName = workbook.SheetNames?.[0];
+    if (!firstSheetName) return [];
+    const sheet = workbook.Sheets[firstSheetName];
+    const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:A1');
+    const links = [];
+    for (let row = range.s.r; row <= range.e.r; row++) {
+      const cell = sheet[XLSX.utils.encode_cell({ r: row, c: 0 })];
+      const value = String(cell?.l?.Target || cell?.v || '').trim();
+      if (isWebLink(value) && !links.includes(value)) links.push(value);
+    }
+    return links;
+  } catch (error) {
+    console.warn(`Não foi possível ler "${toWebPath(excel.absolute, false)}": ${error.message}`);
+    return [];
+  }
 }
 
 async function readSpreadsheet(excel) {
@@ -145,7 +183,11 @@ async function scanType(typeDirectory) {
       const photos = await readImages(photosDirectory);
       const equipmentImages = await readImages(equipmentDirectory);
       const excel = await findSpreadsheet(directory);
-      const excelData = await readSpreadsheet(excel);
+      const linkExcel = await findLinkSpreadsheet(directory);
+      const [excelData, videos] = await Promise.all([
+        readSpreadsheet(excel),
+        readVideoLinks(linkExcel)
+      ]);
 
       profiles.push({
         kind: typeDirectory.name,
@@ -160,6 +202,9 @@ async function scanType(typeDirectory) {
           image: toWebPath(file.absolute)
         })),
         excelPath: excel ? toWebPath(excel.absolute, false) : '',
+        linkExcelPath: linkExcel ? toWebPath(linkExcel.absolute, false) : '',
+        videos,
+        videosLoaded: true,
         specifications: excelData.specifications,
         description: excelData.description,
         careBeforeAfter: excelData.careBeforeAfter,

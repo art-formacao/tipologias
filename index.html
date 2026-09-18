@@ -263,6 +263,31 @@
       .fullscreen-body { grid-template-columns: 1fr; padding: 22px 14px; gap: 24px; }
       .vehicle-img-container { height: 280px; }
     }
+    .profile-video-grid {
+      width: 100%; margin-top: 14px; display: none;
+      grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;
+    }
+    .profile-video-card {
+      width: 100%; aspect-ratio: 4 / 3; min-width: 0; overflow: hidden;
+      border: 1px solid var(--border); border-radius: 10px; background: #111;
+      box-shadow: 0 2px 7px rgba(0,0,0,0.08);
+    }
+    .profile-video-card iframe {
+      display: block; width: 100%; height: 100%; border: 0; background: #111;
+    }
+    .profile-video-unavailable {
+      width: 100%; height: 100%; padding: 8px; display: flex; align-items: center;
+      justify-content: center; text-align: center; color: #fff; font-size: 11px;
+    }
+    .profile-description-title { margin-top: 25px; }
+    @media (max-width: 1024px) {
+      .profile-video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+    }
+    @media (max-width: 680px) {
+      .profile-video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; margin-top: 7px; }
+      .profile-video-card { border-radius: 6px; }
+      .profile-description-title { margin-top: 12px; }
+    }
     .profile-note { color: var(--text-muted); line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
     .profile-note-section { margin-top: 30px; }
     .profile-note-section h3 { margin: 0 0 1em; }
@@ -467,12 +492,12 @@
       gap: 10px; width: 100%; align-items: stretch;
     }
     .vehicle-type-btn {
-      width: 100%; min-width: 0; height: 76px; min-height: 76px; padding: 14px 16px;
+      width: 100%; min-width: 0; height: 56px; min-height: 56px; padding: 10px 16px;
       border: 1px solid var(--border); border-bottom: 1px solid var(--border);
       border-radius: 15px; background: var(--card-bg); color: var(--text-muted);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; white-space: nowrap;
       display: flex; align-items: center; justify-content: center; line-height: 1;
-      font-size: clamp(16px, 2.25vw, 26px);
+      font-size: clamp(14px, 1.8vw, 20px);
     }
     .vehicle-type-btn:hover { transform: translateY(-2px); border-color: var(--primary); }
     .vehicle-type-btn.active { color: var(--primary); border: 2px solid var(--primary); background: var(--primary-light); box-shadow: 0 5px 15px rgba(28,94,172,0.12); }
@@ -509,7 +534,7 @@
     .profile-close-btn { flex: 0 0 auto; }
 
     @media (max-width: 1024px) {
-      .vehicle-type-btn { height: 64px; min-height: 64px; padding: 11px 10px; font-size: clamp(14px, 2.35vw, 20px); }
+      .vehicle-type-btn { height: 45px; min-height: 45px; padding: 8px 10px; font-size: clamp(12px, 2vw, 16px); }
       .category-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
       .category-card { min-height: 220px; }
       .category-card-title { padding: 12px; font-size: 17px; }
@@ -519,7 +544,7 @@
     @media (max-width: 680px) {
       .app-container { overflow-y: auto; }
       .vehicle-type-switch { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
-      .vehicle-type-btn { width: 100%; min-width: 0; height: 47px; min-height: 47px; padding: 7px 2px; border-radius: 9px; font-size: clamp(7.5px, 2.45vw, 11px); white-space: nowrap; }
+      .vehicle-type-btn { width: 100%; min-width: 0; height: 30px; min-height: 30px; padding: 4px 2px; border-radius: 9px; font-size: clamp(7px, 2.2vw, 10px); white-space: nowrap; }
       .category-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; overflow-y: auto; }
       .category-card { min-height: 150px; border-radius: 10px; }
       .category-card-title { padding: 8px 5px; font-size: 11px; }
@@ -599,7 +624,8 @@
           <button class="gallery-btn next" id="galleryNext" type="button" onclick="changeGallery(1)" aria-label="Fotografia seguinte">›</button>
           <span class="gallery-counter" id="galleryCounter"></span>
         </div>
-        <h3 style="margin-top:25px;">Descrição</h3>
+        <div class="profile-video-grid" id="profileVideoGrid" aria-label="Vídeos da tipologia"></div>
+        <h3 class="profile-description-title">Descrição</h3>
         <p id="fvDesc" class="profile-note">--</p>
 
         <section class="profile-note-section">
@@ -756,7 +782,12 @@
         serviceConsiderations: profile.serviceConsiderations || '',
         specifications: profile.specifications || [],
         excelPath: profile.excelPath || '',
+        linkExcelPath: profile.linkExcelPath || '',
+        videos: Array.isArray(profile.videos) ? profile.videos.filter(Boolean) : [],
         detailsLoaded: !profile.excelPath || Boolean(profile.detailsLoaded) || Boolean(profile.description) || Boolean(profile.careBeforeAfter) || Boolean(profile.attentionPoints) || Boolean(profile.serviceConsiderations) || Boolean(profile.specifications?.length),
+        videosLoaded: typeof profile.videosLoaded === 'boolean'
+          ? profile.videosLoaded
+          : (!profile.linkExcelPath || Array.isArray(profile.videos)),
         detailsPromise: null,
         img: photos[0] || '',
         imgs: photos,
@@ -834,12 +865,19 @@
       return String(path || '').split('/').filter(Boolean).pop() || '';
     }
 
-    function isSpreadsheetFile(path) {
+    function spreadsheetFileStem(path) {
       const name = pathName(path);
       const extension = name.slice(name.lastIndexOf('.')).toLowerCase();
-      const stem = extension ? name.slice(0, -extension.length) : name;
-      return ['.xlsx', '.xls', '.xlsm'].includes(extension) &&
-        normalizeFolderText(stem) === 'especificacoes tecnicas e descricao';
+      if (!['.xlsx', '.xls', '.xlsm'].includes(extension)) return '';
+      return normalizeFolderText(name.slice(0, -extension.length));
+    }
+
+    function isSpreadsheetFile(path) {
+      return spreadsheetFileStem(path) === 'especificacoes tecnicas e descricao';
+    }
+
+    function isLinkSpreadsheetFile(path) {
+      return spreadsheetFileStem(path) === 'link';
     }
 
     function isImageFile(path) {
@@ -926,6 +964,28 @@
       }
     }
 
+    async function readGithubVideoLinks(filePath) {
+      try {
+        const XLSX = await loadSheetJs();
+        const response = await fetch(githubRawUrl(filePath), { cache: 'default' });
+        if (!response.ok) throw new Error(`resposta HTTP ${response.status}`);
+        const workbook = XLSX.read(await response.arrayBuffer(), { type: 'array', cellDates: false });
+        const firstSheetName = workbook.SheetNames?.[0];
+        if (!firstSheetName) return [];
+        const sheet = workbook.Sheets[firstSheetName];
+        const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:A1');
+        const links = [];
+        for (let row = range.s.r; row <= range.e.r; row++) {
+          const cell = sheet[XLSX.utils.encode_cell({ r: row, c: 0 })];
+          const value = String(cell?.l?.Target || cell?.v || '').trim();
+          if (/^https?:\/\//i.test(value) && !links.includes(value)) links.push(value);
+        }
+        return links;
+      } catch (error) {
+        throw new Error(`Falha ao ler o Excel de vídeos "${filePath}": ${error.message}`);
+      }
+    }
+
     async function buildGithubManifest(treePayload) {
       if (!treePayload || !Array.isArray(treePayload.tree)) {
         throw new Error('A API do GitHub devolveu uma árvore inválida.');
@@ -976,7 +1036,7 @@
         const name = pathName(entry.path);
         if (entry.type === 'tree' && parent && ['fotos', 'equipamentos associados'].includes(normalizeFolderText(name))) {
           profilePaths.add(parent);
-        } else if (entry.type === 'blob' && parent && isSpreadsheetFile(entry.path)) {
+        } else if (entry.type === 'blob' && parent && (isSpreadsheetFile(entry.path) || isLinkSpreadsheetFile(entry.path))) {
           profilePaths.add(parent);
         }
       }
@@ -1008,6 +1068,9 @@
         const excel = scopedEntries
           .filter(entry => entry.type === 'blob' && pathParent(entry.path) === profilePath && isSpreadsheetFile(entry.path))
           .sort((a, b) => compareNaturalPaths(a.path, b.path))[0];
+        const linkExcel = scopedEntries
+          .filter(entry => entry.type === 'blob' && pathParent(entry.path) === profilePath && isLinkSpreadsheetFile(entry.path))
+          .sort((a, b) => compareNaturalPaths(a.path, b.path))[0];
         profiles.push({
           kind: typeName,
           cat: category,
@@ -1021,6 +1084,9 @@
             image: `./${photo.path}`
           })),
           excelPath: excel?.path || '',
+          linkExcelPath: linkExcel?.path || '',
+          videos: [],
+          videosLoaded: !linkExcel,
           specifications: [],
           description: '',
           careBeforeAfter: '',
@@ -1045,7 +1111,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v6';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v7-videos';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
@@ -1377,23 +1443,76 @@
       }
     }
 
+    function googleDrivePreviewUrl(link) {
+      try {
+        const url = new URL(String(link || '').trim());
+        const host = url.hostname.toLowerCase();
+        if (host !== 'drive.google.com' && host !== 'www.drive.google.com') return '';
+        const pathMatch = url.pathname.match(/\/file\/d\/([^/]+)/i);
+        const fileId = pathMatch?.[1] || url.searchParams.get('id') || '';
+        return fileId ? `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/preview` : '';
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function renderProfileVideos(vehicle) {
+      const grid = document.getElementById('profileVideoGrid');
+      const videos = Array.isArray(vehicle?.videos) ? vehicle.videos.filter(Boolean) : [];
+      grid.innerHTML = '';
+      grid.style.display = videos.length ? 'grid' : 'none';
+      videos.forEach((link, index) => {
+        const card = document.createElement('div');
+        card.className = 'profile-video-card';
+        const previewUrl = googleDrivePreviewUrl(link);
+        if (previewUrl) {
+          const frame = document.createElement('iframe');
+          frame.src = previewUrl;
+          frame.title = `Vídeo ${index + 1} da tipologia`;
+          frame.loading = 'lazy';
+          frame.allow = 'autoplay; fullscreen';
+          frame.allowFullscreen = true;
+          frame.referrerPolicy = 'strict-origin-when-cross-origin';
+          card.appendChild(frame);
+        } else {
+          const message = document.createElement('span');
+          message.className = 'profile-video-unavailable';
+          message.textContent = 'Link de vídeo não reconhecido';
+          card.appendChild(message);
+        }
+        grid.appendChild(card);
+      });
+    }
+
     async function ensureProfileDetails(v) {
-      if (v.detailsLoaded || !v.excelPath) return;
+      const detailsReady = v.detailsLoaded || !v.excelPath;
+      const videosReady = v.videosLoaded || !v.linkExcelPath;
+      if (detailsReady && videosReady) return;
       if (!v.detailsPromise) {
-        v.detailsPromise = readGithubSpreadsheet(v.excelPath)
-          .then(spreadsheet => {
-            v.specifications = spreadsheet.specifications || [];
-            v.desc = spreadsheet.description || '';
-            v.careBeforeAfter = spreadsheet.careBeforeAfter || '';
-            v.attentionPoints = spreadsheet.attentionPoints || '';
-            v.serviceConsiderations = spreadsheet.serviceConsiderations || '';
-            v.detailsLoaded = true;
-          })
-          .catch(error => {
-            v.detailsLoaded = true;
-            console.error(error);
-          })
-          .finally(() => { v.detailsPromise = null; });
+        const tasks = [];
+        if (!detailsReady) {
+          tasks.push(
+            readGithubSpreadsheet(v.excelPath)
+              .then(spreadsheet => {
+                v.specifications = spreadsheet.specifications || [];
+                v.desc = spreadsheet.description || '';
+                v.careBeforeAfter = spreadsheet.careBeforeAfter || '';
+                v.attentionPoints = spreadsheet.attentionPoints || '';
+                v.serviceConsiderations = spreadsheet.serviceConsiderations || '';
+              })
+              .catch(error => console.error(error))
+              .finally(() => { v.detailsLoaded = true; })
+          );
+        }
+        if (!videosReady) {
+          tasks.push(
+            readGithubVideoLinks(v.linkExcelPath)
+              .then(links => { v.videos = links; })
+              .catch(error => console.error(error))
+              .finally(() => { v.videosLoaded = true; })
+          );
+        }
+        v.detailsPromise = Promise.all(tasks).finally(() => { v.detailsPromise = null; });
       }
       await v.detailsPromise;
     }
@@ -1443,6 +1562,7 @@
       activeGallery = getVehicleImages(v);
       activeImageIndex = 0;
       renderGallery();
+      renderProfileVideos(v);
 
       const equipsContainer = document.getElementById('fvEquips');
       const equipmentItems = getAssociatedEquipments(v);
@@ -1477,7 +1597,7 @@
 
       document.getElementById('fullModal').style.display = 'flex';
 
-      if (!v.detailsLoaded && v.excelPath) {
+      if ((!v.detailsLoaded && v.excelPath) || (!v.videosLoaded && v.linkExcelPath)) {
         await ensureProfileDetails(v);
         if (activeProfile === v) {
           document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
@@ -1485,6 +1605,7 @@
           document.getElementById('fvAttentionPoints').innerText = v.attentionPoints || 'Sem pontos de atenção registados.';
           document.getElementById('fvServiceConsiderations').innerText = v.serviceConsiderations || 'Sem aspetos registados.';
           renderTechnicalSpecs(v);
+          renderProfileVideos(v);
         }
       }
     }
