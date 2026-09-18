@@ -702,6 +702,43 @@
       .equipment-card { width: 34px; max-width: 34px; flex-basis: 34px; }
       .equipment-photo { width: 34px; height: 34px; flex-basis: 34px; }
     }
+
+    /* Ajuste final para telemóveis: quatro categorias visíveis e scroll por toque */
+    @media (max-width: 680px) {
+      html, body {
+        height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto;
+        -webkit-overflow-scrolling: touch; touch-action: pan-y;
+      }
+      .brand-header { position: sticky; top: 0; }
+      .app-container {
+        height: auto; min-height: calc(100dvh - 54px); overflow: visible;
+        touch-action: pan-y;
+      }
+      .top-bar { flex: 0 0 auto; }
+      .category-showcase {
+        flex: 0 0 auto; min-height: 0; overflow: visible;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: auto; align-content: start;
+        -webkit-overflow-scrolling: touch; touch-action: pan-y;
+      }
+      .category-card {
+        min-height: 0; height: clamp(170px, 26dvh, 220px);
+      }
+      .category-card-title {
+        min-height: 32px; padding: 7px 5px; display: flex;
+        align-items: center; justify-content: center;
+      }
+      .category-card-image { min-height: 0; padding: 4px 6px; }
+      .category-card-image img { max-height: 100%; }
+      .category-card-count {
+        flex: 0 0 auto; min-height: 18px; padding: 3px 5px 6px;
+        line-height: 1.2;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .category-card { height: clamp(160px, 25dvh, 205px); }
+    }
   </style>
 </head>
 <body>
