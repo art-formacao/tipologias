@@ -38,20 +38,30 @@
     .header-menu-btn:hover, .header-menu-btn:focus-visible { background: rgba(255,255,255,0.12); outline: none; }
     .header-menu-btn svg { width: 25px; height: 25px; }
     .header-search {
-      width: min(208px, 36vw); height: 42px; position: relative; flex: 0 1 208px;
+      width: min(500px, 55vw); height: 46px; position: relative; flex: 0 1 500px;
+      display: flex; align-items: center; gap: 6px; padding: 4px;
+      border: 1px solid rgba(255,255,255,0.35); border-radius: 25px;
+      background: rgba(255,255,255,0.13); transition: background 0.2s ease, border-color 0.2s ease;
     }
-    .header-search svg {
-      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-      width: 19px; height: 19px; color: rgba(255,255,255,0.72); pointer-events: none;
-    }
+    .header-search:focus-within { background: rgba(255,255,255,0.19); border-color: rgba(255,255,255,0.7); }
     .header-search input {
-      width: 100%; height: 100%; padding: 0 18px 0 47px;
-      border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
-      background: rgba(255,255,255,0.10); color: #fff; font-size: 15px; outline: none;
-      transition: background 0.2s ease, border-color 0.2s ease;
+      flex: 1 1 auto; min-width: 0; height: 100%; padding: 0 10px 0 15px;
+      border: 0; border-radius: 21px; background: transparent; color: #fff;
+      font-size: 14px; outline: none;
     }
-    .header-search input::placeholder { color: rgba(255,255,255,0.62); }
-    .header-search input:focus { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.35); }
+    .header-search input::placeholder { color: rgba(255,255,255,0.78); }
+    .header-search-button {
+      width: 36px; height: 36px; flex: 0 0 36px; padding: 0; border: 0; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #fff; color: var(--primary); cursor: pointer;
+      box-shadow: 0 2px 7px rgba(0,0,0,0.20); transition: 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .header-search-button svg { position: static; width: 20px; height: 20px; color: currentColor; pointer-events: none; }
+    .header-search-button:hover, .header-search-button:focus-visible {
+      background: var(--primary-light); color: #124b8d; transform: scale(1.04); outline: none;
+    }
+    .header-search-button:active { background: #d4e4f7; transform: scale(0.95); }
 
     .app-container {
       width: 100%; height: calc(100vh - 70px); min-height: 0; padding: 20px 30px;
@@ -62,8 +72,10 @@
       .brand-header { height: 64px; padding: 0 12px; gap: 8px; }
       .brand-logo { width: 155px; max-width: 39vw; }
       .header-menu-btn { width: 38px; height: 38px; flex-basis: 38px; }
-      .header-search { width: auto; flex: 1 1 auto; height: 38px; }
-      .header-search input { font-size: 14px; padding-left: 40px; }
+      .header-search { width: auto; flex: 1 1 auto; height: 38px; padding: 3px; gap: 3px; }
+      .header-search input { font-size: 10px; padding: 0 4px 0 8px; }
+      .header-search-button { width: 30px; height: 30px; flex-basis: 30px; }
+      .header-search-button svg { width: 17px; height: 17px; }
       .app-container { height: calc(100vh - 64px); min-height: 0; padding: 18px 16px; }
     }
 
@@ -471,9 +483,10 @@
     @media (max-width: 680px) {
       .brand-header { height: 54px; padding: 0 8px; gap: 7px; }
       .brand-logo { width: 118px; max-width: 34vw; }
-      .header-search { height: 32px; }
-      .header-search svg { left: 10px; width: 15px; height: 15px; }
-      .header-search input { padding: 0 10px 0 31px; font-size: 11px; }
+      .header-search { height: 34px; padding: 3px; gap: 3px; }
+      .header-search input { padding: 0 3px 0 7px; font-size: 9px; }
+      .header-search-button { width: 28px; height: 28px; flex-basis: 28px; }
+      .header-search-button svg { width: 16px; height: 16px; }
       .app-container {
         height: calc(100vh - 54px); min-height: 0; padding: 10px 8px;
         overflow: hidden;
@@ -786,13 +799,15 @@
 
   <header class="brand-header">
     <img class="brand-logo" src="Logo-TJA_Pri.png" alt="TJA Transportes">
-    <div class="header-search">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
-        <path d="m16 16 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <input id="appSearch" type="search" placeholder="Pesquisar..." aria-label="Pesquisar tipologia, sigla, código ou matrícula" oninput="searchApp(this.value)" onkeydown="handleSearchKeydown(event)">
-    </div>
+    <form class="header-search" role="search" onsubmit="submitAppSearch(event)">
+      <input id="appSearch" type="search" placeholder="Procure a tipologia pelo código, matrícula ou nome" aria-label="Procure a tipologia pelo código, matrícula ou nome" autocomplete="off">
+      <button class="header-search-button" type="submit" aria-label="Iniciar pesquisa" title="Pesquisar">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="2.4"/>
+          <path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </form>
   </header>
 
   <div class="app-container">
@@ -911,7 +926,6 @@
     let currentKind = '';
     let currentCat = '';
     let searchQuery = '';
-    let identifierSearchTimer;
     let activeGallery = [];
     let activeImageIndex = 0;
     let activeProfile = null;
@@ -1571,7 +1585,6 @@
     }
 
     function openProfileFromSearch(vehicle) {
-      clearTimeout(identifierSearchTimer);
       closeSearchResults();
       searchQuery = '';
       currentKind = getVehicleKind(vehicle);
@@ -1585,7 +1598,7 @@
       const list = document.getElementById('searchResultsList');
       const text = document.getElementById('searchResultsText');
       list.innerHTML = '';
-      text.textContent = `“${originalQuery}” foi encontrado em ${profiles.length} tipologias. Qual pretende consultar?`;
+      text.textContent = `A pesquisa “${originalQuery}” encontrou ${profiles.length} tipologias. Qual pretende consultar?`;
       profiles.forEach(vehicle => {
         const button = document.createElement('button');
         button.type = 'button';
@@ -1603,29 +1616,51 @@
       document.getElementById('searchResultsModal').classList.add('open');
     }
 
-    function searchVehicleIdentifier(value) {
-      const profiles = registryProfilesForQuery(value);
+    function uniqueProfiles(profiles) {
+      const unique = new Map();
+      profiles.forEach(vehicle => {
+        const key = vehicle.sourcePath || `${vehicle.kind}|${vehicle.cat}|${vehicle.title}`;
+        if (!unique.has(key)) unique.set(key, vehicle);
+      });
+      return Array.from(unique.values());
+    }
+
+    function profilesForNameQuery(value) {
+      const wanted = normalizeProfileName(value);
+      if (!wanted) return [];
+      const exact = dataset.filter(vehicle => profileNames(vehicle).includes(wanted));
+      if (exact.length) return uniqueProfiles(exact);
+      return uniqueProfiles(dataset.filter(vehicle =>
+        profileNames(vehicle).some(name => name.includes(wanted))
+      ));
+    }
+
+    function openSearchMatches(profiles, originalQuery) {
       if (profiles.length === 1) openProfileFromSearch(profiles[0]);
-      else if (profiles.length > 1) showSearchResults(profiles, value.trim());
+      else if (profiles.length > 1) showSearchResults(profiles, originalQuery);
       return profiles.length;
     }
 
-    function handleSearchKeydown(event) {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      clearTimeout(identifierSearchTimer);
-      searchVehicleIdentifier(event.currentTarget.value);
+    function executeAppSearch(value) {
+      const query = String(value || '').trim();
+      closeSearchResults();
+      closeFullModal();
+      if (!query) {
+        searchQuery = '';
+        renderTree();
+        return;
+      }
+      const identifierProfiles = registryProfilesForQuery(query);
+      if (openSearchMatches(identifierProfiles, query)) return;
+      const nameProfiles = profilesForNameQuery(query);
+      if (openSearchMatches(nameProfiles, query)) return;
+      searchQuery = normalizedSearchText(query);
+      renderTree();
     }
 
-    function searchApp(value) {
-      clearTimeout(identifierSearchTimer);
-      closeSearchResults();
-      searchQuery = normalizedSearchText(value.trim());
-      closeFullModal();
-      renderTree();
-      if (normalizeIdentifier(value)) {
-        identifierSearchTimer = setTimeout(() => searchVehicleIdentifier(value), 350);
-      }
+    function submitAppSearch(event) {
+      event.preventDefault();
+      executeAppSearch(document.getElementById('appSearch').value);
     }
 
     function toggleDrawer() {
