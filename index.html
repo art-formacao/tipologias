@@ -746,6 +746,40 @@
     @media (max-width: 420px) {
       .category-card { height: clamp(160px, 25dvh, 205px); }
     }
+
+    /* Escolha quando um código identifica mais do que uma tipologia */
+    .search-results-modal {
+      position: fixed; inset: 0; z-index: 800; display: none; align-items: center; justify-content: center;
+      padding: 20px; background: rgba(20, 24, 30, 0.35); backdrop-filter: blur(2px);
+    }
+    .search-results-modal.open { display: flex; }
+    .search-results-panel {
+      width: min(560px, 100%); max-height: min(620px, 82vh); overflow-y: auto;
+      padding: 22px; border: 1px solid var(--border); border-radius: 18px; background: #fff;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.24);
+    }
+    .search-results-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 8px; }
+    .search-results-heading h2 { margin: 0; font-size: 20px; }
+    .search-results-text { margin: 0 0 16px; color: var(--text-muted); font-size: 13px; }
+    .search-results-close {
+      width: 32px; height: 32px; flex: 0 0 32px; padding: 0; border: 0; border-radius: 50%;
+      background: #e5e5e7; color: #5f6064; font-size: 19px; cursor: pointer;
+    }
+    .search-results-close:hover, .search-results-close:active { background: #ef3340; color: #fff; }
+    .search-results-list { display: grid; gap: 9px; }
+    .search-result-btn {
+      width: 100%; padding: 13px 15px; border: 1px solid var(--border); border-radius: 12px;
+      background: #f7f7f9; color: var(--text); text-align: left; cursor: pointer;
+    }
+    .search-result-btn:hover, .search-result-btn:focus-visible { border-color: var(--primary); background: var(--primary-light); outline: none; }
+    .search-result-title { display: block; font-size: 15px; font-weight: 700; }
+    .search-result-path { display: block; margin-top: 3px; color: var(--text-muted); font-size: 11px; }
+    @media (max-width: 680px) {
+      .search-results-modal { padding: 12px; }
+      .search-results-panel { padding: 16px; border-radius: 14px; }
+      .search-results-heading h2 { font-size: 17px; }
+      .search-result-btn { padding: 11px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -757,7 +791,7 @@
         <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
         <path d="m16 16 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <input id="appSearch" type="search" placeholder="Pesquisar..." aria-label="Pesquisar na aplicação" oninput="searchApp(this.value)">
+      <input id="appSearch" type="search" placeholder="Pesquisar..." aria-label="Pesquisar tipologia, sigla, código ou matrícula" oninput="searchApp(this.value)" onkeydown="handleSearchKeydown(event)">
     </div>
   </header>
 
@@ -844,6 +878,17 @@
     </div>
   </div>
 
+  <div class="search-results-modal" id="searchResultsModal" onclick="closeSearchResults(event)">
+    <div class="search-results-panel" role="dialog" aria-modal="true" aria-labelledby="searchResultsTitle" onclick="event.stopPropagation()">
+      <div class="search-results-heading">
+        <h2 id="searchResultsTitle">Escolha a tipologia</h2>
+        <button class="search-results-close" type="button" onclick="closeSearchResults()" aria-label="Fechar resultados">✕</button>
+      </div>
+      <p class="search-results-text" id="searchResultsText"></p>
+      <div class="search-results-list" id="searchResultsList"></div>
+    </div>
+  </div>
+
   <div class="video-player-modal" id="videoPlayerModal" onclick="closeProfileVideo(event)">
     <div class="video-player-panel" onclick="event.stopPropagation()">
       <button class="video-player-close" type="button" onclick="closeProfileVideo()" aria-label="Fechar vídeo">✕</button>
@@ -862,9 +907,11 @@
   <script>
     let dataset = [];
     let availableTypes = [];
+    let vehicleRegistry = [];
     let currentKind = '';
     let currentCat = '';
     let searchQuery = '';
+    let identifierSearchTimer;
     let activeGallery = [];
     let activeImageIndex = 0;
     let activeProfile = null;
@@ -1078,6 +1125,10 @@
       return spreadsheetFileStem(path) === 'link';
     }
 
+    function isTypesSpreadsheetFile(path) {
+      return spreadsheetFileStem(path) === 'tipos';
+    }
+
     function isImageFile(path) {
       const name = pathName(path);
       return browserImageExtensions.has(name.slice(name.lastIndexOf('.')).toLowerCase());
@@ -1162,6 +1213,37 @@
       }
     }
 
+    async function readGithubVehicleRegistry(filePath) {
+      if (!filePath) return [];
+      try {
+        const XLSX = await loadSheetJs();
+        const response = await fetch(githubRawUrl(filePath), { cache: 'default' });
+        if (!response.ok) throw new Error(`resposta HTTP ${response.status}`);
+        const workbook = XLSX.read(await response.arrayBuffer(), { type: 'array', cellDates: false });
+        const firstSheetName = workbook.SheetNames?.[0];
+        if (!firstSheetName) return [];
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { header: 1, raw: false, defval: '' });
+        const registry = [];
+        const seen = new Set();
+        for (const row of rows) {
+          const profileName = String(row?.[0] ?? '').trim();
+          const acronym = String(row?.[1] ?? '').trim();
+          const code = String(row?.[2] ?? '').trim();
+          const registration = String(row?.[3] ?? '').trim();
+          if (!profileName || normalizeFolderText(profileName) === 'tipo') continue;
+          if (!acronym && !code && !registration) continue;
+          const key = [profileName, acronym, code, registration].map(normalizeFolderText).join('|');
+          if (seen.has(key)) continue;
+          seen.add(key);
+          registry.push({ profileName, acronym, code, registration });
+        }
+        return registry;
+      } catch (error) {
+        console.warn(`Não foi possível ler o Excel de pesquisa "${filePath}".`, error);
+        return [];
+      }
+    }
+
     async function readGithubVideoLinks(filePath) {
       try {
         const XLSX = await loadSheetJs();
@@ -1199,6 +1281,9 @@
         const parts = entry.path.split('/');
         return parts[0] === rootPath && parts.length > 1;
       });
+      const registryExcel = scopedEntries.find(entry =>
+        entry.type === 'blob' && pathParent(entry.path) === rootPath && isTypesSpreadsheetFile(entry.path)
+      );
       const directories = scopedEntries.filter(entry => entry.type === 'tree');
       const typeEntries = directories
         .filter(entry => pathParent(entry.path) === rootPath)
@@ -1294,7 +1379,14 @@
         });
       }
 
-      return { generatedAt: new Date().toISOString(), types, profiles };
+      const vehicleRegistry = registryExcel ? await readGithubVehicleRegistry(registryExcel.path) : [];
+      return {
+        generatedAt: new Date().toISOString(),
+        types,
+        profiles,
+        registryExcelPath: registryExcel?.path || '',
+        vehicleRegistry
+      };
     }
 
     async function loadGithubManifest() {
@@ -1309,7 +1401,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v7-videos';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v8-registry-search';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
@@ -1322,6 +1414,14 @@
           }))
         : [];
       dataset = Array.isArray(manifest?.profiles) ? manifest.profiles.map(mapFolderProfile) : [];
+      vehicleRegistry = Array.isArray(manifest?.vehicleRegistry)
+        ? manifest.vehicleRegistry.map(item => ({
+            profileName: String(item?.profileName || '').trim(),
+            acronym: String(item?.acronym || '').trim(),
+            code: String(item?.code || '').trim(),
+            registration: String(item?.registration || '').trim()
+          })).filter(item => item.profileName && (item.acronym || item.code || item.registration))
+        : [];
       if (!availableTypes.length && dataset.length) {
         const typeMap = new Map();
         dataset.forEach(item => {
@@ -1420,10 +1520,112 @@
       openFullModal(chooseInitialProfile(profiles));
     }
 
+    function normalizeIdentifier(value) {
+      return normalizedSearchText(value).replace(/[^a-z0-9]/g, '');
+    }
+
+    function normalizeProfileName(value) {
+      return normalizedSearchText(value)
+        .replace(/\bstandart\b/g, 'standard')
+        .replace(/[—–_\/\\-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function profileNames(vehicle) {
+      const sourceName = String(vehicle?.sourcePath || '').split('/').filter(Boolean).pop() || '';
+      let decodedSourceName = sourceName;
+      try { decodedSourceName = decodeURIComponent(sourceName); } catch (error) {}
+      return [vehicle?.shortTitle, vehicle?.title, decodedSourceName]
+        .map(normalizeProfileName)
+        .filter(Boolean);
+    }
+
+    function profilesForRegistryName(profileName) {
+      const wanted = normalizeProfileName(profileName);
+      if (!wanted) return [];
+      return dataset.filter(vehicle => profileNames(vehicle).includes(wanted));
+    }
+
+    function registryProfilesForQuery(value) {
+      const query = normalizeIdentifier(value);
+      if (!query) return [];
+      const matches = vehicleRegistry.filter(item =>
+        [item.acronym, item.code, item.registration]
+          .map(normalizeIdentifier)
+          .some(identifier => identifier && identifier === query)
+      );
+      const uniqueProfiles = new Map();
+      matches.forEach(item => {
+        profilesForRegistryName(item.profileName).forEach(vehicle => {
+          const key = vehicle.sourcePath || `${vehicle.kind}|${vehicle.cat}|${vehicle.title}`;
+          if (!uniqueProfiles.has(key)) uniqueProfiles.set(key, vehicle);
+        });
+      });
+      return Array.from(uniqueProfiles.values());
+    }
+
+    function closeSearchResults(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('searchResultsModal').classList.remove('open');
+    }
+
+    function openProfileFromSearch(vehicle) {
+      clearTimeout(identifierSearchTimer);
+      closeSearchResults();
+      searchQuery = '';
+      currentKind = getVehicleKind(vehicle);
+      currentCat = vehicle.cat;
+      renderNavigation();
+      renderTree();
+      openFullModal(vehicle);
+    }
+
+    function showSearchResults(profiles, originalQuery) {
+      const list = document.getElementById('searchResultsList');
+      const text = document.getElementById('searchResultsText');
+      list.innerHTML = '';
+      text.textContent = `“${originalQuery}” foi encontrado em ${profiles.length} tipologias. Qual pretende consultar?`;
+      profiles.forEach(vehicle => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'search-result-btn';
+        const title = document.createElement('span');
+        title.className = 'search-result-title';
+        title.textContent = vehicle.shortTitle || vehicle.title;
+        const path = document.createElement('span');
+        path.className = 'search-result-path';
+        path.textContent = [getVehicleKind(vehicle), vehicle.cat, vehicle.folder].filter(Boolean).join(' › ');
+        button.append(title, path);
+        button.onclick = () => openProfileFromSearch(vehicle);
+        list.appendChild(button);
+      });
+      document.getElementById('searchResultsModal').classList.add('open');
+    }
+
+    function searchVehicleIdentifier(value) {
+      const profiles = registryProfilesForQuery(value);
+      if (profiles.length === 1) openProfileFromSearch(profiles[0]);
+      else if (profiles.length > 1) showSearchResults(profiles, value.trim());
+      return profiles.length;
+    }
+
+    function handleSearchKeydown(event) {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      clearTimeout(identifierSearchTimer);
+      searchVehicleIdentifier(event.currentTarget.value);
+    }
+
     function searchApp(value) {
+      clearTimeout(identifierSearchTimer);
+      closeSearchResults();
       searchQuery = normalizedSearchText(value.trim());
       closeFullModal();
       renderTree();
+      if (normalizeIdentifier(value)) {
+        identifierSearchTimer = setTimeout(() => searchVehicleIdentifier(value), 350);
+      }
     }
 
     function toggleDrawer() {
@@ -1895,6 +2097,10 @@
     }
 
     document.addEventListener('keydown', event => {
+      if (document.getElementById('searchResultsModal').classList.contains('open')) {
+        if (event.key === 'Escape') closeSearchResults();
+        return;
+      }
       if (document.getElementById('videoPlayerModal').classList.contains('open')) {
         if (event.key === 'Escape') closeProfileVideo();
         return;

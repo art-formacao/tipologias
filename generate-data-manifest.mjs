@@ -62,6 +62,10 @@ function isLinkSpreadsheet(fileName) {
   return spreadsheetStem(fileName) === 'link';
 }
 
+function isTypesSpreadsheet(fileName) {
+  return spreadsheetStem(fileName) === 'tipos';
+}
+
 async function findNamedDirectory(directory, expectedName) {
   const expected = normalize(expectedName);
   return (await directoriesAt(directory)).find(item => normalize(item.name) === expected);
@@ -87,6 +91,38 @@ async function findLinkSpreadsheet(profileDirectory) {
 
 function isWebLink(value) {
   return /^https?:\/\//i.test(String(value || '').trim());
+}
+
+async function readVehicleRegistry(excel) {
+  if (!excel) return [];
+  try {
+    const workbook = XLSX.readFile(excel.absolute, { cellDates: false });
+    const firstSheetName = workbook.SheetNames?.[0];
+    if (!firstSheetName) return [];
+    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {
+      header: 1,
+      raw: false,
+      defval: ''
+    });
+    const registry = [];
+    const seen = new Set();
+    for (const row of rows) {
+      const profileName = String(row?.[0] ?? '').trim();
+      const acronym = String(row?.[1] ?? '').trim();
+      const code = String(row?.[2] ?? '').trim();
+      const registration = String(row?.[3] ?? '').trim();
+      if (!profileName || normalize(profileName) === 'tipo') continue;
+      if (!acronym && !code && !registration) continue;
+      const key = [profileName, acronym, code, registration].map(normalize).join('|');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      registry.push({ profileName, acronym, code, registration });
+    }
+    return registry;
+  } catch (error) {
+    console.warn(`Não foi possível ler "${toWebPath(excel.absolute, false)}": ${error.message}`);
+    return [];
+  }
 }
 
 async function readVideoLinks(excel) {
@@ -235,6 +271,9 @@ async function scanType(typeDirectory) {
   };
 }
 
+const rootFiles = await filesAt(tipologiasRoot);
+const typesExcel = rootFiles.find(file => isTypesSpreadsheet(file.name));
+const vehicleRegistry = await readVehicleRegistry(typesExcel);
 const typeDirectories = await directoriesAt(tipologiasRoot);
 const scanned = await Promise.all(typeDirectories.map(scanType));
 const types = scanned.map(result => result.type);
@@ -248,7 +287,9 @@ const profiles = scanned
 const manifest = {
   generatedAt: new Date().toISOString(),
   types,
-  profiles
+  profiles,
+  registryExcelPath: typesExcel ? toWebPath(typesExcel.absolute, false) : '',
+  vehicleRegistry
 };
 
 await fs.writeFile(
@@ -265,5 +306,6 @@ const categoryIconCount = types.reduce(
 
 console.log(
   `data-manifest.json criado com ${types.length} tipos, ${profiles.length} perfis, ` +
-  `${typeIconCount} ícones principais e ${categoryIconCount} ícones de categoria.`
+  `${vehicleRegistry.length} registos de pesquisa, ${typeIconCount} ícones principais e ` +
+  `${categoryIconCount} ícones de categoria.`
 );

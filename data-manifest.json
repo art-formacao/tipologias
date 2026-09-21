@@ -956,5 +956,7 @@
       "videos": [],
       "videosLoaded": true
     }
-  ]
+  ],
+  "registryExcelPath": "Tipologias/Tipos.xlsx",
+  "vehicleRegistry": []
 }
