@@ -490,7 +490,10 @@
       .brand-header { height: 54px; padding: 0 8px; gap: 7px; }
       .brand-logo { width: 118px; max-width: 34vw; }
       .header-search { height: 34px; padding: 3px; gap: 3px; }
-      .header-search input { padding: 0 3px 0 7px; font-size: 9px; }
+      .header-search input {
+        padding: 0 3px 0 7px; font-size: 16px;
+        -webkit-text-size-adjust: 100%;
+      }
       .header-search-button { width: 28px; height: 28px; flex-basis: 28px; }
       .header-search-button svg { width: 16px; height: 16px; }
       .app-container {
@@ -499,10 +502,15 @@
       }
       .top-bar { margin-bottom: 8px; }
       .header p { font-size: 9px; }
-      .vehicle-type-switch { gap: 7px; flex-wrap: nowrap; margin-bottom: 3px; }
+      .vehicle-type-switch {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 4px; width: 100%; margin-bottom: 3px;
+      }
       .vehicle-type-btn {
-        min-width: 0; padding-bottom: 3px; border-bottom-width: 2px;
-        font-size: clamp(10px, 3.1vw, 13px); white-space: nowrap;
+        width: 100%; min-width: 0; height: 56px; min-height: 56px;
+        padding: 4px 2px; border-bottom-width: 2px;
+        font-size: clamp(9px, 3.2vw, 14px); white-space: nowrap;
+        overflow: hidden; text-overflow: clip;
       }
       .filters { gap: 5px; margin-bottom: 8px; flex-wrap: nowrap; }
       .filter-btn { min-width: 0; padding: 5px 8px; font-size: 9px; white-space: nowrap; }
@@ -881,7 +889,8 @@
       .equipment-card { width: 96px; max-width: 96px; flex: 0 0 96px; font-size: 14px; }
       .equipment-photo { width: 84px; height: 84px; flex-basis: 84px; }
       .equipment-photo.enlarged {
-        transform: scale(2); z-index: 100;
+        transform: scale(2); z-index: 100; position: relative;
+        overflow: visible;
       }
       .equipment-card:first-child .equipment-photo.enlarged { transform-origin: left center; }
       .equipment-card:last-child .equipment-photo.enlarged { transform-origin: right center; }
@@ -993,7 +1002,7 @@
   <header class="brand-header">
     <img class="brand-logo" src="Logo-TJA_Pri.png" alt="TJA Transportes">
     <form class="header-search" role="search" onsubmit="submitAppSearch(event)">
-      <input id="appSearch" type="search" placeholder="Procure a tipologia pelo código, matrícula ou nome" aria-label="Procure a tipologia pelo código, matrícula ou nome" autocomplete="off">
+      <input id="appSearch" type="search" placeholder="Procure a tipologia pelo código, matrícula ou nome" aria-label="Procure a tipologia pelo código, matrícula ou nome" autocomplete="off" oninput="handleAppSearchInput(this)">
       <button class="header-search-button" type="submit" aria-label="Iniciar pesquisa" title="Pesquisar">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="2.4"/>
@@ -1857,6 +1866,10 @@
     function submitAppSearch(event) {
       event.preventDefault();
       executeAppSearch(document.getElementById('appSearch').value);
+    }
+
+    function handleAppSearchInput(input) {
+      if (!String(input.value || '').trim()) executeAppSearch('');
     }
 
     function toggleDrawer() {
