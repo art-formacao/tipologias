@@ -1000,6 +1000,7 @@
       .vehicle-type-switch {
         display: grid !important;
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        grid-auto-columns: minmax(0, 1fr) !important;
         gap: 4px !important;
         width: 100% !important;
         margin: 0 0 3px !important;
@@ -1009,6 +1010,8 @@
         min-width: 0 !important;
         height: 76px !important;
         min-height: 76px !important;
+        max-height: 76px !important;
+        box-sizing: border-box !important;
         padding: 6px 2px !important;
         font-size: clamp(11px, 3.8vw, 17px) !important;
         overflow: hidden !important;
