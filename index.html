@@ -923,14 +923,22 @@
         padding-right: 44px;
       }
       .profile-variant-area { position: static; }
-      .profile-variant-row { padding-right: 38px; }
+      .profile-variant-row {
+        width: 100%; padding-right: 42px; overflow: visible;
+      }
       .profile-variant-row .profile-close-btn {
         position: absolute; top: 5px; right: 8px;
         width: 32px; height: 32px; flex-basis: 32px; z-index: 2;
       }
       .profile-variant-label { font-size: 14px; }
+      .profile-variant-selector {
+        width: 100%; min-width: 0; padding-right: 52px;
+        overflow-x: auto; overflow-y: visible;
+        scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+      }
       .profile-variant-btn {
-        padding: 14px 20px; border-radius: 10px; font-size: 27px;
+        min-height: 54px; padding: 14px 22px !important; border-radius: 11px !important;
+        font-size: 20px; line-height: 1.2;
       }
       .profile-order-description,
       .profile-order-care .profile-note,
