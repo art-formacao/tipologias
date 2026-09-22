@@ -893,15 +893,23 @@
       .profile-order-care,
       .profile-order-service,
       .profile-order-attention {
-        width: 100%; margin: 11px 0 0; padding: 11px 12px;
-        border: 1px solid var(--border); border-radius: 11px;
+        width: 100%; margin: 15px 0 0; padding: 0;
+        border: 0; border-radius: 0; background: transparent;
       }
-      .profile-order-care, .profile-order-service { background: #fff; }
-      .profile-order-attention { background: #efeee9; }
       .profile-order-care h3,
       .profile-order-service h3,
       .profile-order-attention h3 {
         margin: 0 0 7px; font-size: 12px !important; line-height: 1.25;
+      }
+      .profile-order-care .profile-note,
+      .profile-order-service .profile-note,
+      .profile-order-attention .profile-note {
+        margin: 0; padding: 11px 12px;
+        border: 1px solid var(--border); border-radius: 11px;
+        background: #fff;
+      }
+      .profile-order-attention .profile-note {
+        background: #efeee9;
       }
       .profile-note { font-size: 9px; line-height: 1.45; }
     }
@@ -918,6 +926,9 @@
         overflow: hidden; text-overflow: ellipsis;
       }
       .fullscreen-header { position: relative; }
+      .fullscreen-header,
+      .profile-variant-area,
+      .profile-variant-row { min-width: 0; }
       .profile-heading {
         flex: 1 1 100%; width: 100%; max-width: none;
         padding-right: 44px;
@@ -935,16 +946,16 @@
       }
       .profile-variant-label { font-size: 14px; }
       .profile-variant-selector {
-        width: 100%; min-width: 0; padding: 0;
+        width: 100%; min-width: 0; max-width: 100%; padding: 0;
         display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 7px; overflow: visible;
+        gap: 5px; overflow: hidden; box-sizing: border-box;
       }
       .profile-variant-btn {
-        width: 100%; height: 44px; min-height: 44px; min-width: 0;
+        width: 100%; max-width: 100%; height: 44px; min-height: 44px; min-width: 0;
         padding: 0 5px !important; border-radius: 9px !important;
         display: inline-flex; align-items: center; justify-content: center;
-        font-size: 19px; line-height: 1; white-space: nowrap;
-        overflow: hidden; text-overflow: clip;
+        font-size: clamp(12px, 4.1vw, 17px); line-height: 1;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       .profile-order-description,
       .profile-order-care .profile-note,
@@ -961,6 +972,16 @@
       .profile-order-equipment-title {
         font-size: 24px !important;
         line-height: 1.25;
+      }
+      .profile-order-care,
+      .profile-order-service,
+      .profile-order-attention {
+        margin-top: 18px;
+      }
+      .profile-order-care h3,
+      .profile-order-service h3,
+      .profile-order-attention h3 {
+        margin: 0 0 9px;
       }
     }
   </style>
