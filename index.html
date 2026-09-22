@@ -860,11 +860,16 @@
       .equipment-list {
         width: 100%; margin-top: 0; padding: 2px 0 8px;
         display: flex; flex-wrap: nowrap; justify-content: flex-start;
-        column-gap: 9px; row-gap: 0; overflow-x: auto; overflow-y: visible;
+        column-gap: 9px; row-gap: 0; overflow: visible;
         scrollbar-width: thin; -webkit-overflow-scrolling: touch;
       }
       .equipment-card { width: 48px; max-width: 48px; flex: 0 0 48px; font-size: 7px; }
       .equipment-photo { width: 42px; height: 42px; flex-basis: 42px; }
+      .equipment-photo.enlarged {
+        transform: scale(2.8); z-index: 100;
+      }
+      .equipment-card:first-child .equipment-photo.enlarged { transform-origin: left center; }
+      .equipment-card:last-child .equipment-photo.enlarged { transform-origin: right center; }
 
       .profile-order-description {
         width: 100%; margin: 0; padding: 11px 12px; border: 1px solid var(--border);
