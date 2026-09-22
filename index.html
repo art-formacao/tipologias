@@ -1525,16 +1525,43 @@
         let careBeforeAfter = '';
         let attentionPoints = '';
         let serviceConsiderations = '';
+        let activeTextField = '';
+        const appendText = (field, value) => {
+          if (!value) return;
+          const current = field === 'description' ? description
+            : field === 'careBeforeAfter' ? careBeforeAfter
+            : field === 'attentionPoints' ? attentionPoints
+            : serviceConsiderations;
+          const combined = current ? `${current}\n${value}` : value;
+          if (field === 'description') description = combined;
+          else if (field === 'careBeforeAfter') careBeforeAfter = combined;
+          else if (field === 'attentionPoints') attentionPoints = combined;
+          else serviceConsiderations = combined;
+        };
         for (const row of rows) {
           const name = String(row?.[0] ?? '').trim();
           const value = String(row?.[1] ?? '').trim();
-          if (!name) continue;
+          if (!name) {
+            if (value && activeTextField) appendText(activeTextField, value);
+            continue;
+          }
           const normalizedName = normalizeFolderText(name).replace(/:\s*$/, '').replace(/\s+/g, ' ');
-          if (normalizedName === 'descricao') description = value;
-          else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') careBeforeAfter = value;
-          else if (normalizedName === 'pontos de atencao') attentionPoints = value;
-          else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') serviceConsiderations = value;
-          else specifications.push({ name, value });
+          if (normalizedName === 'descricao') {
+            activeTextField = 'description';
+            description = value;
+          } else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') {
+            activeTextField = 'careBeforeAfter';
+            careBeforeAfter = value;
+          } else if (normalizedName === 'pontos de atencao') {
+            activeTextField = 'attentionPoints';
+            attentionPoints = value;
+          } else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') {
+            activeTextField = 'serviceConsiderations';
+            serviceConsiderations = value;
+          } else {
+            activeTextField = '';
+            specifications.push({ name, value });
+          }
         }
         return { specifications, description, careBeforeAfter, attentionPoints, serviceConsiderations };
       } catch (error) {
