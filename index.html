@@ -27,8 +27,17 @@
       background: #1C5EAC; display: flex; align-items: center; gap: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.14); position: sticky; top: 0; z-index: 500;
     }
+    .brand-identity {
+      width: 220px; max-width: 34vw; flex: 0 1 auto;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #fff; line-height: 1; white-space: nowrap;
+    }
     .brand-logo {
-      width: 220px; max-width: 34vw; height: auto; display: block; flex: 0 1 auto;
+      width: 100%; max-width: none; height: auto; display: block;
+    }
+    .brand-department {
+      margin-top: 4px; color: #fff; font-size: 13px; font-weight: 400;
+      line-height: 1; text-align: center;
     }
     .header-menu-btn {
       width: 40px; height: 40px; padding: 0; flex: 0 0 40px;
@@ -71,7 +80,8 @@
 
     @media (max-width: 680px) {
       .brand-header { height: 64px; padding: 0 12px; gap: 8px; }
-      .brand-logo { width: 155px; max-width: 39vw; }
+      .brand-identity { width: 155px; max-width: 39vw; }
+      .brand-department { margin-top: 3px; font-size: 9px; }
       .header-menu-btn { width: 38px; height: 38px; flex-basis: 38px; }
       .header-search { width: auto; flex: 1 1 auto; height: 38px; padding: 3px; gap: 3px; }
       .header-search input { font-size: 10px; padding: 0 4px 0 8px; }
@@ -501,7 +511,8 @@
 
     @media (max-width: 680px) {
       .brand-header { height: 54px; padding: 0 8px; gap: 7px; }
-      .brand-logo { width: 118px; max-width: 34vw; }
+      .brand-identity { width: 118px; max-width: 34vw; }
+      .brand-department { margin-top: 2px; font-size: 8px; }
       .header-search { height: 34px; padding: 3px; gap: 3px; }
       .header-search input {
         padding: 0 3px 0 7px; font-size: 16px;
@@ -1043,7 +1054,10 @@
 <body>
 
   <header class="brand-header">
-    <img class="brand-logo" src="Logo-TJA_Pri.png" alt="TJA Transportes">
+    <div class="brand-identity">
+      <img class="brand-logo" src="Logo-TJA_Pri.png" alt="TJA Transportes">
+      <div class="brand-department">-Dep. Formação-</div>
+    </div>
     <form class="header-search" role="search" onsubmit="submitAppSearch(event)">
       <input id="appSearch" type="search" placeholder="Procure a tipologia pelo código, matrícula ou nome" aria-label="Procure a tipologia pelo código, matrícula ou nome" autocomplete="off" oninput="handleAppSearchInput(this)">
       <button class="header-search-button" type="submit" aria-label="Iniciar pesquisa" title="Pesquisar">
