@@ -995,6 +995,28 @@
         margin: 0 0 9px;
       }
     }
+
+    @media (max-width: 680px) {
+      .vehicle-type-switch {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+        width: 100% !important;
+        margin: 0 0 3px !important;
+      }
+      .vehicle-type-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 76px !important;
+        min-height: 76px !important;
+        padding: 6px 2px !important;
+        font-size: clamp(11px, 3.8vw, 17px) !important;
+        overflow: hidden !important;
+      }
+      .equipment-photo.enlarged {
+        transform: scale(3.36) !important;
+      }
+    }
   </style>
 </head>
 <body>
