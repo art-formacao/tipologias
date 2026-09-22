@@ -722,14 +722,14 @@
       align-self: center; margin: 0; width: 34px; height: 34px; flex: 0 0 34px;
     }
     .profile-variant-scroll-hint {
-      display: none; position: absolute; right: 38px; top: 0; bottom: 0; z-index: 2;
+      display: none; position: absolute; right: 38px; top: 0; height: 44px; z-index: 2;
       width: 30px; align-items: center; justify-content: flex-end;
       padding-right: 2px; color: var(--primary); font-size: 26px; font-weight: 700;
       pointer-events: none; background: linear-gradient(90deg, rgba(255,255,255,0), #fff 55%);
     }
     .profile-variant-row.has-more-right .profile-variant-scroll-hint { display: inline-flex; }
     .profile-variant-scroll-hint.left {
-      left: 0; right: auto; justify-content: flex-start; padding: 0 0 0 2px;
+      left: 0; right: auto; height: 44px; justify-content: flex-start; padding: 0 0 0 2px;
       background: linear-gradient(90deg, #fff 45%, rgba(255,255,255,0));
     }
     .profile-variant-row.has-more-left .profile-variant-scroll-hint.left { display: inline-flex; }
@@ -996,7 +996,7 @@
         padding-right: 44px;
       }
       .profile-variant-area {
-        position: static; z-index: 3; flex: 1 1 100%;
+        position: relative; z-index: 3; flex: 1 1 100%;
         width: 100%; max-width: none; background: #fff;
       }
       .profile-variant-row {
@@ -1022,10 +1022,10 @@
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       .profile-variant-scroll-hint {
-        right: 34px; width: 24px; font-size: 28px;
+        right: 34px; top: 22px; width: 24px; height: 44px; font-size: 28px;
       }
       .profile-variant-scroll-hint.left {
-        left: 0; right: auto; width: 24px;
+        left: 0; right: auto; top: 22px; width: 24px; height: 44px;
       }
       .profile-order-description,
       .profile-order-care .profile-note,
@@ -2312,6 +2312,8 @@
       const row = selector.closest('.profile-variant-row');
       const profiles = getProfilesForCategory(getVehicleKind(activeVehicle), activeVehicle.cat);
       selector.innerHTML = '';
+      selector.scrollLeft = 0;
+      row.classList.remove('has-more-left', 'has-more-right');
       label.textContent = `Selecionar tipo de ${activeVehicle.cat}`;
       profiles.forEach(profile => {
         const button = document.createElement('button');
@@ -2325,7 +2327,8 @@
       selector.style.display = profiles.length > 1 ? 'flex' : 'none';
       label.style.display = profiles.length > 1 ? 'block' : 'none';
       const updateScrollHint = () => {
-        const hasMoreRight = selector.scrollLeft + selector.clientWidth < selector.scrollWidth - 2;
+        const maxScrollLeft = Math.max(0, selector.scrollWidth - selector.clientWidth);
+        const hasMoreRight = maxScrollLeft - selector.scrollLeft > 2;
         const hasMoreLeft = selector.scrollLeft > 2;
         row.classList.toggle('has-more-right', hasMoreRight);
         row.classList.toggle('has-more-left', hasMoreLeft);
