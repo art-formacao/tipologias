@@ -20,6 +20,7 @@
       width: 100%; height: 100%; margin: 0; padding: 0;
       background-color: var(--bg); color: var(--text); overflow-x: hidden;
     }
+    body.modal-open { overflow: hidden; }
 
     .brand-header {
       width: 100%; height: 70px; padding: 0 16px;
@@ -519,7 +520,10 @@
       .folder-children .node { padding: 7px 8px; font-size: 9px; }
       .folder-children .arrow { margin-left: 7px; }
 
-      .fullscreen-modal { top: 54px; height: calc(100vh - 54px); }
+      .fullscreen-modal {
+        top: 0; left: 0; width: 100vw; height: 100dvh;
+        min-height: 100vh; z-index: 700;
+      }
       .fullscreen-header { padding: 5px 8px; gap: 6px; }
       #fvCat { font-size: 7px !important; }
       #fvTitle { font-size: 13px !important; }
@@ -843,7 +847,7 @@
         width: 100%; margin: 15px 0 7px !important; font-size: 13px !important;
       }
       .spec-grid {
-        width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
+        width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;
       }
       .spec-card, .spec-card.compact {
         grid-column: auto !important; min-width: 0; min-height: 58px;
@@ -2139,6 +2143,7 @@
       }
 
       document.getElementById('fullModal').style.display = 'flex';
+      document.body.classList.add('modal-open');
 
       if ((!v.detailsLoaded && v.excelPath) || (!v.videosLoaded && v.linkExcelPath)) {
         await ensureProfileDetails(v);
@@ -2248,6 +2253,7 @@
       closeProfileVideo();
       activeProfile = null;
       document.getElementById('fullModal').style.display = 'none';
+      document.body.classList.remove('modal-open');
     }
 
     loadFolderData();
