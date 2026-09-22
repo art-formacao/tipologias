@@ -20,12 +20,7 @@
       width: 100%; height: 100%; margin: 0; padding: 0;
       background-color: var(--bg); color: var(--text); overflow-x: hidden;
     }
-    html.modal-open, body.modal-open {
-      overflow: hidden; overscroll-behavior: none;
-    }
-    body.modal-open {
-      position: fixed; width: 100%; left: 0; right: 0;
-    }
+    body.modal-open { overflow: hidden; }
 
     .brand-header {
       width: 100%; height: 70px; padding: 0 16px;
@@ -232,10 +227,10 @@
       align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10;
     }
     .fullscreen-header .profile-close-btn {
-      width: 76px; height: 76px; flex: 0 0 76px; padding: 0 !important;
+      width: 38px; height: 38px; flex: 0 0 38px; padding: 0 !important;
       display: inline-flex; align-items: center; justify-content: center;
       border: 0; border-radius: 50% !important; background: #e5e5e7; color: #5f6064;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.18);       font-size: 46px; font-weight: 500;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.18);             font-size: 23px; font-weight: 500;
       line-height: 1; cursor: pointer; -webkit-tap-highlight-color: transparent;
       transition: background-color 0.18s ease, color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
     }
@@ -253,8 +248,8 @@
     }
     @media (max-width: 680px) {
       .fullscreen-header .profile-close-btn {
-        width: 64px; height: 64px; flex-basis: 64px; padding: 0 !important;
-        border-radius: 50% !important; font-size: 38px;
+        width: 30px; height: 30px; flex-basis: 30px; padding: 0 !important;
+        border-radius: 50% !important; font-size: 19px;
       }
     }
     .fullscreen-body {
@@ -967,16 +962,13 @@
         font-size: 26px !important; white-space: nowrap;
         overflow: hidden; text-overflow: ellipsis;
       }
-      .fullscreen-header {
-        position: sticky !important; top: 0 !important; z-index: 20 !important;
-        flex: 0 0 auto; background: #fff;
-      }
+      .fullscreen-header { position: relative; }
       .fullscreen-header,
       .profile-variant-area,
       .profile-variant-row { min-width: 0; }
       .profile-heading {
         flex: 1 1 100%; width: 100%; max-width: none;
-        padding-right: 76px;
+        padding-right: 44px;
       }
       .profile-variant-area {
         position: static; z-index: 3; flex: 1 1 100%;
@@ -987,7 +979,7 @@
       }
       .profile-variant-row .profile-close-btn {
         position: absolute; top: 5px; right: 8px;
-        width: 64px; height: 64px; flex-basis: 64px; z-index: 2;
+        width: 32px; height: 32px; flex-basis: 32px; z-index: 2;
       }
       .profile-variant-label { font-size: 14px; }
       .profile-variant-selector {
@@ -1210,7 +1202,6 @@
     let activeImageIndex = 0;
     let activeProfile = null;
     let galleryScrollTimer;
-    let profileScrollPosition = 0;
 
     function normalizedSearchText(value) {
       return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -2362,9 +2353,7 @@
       }
 
       document.getElementById('fullModal').style.display = 'flex';
-      profileScrollPosition = window.scrollY;
       document.body.classList.add('modal-open');
-      document.documentElement.classList.add('modal-open');
 
       if ((!v.detailsLoaded && v.excelPath) || (!v.videosLoaded && v.linkExcelPath)) {
         await ensureProfileDetails(v);
@@ -2475,8 +2464,6 @@
       activeProfile = null;
       document.getElementById('fullModal').style.display = 'none';
       document.body.classList.remove('modal-open');
-      document.documentElement.classList.remove('modal-open');
-      window.scrollTo(0, profileScrollPosition);
     }
 
     loadFolderData();
