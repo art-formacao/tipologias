@@ -2181,12 +2181,17 @@
       if (!previewUrl || !fileId) return;
       const video = document.getElementById('videoPlayerVideo');
       const frame = document.getElementById('videoPlayerFrame');
-      const directVideoUrl = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(fileId)}`;
+      const directVideoUrl = `https://drive.usercontent.google.com/download?id=${encodeURIComponent(fileId)}&export=download&confirm=t`;
       video.pause();
       video.style.display = 'block';
       frame.style.display = 'none';
       frame.src = '';
       video.onerror = () => {
+        if (window.matchMedia('(max-width: 680px)').matches) {
+          video.style.display = 'block';
+          video.controls = true;
+          return;
+        }
         video.style.display = 'none';
         frame.style.display = 'block';
         frame.src = `${previewUrl}?autoplay=1&rm=minimal`;
