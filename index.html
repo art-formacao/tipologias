@@ -714,6 +714,7 @@
     /* Alinhamentos finais do perfil */
     .profile-variant-row {
       width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+      position: relative;
     }
     .profile-variant-row .profile-variant-selector {
       flex: 1 1 auto; width: auto; min-width: 0; padding-bottom: 0;
@@ -721,6 +722,13 @@
     .profile-variant-row .profile-close-btn {
       align-self: center; margin: 0; width: 34px; height: 34px; flex: 0 0 34px;
     }
+    .profile-variant-scroll-hint {
+      display: none; position: absolute; right: 38px; top: 0; bottom: 0; z-index: 2;
+      width: 30px; align-items: center; justify-content: flex-end;
+      padding-right: 2px; color: var(--primary); font-size: 26px; font-weight: 700;
+      pointer-events: none; background: linear-gradient(90deg, rgba(255,255,255,0), #fff 55%);
+    }
+    .profile-variant-row.has-more-right .profile-variant-scroll-hint { display: inline-flex; }
 
     /* Vídeos e equipamentos: alinhados à esquerda com o mesmo espaçamento */
     .profile-video-grid,
@@ -1006,8 +1014,11 @@
         height: 44px; min-height: 44px; min-width: 0; flex: 0 0 calc((100% - 10px) / 3);
         padding: 0 5px !important; border-radius: 9px !important;
         display: inline-flex; align-items: center; justify-content: center;
-        font-size: clamp(12px, 4.1vw, 17px); line-height: 1;
+        font-size: clamp(24px, 8.2vw, 34px); line-height: 1;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .profile-variant-scroll-hint {
+        right: 38px; width: 32px; font-size: 28px;
       }
       .profile-order-description,
       .profile-order-care .profile-note,
@@ -1134,6 +1145,7 @@
         <span class="profile-variant-label" id="profileVariantLabel">Selecionar variante</span>
         <div class="profile-variant-row">
           <div class="profile-variant-selector" id="profileVariantSelector"></div>
+          <span class="profile-variant-scroll-hint" id="profileVariantScrollHint" aria-hidden="true">›</span>
           <button class="profile-close-btn" type="button" onclick="closeFullModal()" aria-label="Fechar perfil" title="Fechar perfil">✕</button>
         </div>
       </div>
@@ -2289,6 +2301,7 @@
     function renderProfileVariantSelector(activeVehicle) {
       const selector = document.getElementById('profileVariantSelector');
       const label = document.getElementById('profileVariantLabel');
+      const row = selector.closest('.profile-variant-row');
       const profiles = getProfilesForCategory(getVehicleKind(activeVehicle), activeVehicle.cat);
       selector.innerHTML = '';
       label.textContent = `Selecionar tipo de ${activeVehicle.cat}`;
@@ -2303,7 +2316,15 @@
       });
       selector.style.display = profiles.length > 1 ? 'flex' : 'none';
       label.style.display = profiles.length > 1 ? 'block' : 'none';
-      requestAnimationFrame(() => selector.querySelector('.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+      const updateScrollHint = () => {
+        const hasMoreRight = selector.scrollLeft + selector.clientWidth < selector.scrollWidth - 2;
+        row.classList.toggle('has-more-right', hasMoreRight);
+      };
+      selector.onscroll = updateScrollHint;
+      requestAnimationFrame(() => {
+        selector.querySelector('.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        updateScrollHint();
+      });
     }
 
     async function openFullModal(v) {
