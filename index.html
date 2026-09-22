@@ -905,14 +905,18 @@
       }
       .spec-item:nth-child(-n+3) { grid-column: span 2 !important; }
       .spec-card, .spec-card.compact {
-        min-height: 58px;
-        padding: 8px 6px; border-radius: 9px;
+        height: 29px; min-height: 29px; max-height: 29px;
+        padding: 4px 6px; border-radius: 9px;
+        display: flex; align-items: center; justify-content: flex-start;
       }
       .spec-label {
         display: block; margin: 0 0 4px; font-size: 10px;
         line-height: 1.15; overflow-wrap: anywhere;
       }
-      .spec-value { margin-top: 4px; font-size: 12px; line-height: 1.1; }
+      .spec-value {
+        margin: 0; font-size: 12px; line-height: 1.1;
+        text-align: left; width: 100%;
+      }
 
       .equipment-list {
         width: 100%; margin-top: 0; padding: 2px 0 8px;
