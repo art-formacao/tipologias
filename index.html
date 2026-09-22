@@ -246,15 +246,20 @@
       display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
     }
     .spec-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+    .spec-item { grid-column: span 3; min-width: 0; }
+    .spec-item.compact { grid-column: span 2; }
     .spec-card {
-      grid-column: span 3; background: white; padding: 15px; border-radius: 12px;
+      background: white; padding: 15px; border-radius: 12px;
       border: 1px solid var(--border); min-width: 0;
     }
-    .spec-card.compact { grid-column: span 2; padding: 12px 14px; }
-    .spec-label { font-size: 11px; color: var(--text-muted); font-weight: bold; }
+    .spec-card.compact { padding: 12px 14px; }
+    .spec-label {
+      display: block; margin: 0 0 6px;
+      font-size: 11px; color: var(--text-muted); font-weight: bold;
+    }
     .spec-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
     @media (max-width: 520px) {
-      .spec-card, .spec-card.compact { grid-column: span 6; }
+      .spec-item, .spec-item.compact { grid-column: span 6; }
     }
     .vehicle-img-container {
       width: 100%; height: 380px; background: #e5e5ea; border-radius: 20px;
@@ -853,12 +858,18 @@
       .spec-grid {
         width: 100%; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;
       }
+      .spec-item, .spec-item.compact {
+        grid-column: span 3 !important; min-width: 0;
+      }
+      .spec-item:nth-child(-n+3) { grid-column: span 2 !important; }
       .spec-card, .spec-card.compact {
-        grid-column: span 3 !important; min-width: 0; min-height: 58px;
+        min-height: 58px;
         padding: 8px 6px; border-radius: 9px;
       }
-      .spec-card:nth-child(-n+3) { grid-column: span 2 !important; }
-      .spec-label { font-size: 7px; line-height: 1.15; overflow-wrap: anywhere; }
+      .spec-label {
+        display: block; margin: 0 0 4px; font-size: 10px;
+        line-height: 1.15; overflow-wrap: anywhere;
+      }
       .spec-value { margin-top: 4px; font-size: 12px; line-height: 1.1; }
 
       .equipment-list {
@@ -907,12 +918,15 @@
         overflow: hidden; text-overflow: ellipsis;
       }
       .fullscreen-header { position: relative; }
-      .profile-heading { flex: 1 1 auto; max-width: calc(100% - 38px); }
+      .profile-heading {
+        flex: 1 1 100%; width: 100%; max-width: none;
+        padding-right: 44px;
+      }
       .profile-variant-area { position: static; }
       .profile-variant-row { padding-right: 38px; }
       .profile-variant-row .profile-close-btn {
         position: absolute; top: 5px; right: 8px;
-        width: 32px; height: 32px; flex-basis: 32px;
+        width: 32px; height: 32px; flex-basis: 32px; z-index: 2;
       }
       .profile-variant-label { font-size: 14px; }
       .profile-variant-btn {
@@ -928,7 +942,9 @@
       .profile-order-care h3,
       .profile-order-service h3,
       .profile-order-attention h3,
-      .profile-order-description-title {
+      .profile-order-description-title,
+      .profile-order-specs-title,
+      .profile-order-equipment-title {
         font-size: 24px !important;
         line-height: 1.25;
       }
@@ -1644,16 +1660,19 @@
       const grid = document.getElementById('specGrid');
       grid.innerHTML = '';
       specifications.forEach((specification, index) => {
-        const card = document.createElement('div');
-        card.className = 'spec-card' + (index >= 4 ? ' compact' : '');
+        const item = document.createElement('div');
+        item.className = 'spec-item' + (index >= 4 ? ' compact' : '');
         const label = document.createElement('span');
         label.className = 'spec-label';
         label.textContent = specification.name;
+        const card = document.createElement('div');
+        card.className = 'spec-card' + (index >= 4 ? ' compact' : '');
         const value = document.createElement('div');
         value.className = 'spec-value';
         value.textContent = specification.value || '--';
-        card.append(label, value);
-        grid.appendChild(card);
+        card.appendChild(value);
+        item.append(label, card);
+        grid.appendChild(item);
       });
     }
 
