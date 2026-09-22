@@ -902,10 +902,35 @@
 
     @media (max-width: 680px) {
       #fvCat { font-size: 14px !important; }
-      #fvTitle { font-size: 26px !important; }
+      #fvTitle {
+        font-size: 26px !important; white-space: nowrap;
+        overflow: hidden; text-overflow: ellipsis;
+      }
+      .fullscreen-header { position: relative; }
+      .profile-heading { flex: 1 1 auto; max-width: calc(100% - 38px); }
+      .profile-variant-area { position: static; }
+      .profile-variant-row { padding-right: 38px; }
+      .profile-variant-row .profile-close-btn {
+        position: absolute; top: 5px; right: 8px;
+        width: 32px; height: 32px; flex-basis: 32px;
+      }
       .profile-variant-label { font-size: 14px; }
       .profile-variant-btn {
-        padding: 10px 14px; border-radius: 9px; font-size: 16px;
+        padding: 14px 20px; border-radius: 10px; font-size: 27px;
+      }
+      .profile-order-description,
+      .profile-order-care .profile-note,
+      .profile-order-service .profile-note,
+      .profile-order-attention .profile-note {
+        font-size: 18px;
+        line-height: 1.45;
+      }
+      .profile-order-care h3,
+      .profile-order-service h3,
+      .profile-order-attention h3,
+      .profile-order-description-title {
+        font-size: 24px !important;
+        line-height: 1.25;
       }
     }
   </style>
