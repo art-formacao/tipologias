@@ -847,12 +847,13 @@
         width: 100%; margin: 15px 0 7px !important; font-size: 13px !important;
       }
       .spec-grid {
-        width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;
+        width: 100%; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;
       }
       .spec-card, .spec-card.compact {
-        grid-column: auto !important; min-width: 0; min-height: 58px;
+        grid-column: span 3 !important; min-width: 0; min-height: 58px;
         padding: 8px 6px; border-radius: 9px;
       }
+      .spec-card:nth-child(-n+3) { grid-column: span 2 !important; }
       .spec-label { font-size: 7px; line-height: 1.15; overflow-wrap: anywhere; }
       .spec-value { margin-top: 4px; font-size: 12px; line-height: 1.1; }
 
