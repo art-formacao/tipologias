@@ -707,6 +707,8 @@
       .profile-variant-row .profile-close-btn {
         width: 30px; height: 30px; flex-basis: 30px; font-size: 19px;
       }
+      .profile-variant-label { font-size: 10.5px; }
+      .profile-variant-btn { padding: 7.5px 10.5px; font-size: 12px; }
       .profile-video-grid,
       .equipment-list { column-gap: 5px; row-gap: 7px; }
       .profile-video-card {
@@ -761,6 +763,8 @@
     }
 
     @media (max-width: 420px) {
+      .profile-variant-label { font-size: 9px; }
+      .profile-variant-btn { padding: 7.5px 10.5px; font-size: 12px; }
       .category-card { height: clamp(160px, 25dvh, 205px); }
     }
 
@@ -863,10 +867,10 @@
         column-gap: 9px; row-gap: 0; overflow: visible;
         scrollbar-width: thin; -webkit-overflow-scrolling: touch;
       }
-      .equipment-card { width: 48px; max-width: 48px; flex: 0 0 48px; font-size: 7px; }
-      .equipment-photo { width: 42px; height: 42px; flex-basis: 42px; }
+      .equipment-card { width: 96px; max-width: 96px; flex: 0 0 96px; font-size: 14px; }
+      .equipment-photo { width: 84px; height: 84px; flex-basis: 84px; }
       .equipment-photo.enlarged {
-        transform: scale(2.8); z-index: 100;
+        transform: scale(2); z-index: 100;
       }
       .equipment-card:first-child .equipment-photo.enlarged { transform-origin: left center; }
       .equipment-card:last-child .equipment-photo.enlarged { transform-origin: right center; }
@@ -889,6 +893,11 @@
         margin: 0 0 7px; font-size: 12px !important; line-height: 1.25;
       }
       .profile-note { font-size: 9px; line-height: 1.45; }
+    }
+
+    @media (max-width: 420px) {
+      .equipment-card { width: 78px; max-width: 78px; flex-basis: 78px; font-size: 12px; }
+      .equipment-photo { width: 68px; height: 68px; flex-basis: 68px; }
     }
   </style>
 </head>
