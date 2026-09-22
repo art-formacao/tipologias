@@ -1012,6 +1012,11 @@
         padding: 6px 2px !important;
         font-size: clamp(11px, 3.8vw, 17px) !important;
         overflow: hidden !important;
+        white-space: pre-line !important;
+        line-height: 1.15 !important;
+        text-align: center !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
       .equipment-photo.enlarged {
         transform: scale(3.36) !important;
@@ -1294,7 +1299,7 @@
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'vehicle-type-btn' + (type.name === currentKind ? ' active' : '');
-        button.textContent = type.name;
+        button.textContent = type.name.replace(/^Tipos de\s+/i, 'Tipos de\n');
         button.onclick = () => switchVehicleKind(type.name);
         typeContainer.appendChild(button);
       });
