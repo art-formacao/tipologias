@@ -38,20 +38,30 @@
     .header-menu-btn:hover, .header-menu-btn:focus-visible { background: rgba(255,255,255,0.12); outline: none; }
     .header-menu-btn svg { width: 25px; height: 25px; }
     .header-search {
-      width: min(208px, 36vw); height: 42px; position: relative; flex: 0 1 208px;
+      width: min(500px, 55vw); height: 46px; position: relative; flex: 0 1 500px;
+      display: flex; align-items: center; gap: 6px; padding: 4px;
+      border: 1px solid rgba(255,255,255,0.35); border-radius: 25px;
+      background: rgba(255,255,255,0.13); transition: background 0.2s ease, border-color 0.2s ease;
     }
-    .header-search svg {
-      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-      width: 19px; height: 19px; color: rgba(255,255,255,0.72); pointer-events: none;
-    }
+    .header-search:focus-within { background: rgba(255,255,255,0.19); border-color: rgba(255,255,255,0.7); }
     .header-search input {
-      width: 100%; height: 100%; padding: 0 18px 0 47px;
-      border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
-      background: rgba(255,255,255,0.10); color: #fff; font-size: 15px; outline: none;
-      transition: background 0.2s ease, border-color 0.2s ease;
+      flex: 1 1 auto; min-width: 0; height: 100%; padding: 0 10px 0 15px;
+      border: 0; border-radius: 21px; background: transparent; color: #fff;
+      font-size: 14px; outline: none;
     }
-    .header-search input::placeholder { color: rgba(255,255,255,0.62); }
-    .header-search input:focus { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.35); }
+    .header-search input::placeholder { color: rgba(255,255,255,0.78); }
+    .header-search-button {
+      width: 36px; height: 36px; flex: 0 0 36px; padding: 0; border: 0; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #fff; color: var(--primary); cursor: pointer;
+      box-shadow: 0 2px 7px rgba(0,0,0,0.20); transition: 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .header-search-button svg { position: static; width: 20px; height: 20px; color: currentColor; pointer-events: none; }
+    .header-search-button:hover, .header-search-button:focus-visible {
+      background: var(--primary-light); color: #124b8d; transform: scale(1.04); outline: none;
+    }
+    .header-search-button:active { background: #d4e4f7; transform: scale(0.95); }
 
     .app-container {
       width: 100%; height: calc(100vh - 70px); min-height: 0; padding: 20px 30px;
@@ -62,8 +72,10 @@
       .brand-header { height: 64px; padding: 0 12px; gap: 8px; }
       .brand-logo { width: 155px; max-width: 39vw; }
       .header-menu-btn { width: 38px; height: 38px; flex-basis: 38px; }
-      .header-search { width: auto; flex: 1 1 auto; height: 38px; }
-      .header-search input { font-size: 14px; padding-left: 40px; }
+      .header-search { width: auto; flex: 1 1 auto; height: 38px; padding: 3px; gap: 3px; }
+      .header-search input { font-size: 10px; padding: 0 4px 0 8px; }
+      .header-search-button { width: 30px; height: 30px; flex-basis: 30px; }
+      .header-search-button svg { width: 17px; height: 17px; }
       .app-container { height: calc(100vh - 64px); min-height: 0; padding: 18px 16px; }
     }
 
@@ -471,9 +483,10 @@
     @media (max-width: 680px) {
       .brand-header { height: 54px; padding: 0 8px; gap: 7px; }
       .brand-logo { width: 118px; max-width: 34vw; }
-      .header-search { height: 32px; }
-      .header-search svg { left: 10px; width: 15px; height: 15px; }
-      .header-search input { padding: 0 10px 0 31px; font-size: 11px; }
+      .header-search { height: 34px; padding: 3px; gap: 3px; }
+      .header-search input { padding: 0 3px 0 7px; font-size: 9px; }
+      .header-search-button { width: 28px; height: 28px; flex-basis: 28px; }
+      .header-search-button svg { width: 16px; height: 16px; }
       .app-container {
         height: calc(100vh - 54px); min-height: 0; padding: 10px 8px;
         overflow: hidden;
@@ -746,19 +759,142 @@
     @media (max-width: 420px) {
       .category-card { height: clamp(160px, 25dvh, 205px); }
     }
+
+    /* Escolha quando um código identifica mais do que uma tipologia */
+    .search-results-modal {
+      position: fixed; inset: 0; z-index: 800; display: none; align-items: center; justify-content: center;
+      padding: 20px; background: rgba(20, 24, 30, 0.35); backdrop-filter: blur(2px);
+    }
+    .search-results-modal.open { display: flex; }
+    .search-results-panel {
+      width: min(560px, 100%); max-height: min(620px, 82vh); overflow-y: auto;
+      padding: 22px; border: 1px solid var(--border); border-radius: 18px; background: #fff;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.24);
+    }
+    .search-results-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 8px; }
+    .search-results-heading h2 { margin: 0; font-size: 20px; }
+    .search-results-text { margin: 0 0 16px; color: var(--text-muted); font-size: 13px; }
+    .search-results-close {
+      width: 32px; height: 32px; flex: 0 0 32px; padding: 0; border: 0; border-radius: 50%;
+      background: #e5e5e7; color: #5f6064; font-size: 19px; cursor: pointer;
+    }
+    .search-results-close:hover, .search-results-close:active { background: #ef3340; color: #fff; }
+    .search-results-list { display: grid; gap: 9px; }
+    .search-result-btn {
+      width: 100%; padding: 13px 15px; border: 1px solid var(--border); border-radius: 12px;
+      background: #f7f7f9; color: var(--text); text-align: left; cursor: pointer;
+    }
+    .search-result-btn:hover, .search-result-btn:focus-visible { border-color: var(--primary); background: var(--primary-light); outline: none; }
+    .search-result-title { display: block; font-size: 15px; font-weight: 700; }
+    .search-result-path { display: block; margin-top: 3px; color: var(--text-muted); font-size: 11px; }
+    @media (max-width: 680px) {
+      .search-results-modal { padding: 12px; }
+      .search-results-panel { padding: 16px; border-radius: 14px; }
+      .search-results-heading h2 { font-size: 17px; }
+      .search-result-btn { padding: 11px 12px; }
+    }
+
+    /* Layout vertical exclusivo para telemóveis */
+    @media (max-width: 680px) {
+      .category-showcase {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 11px; width: 100%; padding: 2px 2px 14px;
+      }
+      .category-card {
+        width: 100%; height: clamp(190px, 55vw, 235px); min-height: 190px;
+        border-radius: 13px;
+      }
+      .category-card-title { min-height: 36px; padding: 8px 7px; font-size: 13px; }
+      .category-card-image { padding: 7px 10px; }
+      .category-card-count { min-height: 20px; padding: 3px 7px 7px; font-size: 8px; }
+
+      .fullscreen-body {
+        display: flex !important; flex-direction: column; width: 100%;
+        padding: 9px 8px 26px; gap: 0;
+      }
+      .profile-left-column, .profile-right-column { display: contents; }
+      .profile-order-image { order: 1; }
+      .profile-order-videos { order: 2; }
+      .profile-order-specs-title { order: 3; }
+      .profile-order-specs { order: 4; }
+      .profile-order-equipment-title { order: 5; }
+      .profile-order-equipment { order: 6; }
+      .profile-order-description-title { order: 7; }
+      .profile-order-description { order: 8; }
+      .profile-order-care { order: 9; }
+      .profile-order-service { order: 10; }
+      .profile-order-attention { order: 11; }
+
+      .vehicle-img-container {
+        width: 100%; height: clamp(205px, 58vw, 270px); border-radius: 13px;
+      }
+      .profile-video-grid {
+        width: 100%; margin: 9px 0 11px; flex-wrap: wrap;
+        justify-content: flex-start; column-gap: 7px; row-gap: 7px;
+      }
+      .profile-video-card {
+        width: 42px; max-width: 42px; height: 42px; flex: 0 0 42px;
+        border-radius: 6px;
+      }
+
+      .profile-order-specs-title,
+      .profile-order-equipment-title,
+      .profile-order-description-title {
+        width: 100%; margin: 15px 0 7px !important; font-size: 13px !important;
+      }
+      .spec-grid {
+        width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
+      }
+      .spec-card, .spec-card.compact {
+        grid-column: auto !important; min-width: 0; min-height: 58px;
+        padding: 8px 6px; border-radius: 9px;
+      }
+      .spec-label { font-size: 7px; line-height: 1.15; overflow-wrap: anywhere; }
+      .spec-value { margin-top: 4px; font-size: 12px; line-height: 1.1; }
+
+      .equipment-list {
+        width: 100%; margin-top: 0; padding: 2px 0 8px;
+        display: flex; flex-wrap: nowrap; justify-content: flex-start;
+        column-gap: 9px; row-gap: 0; overflow-x: auto; overflow-y: visible;
+        scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+      }
+      .equipment-card { width: 48px; max-width: 48px; flex: 0 0 48px; font-size: 7px; }
+      .equipment-photo { width: 42px; height: 42px; flex-basis: 42px; }
+
+      .profile-order-description {
+        width: 100%; margin: 0; padding: 11px 12px; border: 1px solid var(--border);
+        border-radius: 11px; background: #fff;
+      }
+      .profile-order-care,
+      .profile-order-service,
+      .profile-order-attention {
+        width: 100%; margin: 11px 0 0; padding: 11px 12px;
+        border: 1px solid var(--border); border-radius: 11px;
+      }
+      .profile-order-care, .profile-order-service { background: #fff; }
+      .profile-order-attention { background: #efeee9; }
+      .profile-order-care h3,
+      .profile-order-service h3,
+      .profile-order-attention h3 {
+        margin: 0 0 7px; font-size: 12px !important; line-height: 1.25;
+      }
+      .profile-note { font-size: 9px; line-height: 1.45; }
+    }
   </style>
 </head>
 <body>
 
   <header class="brand-header">
     <img class="brand-logo" src="Logo-TJA_Pri.png" alt="TJA Transportes">
-    <div class="header-search">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
-        <path d="m16 16 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <input id="appSearch" type="search" placeholder="Pesquisar..." aria-label="Pesquisar na aplicação" oninput="searchApp(this.value)">
-    </div>
+    <form class="header-search" role="search" onsubmit="submitAppSearch(event)">
+      <input id="appSearch" type="search" placeholder="Procure a tipologia pelo código, matrícula ou nome" aria-label="Procure a tipologia pelo código, matrícula ou nome" autocomplete="off">
+      <button class="header-search-button" type="submit" aria-label="Iniciar pesquisa" title="Pesquisar">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="2.4"/>
+          <path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </form>
   </header>
 
   <div class="app-container">
@@ -806,41 +942,52 @@
     </div>
 
     <div class="fullscreen-body">
-      <div>
-        <div class="vehicle-img-container" id="imgContainer">
+      <div class="profile-left-column">
+        <div class="vehicle-img-container profile-order-image" id="imgContainer">
           <span style="color:var(--text-muted);" id="noImgText">Sem imagens anexadas</span>
           <div class="gallery-track" id="galleryTrack" onscroll="syncGalleryIndex()"></div>
           <button class="gallery-btn prev" id="galleryPrev" type="button" onclick="changeGallery(-1)" aria-label="Fotografia anterior">‹</button>
           <button class="gallery-btn next" id="galleryNext" type="button" onclick="changeGallery(1)" aria-label="Fotografia seguinte">›</button>
           <span class="gallery-counter" id="galleryCounter"></span>
         </div>
-        <div class="profile-video-grid" id="profileVideoGrid" aria-label="Vídeos da tipologia"></div>
-        <h3 class="profile-description-title">Descrição</h3>
-        <p id="fvDesc" class="profile-note">--</p>
+        <div class="profile-video-grid profile-order-videos" id="profileVideoGrid" aria-label="Vídeos da tipologia"></div>
+        <h3 class="profile-description-title profile-order-description-title">Descrição</h3>
+        <p id="fvDesc" class="profile-note profile-order-description">--</p>
 
-        <section class="profile-note-section">
+        <section class="profile-note-section profile-order-care">
           <h3>Cuidados a ter antes e depois da utilização</h3>
           <p id="fvCareBeforeAfter" class="profile-note">--</p>
         </section>
 
-        <section class="attention-section">
+        <section class="attention-section profile-order-attention">
           <h3>PONTOS DE ATENÇÃO</h3>
           <p id="fvAttentionPoints" class="profile-note">--</p>
         </section>
       </div>
 
-      <div>
-        <h3>Especificações Técnicas</h3>
-        <div class="spec-grid" id="specGrid"></div>
+      <div class="profile-right-column">
+        <h3 class="profile-order-specs-title">Especificações Técnicas</h3>
+        <div class="spec-grid profile-order-specs" id="specGrid"></div>
 
-        <h3 style="margin-top:30px;">Equipamentos Associados</h3>
-        <div class="equipment-list" id="fvEquips"></div>
+        <h3 class="profile-order-equipment-title" style="margin-top:30px;">Equipamentos Associados</h3>
+        <div class="equipment-list profile-order-equipment" id="fvEquips"></div>
 
-        <section class="profile-note-section">
+        <section class="profile-note-section profile-order-service">
           <h3>Aspetos a ter em conta durante o serviço com este tipo de veículo</h3>
           <p id="fvServiceConsiderations" class="profile-note">--</p>
         </section>
       </div>
+    </div>
+  </div>
+
+  <div class="search-results-modal" id="searchResultsModal" onclick="closeSearchResults(event)">
+    <div class="search-results-panel" role="dialog" aria-modal="true" aria-labelledby="searchResultsTitle" onclick="event.stopPropagation()">
+      <div class="search-results-heading">
+        <h2 id="searchResultsTitle">Escolha a tipologia</h2>
+        <button class="search-results-close" type="button" onclick="closeSearchResults()" aria-label="Fechar resultados">✕</button>
+      </div>
+      <p class="search-results-text" id="searchResultsText"></p>
+      <div class="search-results-list" id="searchResultsList"></div>
     </div>
   </div>
 
@@ -862,6 +1009,7 @@
   <script>
     let dataset = [];
     let availableTypes = [];
+    let vehicleRegistry = [];
     let currentKind = '';
     let currentCat = '';
     let searchQuery = '';
@@ -1078,6 +1226,10 @@
       return spreadsheetFileStem(path) === 'link';
     }
 
+    function isTypesSpreadsheetFile(path) {
+      return spreadsheetFileStem(path) === 'tipos';
+    }
+
     function isImageFile(path) {
       const name = pathName(path);
       return browserImageExtensions.has(name.slice(name.lastIndexOf('.')).toLowerCase());
@@ -1162,6 +1314,37 @@
       }
     }
 
+    async function readGithubVehicleRegistry(filePath) {
+      if (!filePath) return [];
+      try {
+        const XLSX = await loadSheetJs();
+        const response = await fetch(githubRawUrl(filePath), { cache: 'default' });
+        if (!response.ok) throw new Error(`resposta HTTP ${response.status}`);
+        const workbook = XLSX.read(await response.arrayBuffer(), { type: 'array', cellDates: false });
+        const firstSheetName = workbook.SheetNames?.[0];
+        if (!firstSheetName) return [];
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { header: 1, raw: false, defval: '' });
+        const registry = [];
+        const seen = new Set();
+        for (const row of rows) {
+          const profileName = String(row?.[0] ?? '').trim();
+          const acronym = String(row?.[1] ?? '').trim();
+          const code = String(row?.[2] ?? '').trim();
+          const registration = String(row?.[3] ?? '').trim();
+          if (!profileName || normalizeFolderText(profileName) === 'tipo') continue;
+          if (!acronym && !code && !registration) continue;
+          const key = [profileName, acronym, code, registration].map(normalizeFolderText).join('|');
+          if (seen.has(key)) continue;
+          seen.add(key);
+          registry.push({ profileName, acronym, code, registration });
+        }
+        return registry;
+      } catch (error) {
+        console.warn(`Não foi possível ler o Excel de pesquisa "${filePath}".`, error);
+        return [];
+      }
+    }
+
     async function readGithubVideoLinks(filePath) {
       try {
         const XLSX = await loadSheetJs();
@@ -1199,6 +1382,9 @@
         const parts = entry.path.split('/');
         return parts[0] === rootPath && parts.length > 1;
       });
+      const registryExcel = scopedEntries.find(entry =>
+        entry.type === 'blob' && pathParent(entry.path) === rootPath && isTypesSpreadsheetFile(entry.path)
+      );
       const directories = scopedEntries.filter(entry => entry.type === 'tree');
       const typeEntries = directories
         .filter(entry => pathParent(entry.path) === rootPath)
@@ -1294,7 +1480,14 @@
         });
       }
 
-      return { generatedAt: new Date().toISOString(), types, profiles };
+      const vehicleRegistry = registryExcel ? await readGithubVehicleRegistry(registryExcel.path) : [];
+      return {
+        generatedAt: new Date().toISOString(),
+        types,
+        profiles,
+        registryExcelPath: registryExcel?.path || '',
+        vehicleRegistry
+      };
     }
 
     async function loadGithubManifest() {
@@ -1309,7 +1502,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v7-videos';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v8-registry-search';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
@@ -1322,6 +1515,14 @@
           }))
         : [];
       dataset = Array.isArray(manifest?.profiles) ? manifest.profiles.map(mapFolderProfile) : [];
+      vehicleRegistry = Array.isArray(manifest?.vehicleRegistry)
+        ? manifest.vehicleRegistry.map(item => ({
+            profileName: String(item?.profileName || '').trim(),
+            acronym: String(item?.acronym || '').trim(),
+            code: String(item?.code || '').trim(),
+            registration: String(item?.registration || '').trim()
+          })).filter(item => item.profileName && (item.acronym || item.code || item.registration))
+        : [];
       if (!availableTypes.length && dataset.length) {
         const typeMap = new Map();
         dataset.forEach(item => {
@@ -1420,10 +1621,133 @@
       openFullModal(chooseInitialProfile(profiles));
     }
 
-    function searchApp(value) {
-      searchQuery = normalizedSearchText(value.trim());
-      closeFullModal();
+    function normalizeIdentifier(value) {
+      return normalizedSearchText(value).replace(/[^a-z0-9]/g, '');
+    }
+
+    function normalizeProfileName(value) {
+      return normalizedSearchText(value)
+        .replace(/\bstandart\b/g, 'standard')
+        .replace(/[—–_\/\\-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function profileNames(vehicle) {
+      const sourceName = String(vehicle?.sourcePath || '').split('/').filter(Boolean).pop() || '';
+      let decodedSourceName = sourceName;
+      try { decodedSourceName = decodeURIComponent(sourceName); } catch (error) {}
+      return [vehicle?.shortTitle, vehicle?.title, decodedSourceName]
+        .map(normalizeProfileName)
+        .filter(Boolean);
+    }
+
+    function profilesForRegistryName(profileName) {
+      const wanted = normalizeProfileName(profileName);
+      if (!wanted) return [];
+      return dataset.filter(vehicle => profileNames(vehicle).includes(wanted));
+    }
+
+    function registryProfilesForQuery(value) {
+      const query = normalizeIdentifier(value);
+      if (!query) return [];
+      const matches = vehicleRegistry.filter(item =>
+        [item.acronym, item.code, item.registration]
+          .map(normalizeIdentifier)
+          .some(identifier => identifier && identifier === query)
+      );
+      const uniqueProfiles = new Map();
+      matches.forEach(item => {
+        profilesForRegistryName(item.profileName).forEach(vehicle => {
+          const key = vehicle.sourcePath || `${vehicle.kind}|${vehicle.cat}|${vehicle.title}`;
+          if (!uniqueProfiles.has(key)) uniqueProfiles.set(key, vehicle);
+        });
+      });
+      return Array.from(uniqueProfiles.values());
+    }
+
+    function closeSearchResults(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('searchResultsModal').classList.remove('open');
+    }
+
+    function openProfileFromSearch(vehicle) {
+      closeSearchResults();
+      searchQuery = '';
+      currentKind = getVehicleKind(vehicle);
+      currentCat = vehicle.cat;
+      renderNavigation();
       renderTree();
+      openFullModal(vehicle);
+    }
+
+    function showSearchResults(profiles, originalQuery) {
+      const list = document.getElementById('searchResultsList');
+      const text = document.getElementById('searchResultsText');
+      list.innerHTML = '';
+      text.textContent = `A pesquisa “${originalQuery}” encontrou ${profiles.length} tipologias. Qual pretende consultar?`;
+      profiles.forEach(vehicle => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'search-result-btn';
+        const title = document.createElement('span');
+        title.className = 'search-result-title';
+        title.textContent = vehicle.shortTitle || vehicle.title;
+        const path = document.createElement('span');
+        path.className = 'search-result-path';
+        path.textContent = [getVehicleKind(vehicle), vehicle.cat, vehicle.folder].filter(Boolean).join(' › ');
+        button.append(title, path);
+        button.onclick = () => openProfileFromSearch(vehicle);
+        list.appendChild(button);
+      });
+      document.getElementById('searchResultsModal').classList.add('open');
+    }
+
+    function uniqueProfiles(profiles) {
+      const unique = new Map();
+      profiles.forEach(vehicle => {
+        const key = vehicle.sourcePath || `${vehicle.kind}|${vehicle.cat}|${vehicle.title}`;
+        if (!unique.has(key)) unique.set(key, vehicle);
+      });
+      return Array.from(unique.values());
+    }
+
+    function profilesForNameQuery(value) {
+      const wanted = normalizeProfileName(value);
+      if (!wanted) return [];
+      const exact = dataset.filter(vehicle => profileNames(vehicle).includes(wanted));
+      if (exact.length) return uniqueProfiles(exact);
+      return uniqueProfiles(dataset.filter(vehicle =>
+        profileNames(vehicle).some(name => name.includes(wanted))
+      ));
+    }
+
+    function openSearchMatches(profiles, originalQuery) {
+      if (profiles.length === 1) openProfileFromSearch(profiles[0]);
+      else if (profiles.length > 1) showSearchResults(profiles, originalQuery);
+      return profiles.length;
+    }
+
+    function executeAppSearch(value) {
+      const query = String(value || '').trim();
+      closeSearchResults();
+      closeFullModal();
+      if (!query) {
+        searchQuery = '';
+        renderTree();
+        return;
+      }
+      const identifierProfiles = registryProfilesForQuery(query);
+      if (openSearchMatches(identifierProfiles, query)) return;
+      const nameProfiles = profilesForNameQuery(query);
+      if (openSearchMatches(nameProfiles, query)) return;
+      searchQuery = normalizedSearchText(query);
+      renderTree();
+    }
+
+    function submitAppSearch(event) {
+      event.preventDefault();
+      executeAppSearch(document.getElementById('appSearch').value);
     }
 
     function toggleDrawer() {
@@ -1895,6 +2219,10 @@
     }
 
     document.addEventListener('keydown', event => {
+      if (document.getElementById('searchResultsModal').classList.contains('open')) {
+        if (event.key === 'Escape') closeSearchResults();
+        return;
+      }
       if (document.getElementById('videoPlayerModal').classList.contains('open')) {
         if (event.key === 'Escape') closeProfileVideo();
         return;
