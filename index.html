@@ -714,15 +714,16 @@
     /* Alinhamentos finais do perfil */
     .profile-variant-row {
       width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+      position: relative;
     }
     .profile-variant-row .profile-variant-selector {
-      flex: 1 1 auto; width: auto; min-width: 0; padding-bottom: 0;
+      flex: 1 1 100%; width: 100%; min-width: 0; padding-bottom: 0;
     }
     .profile-variant-row .profile-close-btn {
       align-self: center; margin: 0; width: 34px; height: 34px; flex: 0 0 34px;
     }
     .profile-variant-scroll-hint {
-      display: none; position: absolute; right: 38px; top: 0; height: 44px; z-index: 2;
+      display: none; position: absolute; right: 0; top: 0; height: 44px; z-index: 2;
       width: 30px; align-items: center; justify-content: flex-end;
       padding-right: 2px; color: var(--primary); font-size: 26px; font-weight: 700;
       pointer-events: none; background: linear-gradient(90deg, rgba(255,255,255,0), #fff 55%);
@@ -1003,8 +1004,11 @@
         width: 100%; padding-right: 0; overflow: visible;
       }
       .profile-variant-row .profile-close-btn {
-        position: absolute; top: 5px; right: 8px;
         width: 32px; height: 32px; flex-basis: 32px; z-index: 2;
+      }
+      .fullscreen-header > .profile-close-btn {
+        position: absolute; top: 5px; right: 8px;
+        width: 32px; height: 32px; flex-basis: 32px; z-index: 5;
       }
       .profile-variant-label { font-size: 14px; }
       .profile-variant-selector {
@@ -1022,10 +1026,10 @@
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       .profile-variant-scroll-hint {
-        right: 34px; top: 22px; width: 24px; height: 44px; font-size: 28px;
+        right: 0; top: 0; width: 24px; height: 44px; font-size: 28px;
       }
       .profile-variant-scroll-hint.left {
-        left: 0; right: auto; top: 22px; width: 24px; height: 44px;
+        left: 0; right: auto; top: 0; width: 24px; height: 44px;
       }
       .profile-order-description,
       .profile-order-care .profile-note,
@@ -1148,13 +1152,13 @@
         <span id="fvCat" style="color:var(--primary); font-weight:bold; font-size:10px; line-height:1; text-transform:uppercase;">--</span>
         <h2 id="fvTitle" style="margin:2px 0 0 0; font-size:21px; line-height:1.1;">--</h2>
       </div>
+      <button class="profile-close-btn" type="button" onclick="closeFullModal()" aria-label="Fechar perfil" title="Fechar perfil">✕</button>
       <div class="profile-variant-area">
         <span class="profile-variant-label" id="profileVariantLabel">Selecionar variante</span>
         <div class="profile-variant-row">
           <div class="profile-variant-selector" id="profileVariantSelector"></div>
           <span class="profile-variant-scroll-hint left" id="profileVariantScrollHintLeft" aria-hidden="true">‹</span>
           <span class="profile-variant-scroll-hint" id="profileVariantScrollHint" aria-hidden="true">›</span>
-          <button class="profile-close-btn" type="button" onclick="closeFullModal()" aria-label="Fechar perfil" title="Fechar perfil">✕</button>
         </div>
       </div>
     </div>
@@ -2335,7 +2339,7 @@
       };
       selector.onscroll = updateScrollHint;
       requestAnimationFrame(() => {
-        selector.querySelector('.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        selector.scrollLeft = 0;
         updateScrollHint();
       });
     }
