@@ -361,6 +361,10 @@
     .profile-description-title { margin-top: 25px; }
     .profile-order-videos-title { margin: 30px 0 0; }
     @media (min-width: 851px) {
+      .fullscreen-body {
+        column-gap: 40px;
+        row-gap: 9px;
+      }
       .profile-left-column,
       .profile-right-column { display: contents; }
       .profile-order-image {
@@ -378,7 +382,7 @@
       .profile-order-videos-title,
       .profile-order-equipment-title {
         grid-row: 3;
-        margin-top: 0 !important;
+        margin: 0 !important;
       }
       .profile-order-videos-title { grid-column: 1; }
       .profile-order-equipment-title { grid-column: 2; }
@@ -388,9 +392,12 @@
       }
       .profile-video-grid {
         grid-column: 1;
-        margin-top: 9px;
+        margin-top: 0;
       }
-      .profile-order-equipment { grid-column: 2; }
+      .profile-order-equipment {
+        grid-column: 2;
+        margin-top: 0;
+      }
       .profile-order-text-sections { grid-row: 5; }
     }
     .video-player-modal {
