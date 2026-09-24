@@ -1266,7 +1266,11 @@
     }
 
     function getProfilesForCategory(kind, category) {
-      return dataset.filter(item => getVehicleKind(item) === kind && item.cat === category);
+      return dataset.filter(item =>
+        !item.isSubprofile &&
+        getVehicleKind(item) === kind &&
+        item.cat === category
+      );
     }
 
     function chooseInitialProfile(profiles) {
@@ -1292,7 +1296,8 @@
       if (!type) return;
       let visibleCount = 0;
       (type.categories || []).forEach(category => {
-        const allProfiles = getProfilesForCategory(currentKind, category);
+        const allProfiles = getProfilesForCategory(currentKind, category)
+          .filter(profile => !profile.isSubprofile);
         const matchingProfiles = allProfiles.filter(profileMatchesSearch);
         const categoryMatches = normalizedSearchText(`${currentKind} ${category}`).includes(searchQuery);
         if (searchQuery && !categoryMatches && !matchingProfiles.length) return;
@@ -1366,6 +1371,7 @@
         sourcePath: profile.sourcePath,
         variantGroup: profile.variantGroup || '',
         variantLabel: profile.variantLabel || profile.shortTitle || profile.title,
+        isSubprofile: Boolean(profile.isSubprofile),
         desc: profile.description || '',
         careBeforeAfter: profile.careBeforeAfter || '',
         attentionPoints: profile.attentionPoints || '',
@@ -1698,18 +1704,16 @@
 
       const profiles = [];
       const candidateProfilePaths = Array.from(profilePaths);
-      const nestedProfilePaths = new Set(candidateProfilePaths.filter(profilePath =>
-        candidateProfilePaths.some(candidate =>
-          candidate !== profilePath && pathParent(candidate) === profilePath
-        )
-      ));
-      const selectedProfilePaths = candidateProfilePaths
-        .filter(profilePath => !nestedProfilePaths.has(profilePath))
-        .sort(compareNaturalPaths);
+      const selectedProfilePaths = candidateProfilePaths.sort(compareNaturalPaths);
       const variantSiblingCounts = new Map();
       selectedProfilePaths.forEach(profilePath => {
         const parent = pathParent(profilePath);
         variantSiblingCounts.set(parent, (variantSiblingCounts.get(parent) || 0) + 1);
+      });
+      const variantParentCounts = new Map();
+      selectedProfilePaths.forEach(profilePath => {
+        const childCount = variantSiblingCounts.get(profilePath) || 0;
+        if (childCount > 1) variantParentCounts.set(profilePath, childCount);
       });
       for (const profilePath of selectedProfilePaths) {
         const parts = profilePath.split('/');
@@ -1747,11 +1751,13 @@
           shortTitle: folder ? profileName : '',
           title: folder ? `${folder} — ${profileName}` : profileName,
           sourcePath: `./${profilePath}`,
-          variantGroup: candidateProfilePaths.includes(pathParent(profilePath)) &&
-            (variantSiblingCounts.get(pathParent(profilePath)) || 0) > 1
-            ? `./${pathParent(profilePath)}`
-            : '',
+          variantGroup: (variantParentCounts.get(profilePath) || 0) > 1
+            ? `./${profilePath}`
+            : (variantParentCounts.get(pathParent(profilePath)) || 0) > 1
+              ? `./${pathParent(profilePath)}`
+              : '',
           variantLabel: profileName,
+          isSubprofile: (variantParentCounts.get(pathParent(profilePath)) || 0) > 1,
           photos: photos.map(photo => `./${photo.path}`),
           equipment: equipmentPhotos.map(photo => ({
             name: pathName(photo.path).replace(/\.[^.]+$/, ''),
@@ -1792,7 +1798,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v9-profile-groups';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v10-nested-profiles';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
@@ -2408,6 +2414,7 @@
       const profiles = activeVehicle.variantGroup
         ? dataset.filter(profile =>
             profile.variantGroup === activeVehicle.variantGroup &&
+            profile.isSubprofile &&
             getVehicleKind(profile) === getVehicleKind(activeVehicle) &&
             profile.cat === activeVehicle.cat
           )
