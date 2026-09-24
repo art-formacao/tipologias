@@ -898,11 +898,7 @@
       .profile-order-specs { order: 4; }
       .profile-order-equipment-title { order: 5; }
       .profile-order-equipment { order: 6; }
-      .profile-order-description-title { order: 7; }
-      .profile-order-description { order: 8; }
-      .profile-order-care { order: 9; }
-      .profile-order-service { order: 10; }
-      .profile-order-attention { order: 11; }
+      .profile-order-text-sections { order: 7; }
 
       .vehicle-img-container {
         width: 100%; height: clamp(205px, 58vw, 270px); border-radius: 13px;
@@ -922,12 +918,9 @@
         width: 100%; margin: 15px 0 7px !important; font-size: 13px !important;
       }
       .spec-grid {
-        width: 100%; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;
+        width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
       }
-      .spec-item, .spec-item.compact {
-        grid-column: span 3 !important; min-width: 0;
-      }
-      .spec-item:nth-child(-n+3) { grid-column: span 2 !important; }
+      .spec-item, .spec-item.compact { grid-column: span 1 !important; min-width: 0; }
       .spec-card, .spec-card.compact {
         height: 40px; min-height: 40px; max-height: 40px;
         padding: 4px 6px; border-radius: 9px;
@@ -1113,8 +1106,17 @@
       grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     }
     .spec-item,
-    .spec-item.compact {
+    .spec-item.compact,
+    .spec-item:nth-child(n) {
       grid-column: span 1 !important;
+    }
+    .profile-order-text-sections {
+      width: 100%;
+    }
+    @media (max-width: 680px) {
+      .profile-order-text-sections {
+        order: 7;
+      }
     }
     .profile-dynamic-section h3 {
       font-size: 18px;
