@@ -279,6 +279,12 @@
       font-size: 11px; color: var(--text-muted); font-weight: bold;
     }
     .spec-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
+    .profile-dynamic-sections { display: flex; flex-direction: column; gap: 18px; }
+    .profile-dynamic-section h3 { margin: 0 0 9px; }
+    .profile-dynamic-section .profile-note {
+      margin: 0; padding: 15px; border: 1px solid var(--border);
+      border-radius: 12px; background: #fff;
+    }
     @media (max-width: 520px) {
       .spec-item, .spec-item.compact { grid-column: span 6; }
     }
@@ -1103,6 +1109,30 @@
         transform: scale(3.36) !important;
       }
     }
+    .spec-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+    .spec-item,
+    .spec-item.compact {
+      grid-column: span 1 !important;
+    }
+    .profile-dynamic-section h3 {
+      font-size: 18px;
+    }
+    .profile-dynamic-section .profile-note {
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    @media (max-width: 680px) {
+      .profile-dynamic-section h3 {
+        font-size: 24px !important;
+        line-height: 1.25;
+      }
+      .profile-dynamic-section .profile-note {
+        font-size: 18px;
+        line-height: 1.45;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1179,18 +1209,7 @@
           <span class="gallery-counter" id="galleryCounter"></span>
         </div>
         <div class="profile-video-grid profile-order-videos" id="profileVideoGrid" aria-label="Vídeos da tipologia"></div>
-        <h3 class="profile-description-title profile-order-description-title">Descrição</h3>
-        <p id="fvDesc" class="profile-note profile-order-description">--</p>
-
-        <section class="profile-note-section profile-order-care">
-          <h3>Cuidados a ter antes e depois da utilização</h3>
-          <p id="fvCareBeforeAfter" class="profile-note">--</p>
-        </section>
-
-        <section class="attention-section profile-order-attention">
-          <h3>PONTOS DE ATENÇÃO</h3>
-          <p id="fvAttentionPoints" class="profile-note">--</p>
-        </section>
+        <div class="profile-dynamic-sections profile-order-text-sections" id="profileTextSections"></div>
       </div>
 
       <div class="profile-right-column">
@@ -1199,11 +1218,6 @@
 
         <h3 class="profile-order-equipment-title" style="margin-top:30px;">Equipamentos Associados</h3>
         <div class="equipment-list profile-order-equipment" id="fvEquips"></div>
-
-        <section class="profile-note-section profile-order-service">
-          <h3>Aspetos a ter em conta durante o serviço com este tipo de veículo</h3>
-          <p id="fvServiceConsiderations" class="profile-note">--</p>
-        </section>
       </div>
     </div>
   </div>
@@ -1353,6 +1367,7 @@
         careBeforeAfter: profile.careBeforeAfter || '',
         attentionPoints: profile.attentionPoints || '',
         serviceConsiderations: profile.serviceConsiderations || '',
+        textSections: Array.isArray(profile.textSections) ? profile.textSections : [],
         specifications: profile.specifications || [],
         excelPath: profile.excelPath || '',
         linkExcelPath: profile.linkExcelPath || '',
@@ -1513,57 +1528,55 @@
         const response = await fetch(githubRawUrl(filePath), { cache: 'default' });
         if (!response.ok) throw new Error(`resposta HTTP ${response.status}`);
         workbook = XLSX.read(await response.arrayBuffer(), { type: 'array', cellDates: false });
-        const firstSheetName = workbook.SheetNames?.[0];
-        if (!firstSheetName) return {
-          specifications: [], description: '', careBeforeAfter: '', attentionPoints: '', serviceConsiderations: ''
-        };
-        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {
+        const plan1Name = workbook.SheetNames?.find(name => normalizeFolderText(name) === 'plan1') || workbook.SheetNames?.[0];
+        const plan2Name = workbook.SheetNames?.find(name => normalizeFolderText(name) === 'plan2');
+        if (!plan1Name) return { specifications: [], textSections: [] };
+        const rowsFor = sheetName => XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
           header: 1, raw: false, defval: ''
         });
+        const plan1Rows = rowsFor(plan1Name);
+        const plan2Rows = plan2Name ? rowsFor(plan2Name) : [];
         const specifications = [];
-        let description = '';
-        let careBeforeAfter = '';
-        let attentionPoints = '';
-        let serviceConsiderations = '';
-        let activeTextField = '';
-        const appendText = (field, value) => {
-          if (!value) return;
-          const current = field === 'description' ? description
-            : field === 'careBeforeAfter' ? careBeforeAfter
-            : field === 'attentionPoints' ? attentionPoints
-            : serviceConsiderations;
-          const combined = current ? `${current}\n${value}` : value;
-          if (field === 'description') description = combined;
-          else if (field === 'careBeforeAfter') careBeforeAfter = combined;
-          else if (field === 'attentionPoints') attentionPoints = combined;
-          else serviceConsiderations = combined;
-        };
-        for (const row of rows) {
+        const plan1TextSections = [];
+        const knownTextLabels = new Set([
+          'descricao',
+          'cuidados a ter antes e depois da utilizacao',
+          'pontos de atencao',
+          'aspetos a ter em conta durante o servico com este tipo de veiculo'
+        ]);
+        let activeSection = null;
+        for (const row of plan1Rows) {
           const name = String(row?.[0] ?? '').trim();
           const value = String(row?.[1] ?? '').trim();
           if (!name) {
-            if (value && activeTextField) appendText(activeTextField, value);
+            if (value && activeSection) activeSection.value += `\n${value}`;
             continue;
           }
           const normalizedName = normalizeFolderText(name).replace(/:\s*$/, '').replace(/\s+/g, ' ');
-          if (normalizedName === 'descricao') {
-            activeTextField = 'description';
-            description = value;
-          } else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') {
-            activeTextField = 'careBeforeAfter';
-            careBeforeAfter = value;
-          } else if (normalizedName === 'pontos de atencao') {
-            activeTextField = 'attentionPoints';
-            attentionPoints = value;
-          } else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') {
-            activeTextField = 'serviceConsiderations';
-            serviceConsiderations = value;
+          if (knownTextLabels.has(normalizedName)) {
+            activeSection = { title: name, value };
+            plan1TextSections.push(activeSection);
           } else {
-            activeTextField = '';
             specifications.push({ name, value });
+            activeSection = null;
           }
         }
-        return { specifications, description, careBeforeAfter, attentionPoints, serviceConsiderations };
+        const textSections = [];
+        let plan2Section = null;
+        for (const row of plan2Rows) {
+          const name = String(row?.[0] ?? '').trim();
+          const value = String(row?.[1] ?? '').trim();
+          if (!name) {
+            if (value && plan2Section) plan2Section.value += `\n${value}`;
+            continue;
+          }
+          plan2Section = { title: name, value };
+          textSections.push(plan2Section);
+        }
+        return {
+          specifications,
+          textSections: textSections.length ? textSections : plan1TextSections
+        };
       } catch (error) {
         throw new Error(`Falha ao ler o Excel "${filePath}": ${error.message}`);
       }
@@ -1847,18 +1860,44 @@
       grid.innerHTML = '';
       specifications.forEach((specification, index) => {
         const item = document.createElement('div');
-        item.className = 'spec-item' + (index >= 4 ? ' compact' : '');
+        item.className = 'spec-item';
         const label = document.createElement('span');
         label.className = 'spec-label';
         label.textContent = specification.name;
         const card = document.createElement('div');
-        card.className = 'spec-card' + (index >= 4 ? ' compact' : '');
+        card.className = 'spec-card';
         const value = document.createElement('div');
         value.className = 'spec-value';
         value.textContent = specification.value || '--';
         card.appendChild(value);
         item.append(label, card);
         grid.appendChild(item);
+      });
+    }
+
+    function renderProfileTextSections(vehicle) {
+      const container = document.getElementById('profileTextSections');
+      const fallbackSections = [
+        ['Descrição', vehicle.desc || vehicle.description],
+        ['Cuidados a ter antes e depois da utilização', vehicle.careBeforeAfter],
+        ['PONTOS DE ATENÇÃO', vehicle.attentionPoints],
+        ['Aspetos a ter em conta durante o serviço com este tipo de veículo', vehicle.serviceConsiderations]
+      ];
+      const sections = Array.isArray(vehicle.textSections) && vehicle.textSections.length
+        ? vehicle.textSections
+        : fallbackSections.map(([title, value]) => ({ title, value })).filter(section => section.value);
+      container.innerHTML = '';
+      sections.forEach(section => {
+        if (!section?.title) return;
+        const wrapper = document.createElement('section');
+        wrapper.className = 'profile-dynamic-section';
+        const title = document.createElement('h3');
+        title.textContent = section.title;
+        const content = document.createElement('p');
+        content.className = 'profile-note';
+        content.textContent = section.value || '--';
+        wrapper.append(title, content);
+        container.appendChild(wrapper);
       });
     }
 
@@ -2321,10 +2360,7 @@
             readGithubSpreadsheet(v.excelPath)
               .then(spreadsheet => {
                 v.specifications = spreadsheet.specifications || [];
-                v.desc = spreadsheet.description || '';
-                v.careBeforeAfter = spreadsheet.careBeforeAfter || '';
-                v.attentionPoints = spreadsheet.attentionPoints || '';
-                v.serviceConsiderations = spreadsheet.serviceConsiderations || '';
+                v.textSections = spreadsheet.textSections || [];
               })
               .catch(error => console.error(error))
               .finally(() => { v.detailsLoaded = true; })
@@ -2387,17 +2423,11 @@
       document.getElementById('fvCat').innerText = v.cat;
       document.getElementById('fvTitle').innerText = v.title;
       if (v.detailsLoaded || !v.excelPath) {
-        document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
-        document.getElementById('fvCareBeforeAfter').innerText = v.careBeforeAfter || 'Sem cuidados registados.';
-        document.getElementById('fvAttentionPoints').innerText = v.attentionPoints || 'Sem pontos de atenção registados.';
-        document.getElementById('fvServiceConsiderations').innerText = v.serviceConsiderations || 'Sem aspetos registados.';
         renderTechnicalSpecs(v);
+        renderProfileTextSections(v);
       } else {
-        document.getElementById('fvDesc').innerText = '';
-        document.getElementById('fvCareBeforeAfter').innerText = '';
-        document.getElementById('fvAttentionPoints').innerText = '';
-        document.getElementById('fvServiceConsiderations').innerText = '';
         document.getElementById('specGrid').innerHTML = '';
+        document.getElementById('profileTextSections').innerHTML = '';
       }
 
       activeGallery = getVehicleImages(v);
@@ -2443,11 +2473,8 @@
       if ((!v.detailsLoaded && v.excelPath) || (!v.videosLoaded && v.linkExcelPath)) {
         await ensureProfileDetails(v);
         if (activeProfile === v) {
-          document.getElementById('fvDesc').innerText = v.desc || 'Sem descrição registada.';
-          document.getElementById('fvCareBeforeAfter').innerText = v.careBeforeAfter || 'Sem cuidados registados.';
-          document.getElementById('fvAttentionPoints').innerText = v.attentionPoints || 'Sem pontos de atenção registados.';
-          document.getElementById('fvServiceConsiderations').innerText = v.serviceConsiderations || 'Sem aspetos registados.';
           renderTechnicalSpecs(v);
+          renderProfileTextSections(v);
           renderProfileVideos(v);
         }
       }
