@@ -113,38 +113,62 @@ async function readVideoLinks(excel) {
 async function readSpreadsheet(excel) {
   const emptyData = {
     specifications: [],
-    description: '',
-    careBeforeAfter: '',
-    attentionPoints: '',
-    serviceConsiderations: ''
+    textSections: []
   };
   if (!excel) return emptyData;
   try {
     const workbook = XLSX.readFile(excel.absolute, { cellDates: false });
-    const firstSheetName = workbook.SheetNames?.[0];
-    if (!firstSheetName) return emptyData;
-    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {
+    const plan1Name = workbook.SheetNames?.find(name => normalize(name) === 'plan1') || workbook.SheetNames?.[0];
+    const plan2Name = workbook.SheetNames?.find(name => normalize(name) === 'plan2');
+    if (!plan1Name) return emptyData;
+    const rowsFor = sheetName => XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
       header: 1,
       raw: false,
       defval: ''
     });
+    const plan1Rows = rowsFor(plan1Name);
+    const plan2Rows = plan2Name ? rowsFor(plan2Name) : [];
     const specifications = [];
-    let description = '';
-    let careBeforeAfter = '';
-    let attentionPoints = '';
-    let serviceConsiderations = '';
-    for (const row of rows) {
+    const plan1TextSections = [];
+    const knownTextLabels = new Set([
+      'descricao',
+      'cuidados a ter antes e depois da utilizacao',
+      'pontos de atencao',
+      'aspetos a ter em conta durante o servico com este tipo de veiculo'
+    ]);
+    let activeSection = null;
+    for (const row of plan1Rows) {
       const name = String(row?.[0] ?? '').trim();
       const value = String(row?.[1] ?? '').trim();
-      if (!name) continue;
+      if (!name) {
+        if (value && activeSection) activeSection.value += `\n${value}`;
+        continue;
+      }
       const normalizedName = normalize(name).replace(/:\s*$/, '').replace(/\s+/g, ' ');
-      if (normalizedName === 'descricao') description = value;
-      else if (normalizedName === 'cuidados a ter antes e depois da utilizacao') careBeforeAfter = value;
-      else if (normalizedName === 'pontos de atencao') attentionPoints = value;
-      else if (normalizedName === 'aspetos a ter em conta durante o servico com este tipo de veiculo') serviceConsiderations = value;
-      else specifications.push({ name, value });
+      if (knownTextLabels.has(normalizedName)) {
+        activeSection = { title: name, value };
+        plan1TextSections.push(activeSection);
+      } else {
+        activeSection = null;
+        specifications.push({ name, value });
+      }
     }
-    return { specifications, description, careBeforeAfter, attentionPoints, serviceConsiderations };
+    const textSections = [];
+    let plan2Section = null;
+    for (const row of plan2Rows) {
+      const name = String(row?.[0] ?? '').trim();
+      const value = String(row?.[1] ?? '').trim();
+      if (!name) {
+        if (value && plan2Section) plan2Section.value += `\n${value}`;
+        continue;
+      }
+      plan2Section = { title: name, value };
+      textSections.push(plan2Section);
+    }
+    return {
+      specifications,
+      textSections: textSections.length ? textSections : plan1TextSections
+    };
   } catch (error) {
     console.warn(`Não foi possível ler "${toWebPath(excel.absolute, false)}": ${error.message}`);
     return emptyData;
@@ -206,10 +230,7 @@ async function scanType(typeDirectory) {
         videos,
         videosLoaded: true,
         specifications: excelData.specifications,
-        description: excelData.description,
-        careBeforeAfter: excelData.careBeforeAfter,
-        attentionPoints: excelData.attentionPoints,
-        serviceConsiderations: excelData.serviceConsiderations,
+        textSections: excelData.textSections,
         detailsLoaded: true
       });
       return;
