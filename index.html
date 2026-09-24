@@ -360,6 +360,36 @@
     }
     .profile-description-title { margin-top: 25px; }
     .profile-order-videos-title { margin: 30px 0 0; }
+    @media (min-width: 851px) {
+      .profile-left-column,
+      .profile-right-column { display: contents; }
+      .profile-order-image {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+      .profile-order-specs-title {
+        grid-column: 2;
+        grid-row: 1;
+      }
+      .profile-order-specs {
+        grid-column: 2;
+        grid-row: 2;
+      }
+      .profile-order-videos-title,
+      .profile-order-equipment-title {
+        grid-row: 3;
+        margin-top: 0 !important;
+      }
+      .profile-order-videos-title { grid-column: 1; }
+      .profile-order-equipment-title { grid-column: 2; }
+      .profile-video-grid,
+      .profile-order-equipment {
+        grid-row: 4;
+      }
+      .profile-video-grid { grid-column: 1; }
+      .profile-order-equipment { grid-column: 2; }
+      .profile-order-text-sections { grid-row: 5; }
+    }
     .video-player-modal {
       position: fixed; inset: 0; z-index: 750; display: none; align-items: center; justify-content: center;
       padding: 28px; background: rgba(0,0,0,0.82);
