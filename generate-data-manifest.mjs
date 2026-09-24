@@ -193,13 +193,7 @@ async function scanType(typeDirectory) {
   }
   const profiles = [];
 
-  async function walk(directory, variantGroup = '', isSubprofile = false) {
-    const childDirectories = await directoriesAt(directory);
-    const childProfiles = [];
-    for (const child of childDirectories) {
-      if (await isProfileDirectory(child)) childProfiles.push(child);
-    }
-
+  async function walk(directory) {
     if (await isProfileDirectory(directory)) {
       const parts = path.relative(typeDirectory.absolute, directory).split(path.sep).filter(Boolean);
       if (parts.length < 2) return;
@@ -208,7 +202,6 @@ async function scanType(typeDirectory) {
       const profileName = parts.at(-1);
       const hierarchy = parts.slice(1, -1);
       const folder = hierarchy.join(' / ');
-      const childVariantGroup = childProfiles.length > 1 ? toWebPath(directory.absolute) : '';
       const photosDirectory = await findNamedDirectory(directory, 'Fotos');
       const equipmentDirectory = await findNamedDirectory(directory, 'Equipamentos Associados');
       const photos = await readImages(photosDirectory);
@@ -227,9 +220,6 @@ async function scanType(typeDirectory) {
         shortTitle: folder ? profileName : '',
         title: folder ? `${folder} — ${profileName}` : profileName,
         sourcePath: toWebPath(directory),
-        variantGroup: variantGroup || childVariantGroup,
-        variantLabel: profileName,
-        isSubprofile,
         photos: photos.map(file => toWebPath(file.absolute)),
         equipment: equipmentImages.map(file => ({
           name: path.basename(file.name, path.extname(file.name)),
@@ -243,13 +233,6 @@ async function scanType(typeDirectory) {
         textSections: excelData.textSections,
         detailsLoaded: true
       });
-      for (const child of childDirectories) {
-        if (childProfiles.includes(child)) {
-          await walk(child, childVariantGroup, true);
-        } else {
-          await walk(child, variantGroup, isSubprofile);
-        }
-      }
       return;
     }
 
