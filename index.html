@@ -82,7 +82,7 @@
       display: flex; flex-direction: column; overflow: hidden;
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .brand-header { height: 64px; padding: 0 12px; gap: 8px; }
       .brand-identity { width: 155px; max-width: 39vw; }
       .brand-department { margin-top: 3px; font-size: 9px; }
@@ -108,7 +108,7 @@
     }
     .vehicle-type-btn:hover { color: var(--primary); }
     .vehicle-type-btn.active { color: var(--text); border-bottom-color: var(--primary); }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .vehicle-type-switch { gap: 14px; }
       .vehicle-type-btn { font-size: 20px; }
     }
@@ -256,7 +256,7 @@
       background: #ef3340; color: #fff; transform: scale(0.94);
       box-shadow: 0 2px 9px rgba(239,51,64,0.34);
     }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .fullscreen-header .profile-close-btn {
         width: 30px; height: 30px; flex-basis: 30px; padding: 0 !important;
         border-radius: 50% !important; font-size: 19px;
@@ -280,6 +280,7 @@
     }
     .spec-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
     .profile-dynamic-sections { display: flex; flex-direction: column; gap: 18px; }
+    .profile-order-text-sections { grid-column: 1 / -1; }
     .profile-dynamic-section h3 { margin: 0 0 9px; }
     .profile-dynamic-section .profile-note {
       margin: 0; padding: 15px; border: 1px solid var(--border);
@@ -328,7 +329,7 @@
       border-radius: 50%; background: transparent; color: #fff; font-size: 30px; cursor: pointer;
     }
     .lightbox-counter { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); color: #fff; }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .fullscreen-modal { top: 64px; height: calc(100vh - 64px); }
       .fullscreen-header { padding: 7px 16px; }
       .fullscreen-body { grid-template-columns: 1fr; padding: 22px 14px; gap: 24px; }
@@ -358,6 +359,7 @@
       filter: drop-shadow(0 2px 3px rgba(0,0,0,0.65)); z-index: 1;
     }
     .profile-description-title { margin-top: 25px; }
+    .profile-order-videos-title { margin: 30px 0 0; }
     .video-player-modal {
       position: fixed; inset: 0; z-index: 750; display: none; align-items: center; justify-content: center;
       padding: 28px; background: rgba(0,0,0,0.82);
@@ -401,7 +403,7 @@
       .profile-video-card { width: 60px; height: 60px; border-radius: 8px; }
       .video-play-icon { border-top-width: 10px; border-bottom-width: 10px; border-left-width: 16px; }
     }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .profile-video-grid { grid-template-columns: repeat(4, 38px); gap: 5px; margin-top: 7px; }
       .profile-video-card { width: 38px; height: 38px; border-width: 1px; border-radius: 5px; }
       .video-play-icon { border-top-width: 6px; border-bottom-width: 6px; border-left-width: 10px; }
@@ -525,7 +527,7 @@
       .fullscreen-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .brand-header { height: 54px; padding: 0 8px; gap: 7px; }
       .brand-identity { width: 118px; max-width: 34vw; }
       .brand-department { margin-top: 2px; font-size: 8px; }
@@ -697,7 +699,7 @@
       .category-card-image { padding: 12px; }
       .fullscreen-header { align-items: flex-start; }
     }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .app-container { overflow-y: auto; }
       .vehicle-type-switch {
         grid-template-columns: repeat(var(--vehicle-type-count, 3), minmax(0, 1fr));
@@ -768,7 +770,7 @@
       .equipment-photo { width: 60px; height: 60px; flex-basis: 60px; }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .profile-variant-area { max-width: 100%; }
       .profile-variant-row { gap: 6px; }
       .profile-variant-row .profile-close-btn {
@@ -797,7 +799,7 @@
     }
 
     /* Ajuste final para telemóveis: quatro categorias visíveis e scroll por toque */
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       html, body {
         height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto;
         -webkit-overflow-scrolling: touch; touch-action: pan-y;
@@ -866,7 +868,7 @@
     .search-result-btn:hover, .search-result-btn:focus-visible { border-color: var(--primary); background: var(--primary-light); outline: none; }
     .search-result-title { display: block; font-size: 15px; font-weight: 700; }
     .search-result-path { display: block; margin-top: 3px; color: var(--text-muted); font-size: 11px; }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .search-results-modal { padding: 12px; }
       .search-results-panel { padding: 16px; border-radius: 14px; }
       .search-results-heading h2 { font-size: 17px; }
@@ -874,7 +876,7 @@
     }
 
     /* Layout vertical exclusivo para telemóveis */
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .category-showcase {
         grid-template-columns: minmax(0, 1fr) !important;
         gap: 11px; width: 100%; padding: 2px 2px 14px;
@@ -914,6 +916,7 @@
 
       .profile-order-specs-title,
       .profile-order-equipment-title,
+      .profile-order-videos-title,
       .profile-order-description-title {
         width: 100%; margin: 15px 0 7px !important; font-size: 13px !important;
       }
@@ -983,7 +986,7 @@
       .equipment-photo { width: 68px; height: 68px; flex-basis: 68px; }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       #fvCat { font-size: 14px !important; }
       #fvTitle {
         font-size: 26px !important; white-space: nowrap;
@@ -1064,7 +1067,7 @@
       }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .vehicle-type-switch {
         display: grid !important;
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
@@ -1113,7 +1116,7 @@
     .profile-order-text-sections {
       width: 100%;
     }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .profile-order-text-sections {
         order: 7;
       }
@@ -1125,7 +1128,7 @@
       font-size: 15px;
       line-height: 1.45;
     }
-    @media (max-width: 680px) {
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
       .profile-dynamic-section h3 {
         font-size: 24px !important;
         line-height: 1.25;
@@ -1210,8 +1213,8 @@
           <button class="gallery-btn next" id="galleryNext" type="button" onclick="changeGallery(1)" aria-label="Fotografia seguinte">›</button>
           <span class="gallery-counter" id="galleryCounter"></span>
         </div>
+        <h3 class="profile-order-videos-title profile-order-videos" id="profileVideosTitle">Videos</h3>
         <div class="profile-video-grid profile-order-videos" id="profileVideoGrid" aria-label="Vídeos da tipologia"></div>
-        <div class="profile-dynamic-sections profile-order-text-sections" id="profileTextSections"></div>
       </div>
 
       <div class="profile-right-column">
@@ -1221,6 +1224,8 @@
         <h3 class="profile-order-equipment-title" style="margin-top:30px;">Equipamentos Associados</h3>
         <div class="equipment-list profile-order-equipment" id="fvEquips"></div>
       </div>
+
+      <div class="profile-dynamic-sections profile-order-text-sections" id="profileTextSections"></div>
     </div>
   </div>
 
@@ -2287,9 +2292,11 @@
 
     function renderProfileVideos(vehicle) {
       const grid = document.getElementById('profileVideoGrid');
+      const title = document.getElementById('profileVideosTitle');
       const videos = Array.isArray(vehicle?.videos) ? vehicle.videos.filter(Boolean) : [];
       grid.innerHTML = '';
       grid.style.display = videos.length ? 'flex' : 'none';
+      title.style.display = videos.length ? '' : 'none';
       videos.forEach((link, index) => {
         const card = document.createElement('button');
         card.type = 'button';
