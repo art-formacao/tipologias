@@ -682,6 +682,7 @@
     .fullscreen-header { gap: 18px; }
     .profile-heading { flex: 0 0 auto; min-width: 170px; }
     .profile-variant-area { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .profile-subvariant-area { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .profile-variant-label { color: var(--text-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
     .profile-variant-selector { width: 100%; display: flex; justify-content: flex-end; gap: 7px; overflow-x: auto; padding: 1px 2px 4px; scrollbar-width: thin; }
     .profile-variant-btn { flex: 0 0 auto; border: 1px solid var(--border); border-radius: 9px; background: #f1f1f4; color: var(--text); padding: 7px 11px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.18s ease; }
@@ -1003,6 +1004,7 @@
         position: relative; z-index: 3; flex: 1 1 100%;
         width: 100%; max-width: none; padding-right: 0; background: #fff;
       }
+      .profile-subvariant-area { align-items: stretch; }
       .profile-variant-row {
         width: 100%; padding-right: 0; overflow: visible;
       }
@@ -1196,6 +1198,12 @@
           <div class="profile-variant-selector" id="profileVariantSelector"></div>
           <span class="profile-variant-scroll-hint left" id="profileVariantScrollHintLeft" aria-hidden="true">‹</span>
           <span class="profile-variant-scroll-hint" id="profileVariantScrollHint" aria-hidden="true">›</span>
+        </div>
+        <div class="profile-subvariant-area" id="profileSubvariantArea" hidden>
+          <span class="profile-variant-label" id="profileSubvariantLabel">Selecionar subperfil</span>
+          <div class="profile-variant-row">
+            <div class="profile-variant-selector" id="profileSubvariantSelector"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -2411,14 +2419,26 @@
       const selector = document.getElementById('profileVariantSelector');
       const label = document.getElementById('profileVariantLabel');
       const row = selector.closest('.profile-variant-row');
-      const profiles = activeVehicle.variantGroup
-        ? dataset.filter(profile =>
+      const subvariantArea = document.getElementById('profileSubvariantArea');
+      const subvariantSelector = document.getElementById('profileSubvariantSelector');
+      const subvariantLabel = document.getElementById('profileSubvariantLabel');
+      const parentProfile = activeVehicle.isSubprofile
+        ? dataset.find(profile =>
             profile.variantGroup === activeVehicle.variantGroup &&
+            !profile.isSubprofile &&
+            getVehicleKind(profile) === getVehicleKind(activeVehicle) &&
+            profile.cat === activeVehicle.cat
+          )
+        : activeVehicle;
+      const profiles = getProfilesForCategory(getVehicleKind(activeVehicle), activeVehicle.cat);
+      const subprofiles = parentProfile?.variantGroup
+        ? dataset.filter(profile =>
+            profile.variantGroup === parentProfile.variantGroup &&
             profile.isSubprofile &&
             getVehicleKind(profile) === getVehicleKind(activeVehicle) &&
             profile.cat === activeVehicle.cat
           )
-        : getProfilesForCategory(getVehicleKind(activeVehicle), activeVehicle.cat);
+        : [];
       selector.innerHTML = '';
       selector.scrollLeft = 0;
       row.classList.remove('has-more-left', 'has-more-right');
@@ -2426,7 +2446,7 @@
       profiles.forEach(profile => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'profile-variant-btn' + (profile === activeVehicle ? ' active' : '');
+        button.className = 'profile-variant-btn' + (profile === parentProfile ? ' active' : '');
         button.textContent = profile.variantLabel || profile.shortTitle || profile.title;
         button.title = profile.title;
         button.onclick = () => openFullModal(profile);
@@ -2434,6 +2454,19 @@
       });
       selector.style.display = profiles.length > 1 ? 'flex' : 'none';
       label.style.display = profiles.length > 1 ? 'block' : 'none';
+      subvariantSelector.innerHTML = '';
+      subprofiles.forEach(profile => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'profile-variant-btn' + (profile === activeVehicle ? ' active' : '');
+        button.textContent = profile.variantLabel || profile.shortTitle || profile.title;
+        button.title = profile.title;
+        button.onclick = () => openFullModal(profile);
+        subvariantSelector.appendChild(button);
+      });
+      subvariantLabel.textContent = 'Selecionar eixos';
+      subvariantArea.hidden = subprofiles.length < 2;
+      subvariantSelector.style.display = subprofiles.length > 1 ? 'flex' : 'none';
       const updateScrollHint = () => {
         const maxScrollLeft = Math.max(0, selector.scrollWidth - selector.clientWidth);
         const hasMoreRight = maxScrollLeft - selector.scrollLeft > 2;
