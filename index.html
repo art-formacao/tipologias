@@ -82,7 +82,7 @@
       display: flex; flex-direction: column; overflow: hidden;
     }
 
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .brand-header { height: 64px; padding: 0 12px; gap: 8px; }
       .brand-identity { width: 155px; max-width: 39vw; }
       .brand-department { margin-top: 3px; font-size: 9px; }
@@ -108,7 +108,7 @@
     }
     .vehicle-type-btn:hover { color: var(--primary); }
     .vehicle-type-btn.active { color: var(--text); border-bottom-color: var(--primary); }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .vehicle-type-switch { gap: 14px; }
       .vehicle-type-btn { font-size: 20px; }
     }
@@ -256,7 +256,7 @@
       background: #ef3340; color: #fff; transform: scale(0.94);
       box-shadow: 0 2px 9px rgba(239,51,64,0.34);
     }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .fullscreen-header .profile-close-btn {
         width: 30px; height: 30px; flex-basis: 30px; padding: 0 !important;
         border-radius: 50% !important; font-size: 19px;
@@ -280,7 +280,6 @@
     }
     .spec-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
     .profile-dynamic-sections { display: flex; flex-direction: column; gap: 18px; }
-    .profile-order-text-sections { grid-column: 1 / -1; }
     .profile-dynamic-section h3 { margin: 0 0 9px; }
     .profile-dynamic-section .profile-note {
       margin: 0; padding: 15px; border: 1px solid var(--border);
@@ -329,7 +328,7 @@
       border-radius: 50%; background: transparent; color: #fff; font-size: 30px; cursor: pointer;
     }
     .lightbox-counter { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); color: #fff; }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .fullscreen-modal { top: 64px; height: calc(100vh - 64px); }
       .fullscreen-header { padding: 7px 16px; }
       .fullscreen-body { grid-template-columns: 1fr; padding: 22px 14px; gap: 24px; }
@@ -359,55 +358,6 @@
       filter: drop-shadow(0 2px 3px rgba(0,0,0,0.65)); z-index: 1;
     }
     .profile-description-title { margin-top: 25px; }
-    .profile-order-videos-title { margin: 30px 0 0; }
-    @media (min-width: 851px) {
-      .fullscreen-body {
-        column-gap: 40px;
-        row-gap: 9px;
-        grid-template-rows: auto minmax(0, 1fr) auto auto auto;
-      }
-      .profile-left-column,
-      .profile-right-column { display: contents; }
-      .profile-order-image {
-        grid-column: 1;
-        grid-row: 1 / span 2;
-      }
-      .profile-order-specs-title {
-        grid-column: 2;
-        grid-row: 1;
-        margin: 0;
-      }
-      .profile-order-specs {
-        grid-column: 2;
-        grid-row: 2;
-        align-content: space-between;
-        margin: 0;
-      }
-      .profile-order-specs .spec-card {
-        min-height: 69px;
-        padding-block: 23px;
-      }
-      .profile-order-videos-title,
-      .profile-order-equipment-title {
-        grid-row: 3;
-        margin: 0 !important;
-      }
-      .profile-order-videos-title { grid-column: 1; }
-      .profile-order-equipment-title { grid-column: 2; }
-      .profile-video-grid,
-      .profile-order-equipment {
-        grid-row: 4;
-      }
-      .profile-video-grid {
-        grid-column: 1;
-        margin-top: 0;
-      }
-      .profile-order-equipment {
-        grid-column: 2;
-        margin-top: 0 !important;
-      }
-      .profile-order-text-sections { grid-row: 5; }
-    }
     .video-player-modal {
       position: fixed; inset: 0; z-index: 750; display: none; align-items: center; justify-content: center;
       padding: 28px; background: rgba(0,0,0,0.82);
@@ -451,7 +401,7 @@
       .profile-video-card { width: 60px; height: 60px; border-radius: 8px; }
       .video-play-icon { border-top-width: 10px; border-bottom-width: 10px; border-left-width: 16px; }
     }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .profile-video-grid { grid-template-columns: repeat(4, 38px); gap: 5px; margin-top: 7px; }
       .profile-video-card { width: 38px; height: 38px; border-width: 1px; border-radius: 5px; }
       .video-play-icon { border-top-width: 6px; border-bottom-width: 6px; border-left-width: 10px; }
@@ -575,7 +525,7 @@
       .fullscreen-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
     }
 
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .brand-header { height: 54px; padding: 0 8px; gap: 7px; }
       .brand-identity { width: 118px; max-width: 34vw; }
       .brand-department { margin-top: 2px; font-size: 8px; }
@@ -731,9 +681,9 @@
     /* Escolha da variante dentro do perfil */
     .fullscreen-header { gap: 18px; }
     .profile-heading { flex: 0 0 auto; min-width: 170px; }
-    .profile-variant-area { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .profile-variant-area { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; }
     .profile-variant-label { color: var(--text-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
-    .profile-variant-selector { width: 100%; display: flex; justify-content: flex-end; gap: 7px; overflow-x: auto; padding: 1px 2px 4px; scrollbar-width: thin; }
+    .profile-variant-selector { width: 100%; display: flex; justify-content: center; gap: 7px; overflow-x: auto; padding: 1px 2px 4px; scrollbar-width: thin; }
     .profile-variant-btn { flex: 0 0 auto; border: 1px solid var(--border); border-radius: 9px; background: #f1f1f4; color: var(--text); padding: 7px 11px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.18s ease; }
     .profile-variant-btn:hover { border-color: var(--primary); color: var(--primary); }
     .profile-variant-btn.active { border-color: var(--primary); background: var(--primary); color: #fff; }
@@ -747,7 +697,7 @@
       .category-card-image { padding: 12px; }
       .fullscreen-header { align-items: flex-start; }
     }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .app-container { overflow-y: auto; }
       .vehicle-type-switch {
         grid-template-columns: repeat(var(--vehicle-type-count, 3), minmax(0, 1fr));
@@ -767,7 +717,7 @@
       .profile-heading { min-width: 0; max-width: 42%; }
       .profile-variant-area { order: 3; flex: 1 0 100%; align-items: stretch; }
       .profile-variant-label { font-size: 7px; }
-      .profile-variant-selector { justify-content: flex-start; }
+      .profile-variant-selector { justify-content: center; }
       .profile-variant-btn { padding: 5px 7px; border-radius: 6px; font-size: 8px; }
       .profile-close-btn { margin-left: auto; }
     }
@@ -818,7 +768,7 @@
       .equipment-photo { width: 60px; height: 60px; flex-basis: 60px; }
     }
 
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .profile-variant-area { max-width: 100%; }
       .profile-variant-row { gap: 6px; }
       .profile-variant-row .profile-close-btn {
@@ -847,7 +797,7 @@
     }
 
     /* Ajuste final para telemóveis: quatro categorias visíveis e scroll por toque */
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       html, body {
         height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto;
         -webkit-overflow-scrolling: touch; touch-action: pan-y;
@@ -916,7 +866,7 @@
     .search-result-btn:hover, .search-result-btn:focus-visible { border-color: var(--primary); background: var(--primary-light); outline: none; }
     .search-result-title { display: block; font-size: 15px; font-weight: 700; }
     .search-result-path { display: block; margin-top: 3px; color: var(--text-muted); font-size: 11px; }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .search-results-modal { padding: 12px; }
       .search-results-panel { padding: 16px; border-radius: 14px; }
       .search-results-heading h2 { font-size: 17px; }
@@ -924,7 +874,7 @@
     }
 
     /* Layout vertical exclusivo para telemóveis */
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .category-showcase {
         grid-template-columns: minmax(0, 1fr) !important;
         gap: 11px; width: 100%; padding: 2px 2px 14px;
@@ -964,7 +914,6 @@
 
       .profile-order-specs-title,
       .profile-order-equipment-title,
-      .profile-order-videos-title,
       .profile-order-description-title {
         width: 100%; margin: 15px 0 7px !important; font-size: 13px !important;
       }
@@ -1034,22 +983,21 @@
       .equipment-photo { width: 68px; height: 68px; flex-basis: 68px; }
     }
 
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       #fvCat { font-size: 14px !important; }
       #fvTitle {
         font-size: 26px !important; white-space: nowrap;
         overflow: hidden; text-overflow: ellipsis;
       }
       .fullscreen-header {
-        position: sticky !important; top: 0 !important; z-index: 20 !important;
-        background: #fff;
+        display: contents;
       }
       .fullscreen-header,
       .profile-variant-area,
       .profile-variant-row { min-width: 0; }
       .profile-heading {
         flex: 1 1 100%; width: 100%; max-width: none;
-        padding-right: 44px;
+        padding: 7px 52px 7px 8px; background: #fff;
       }
       .profile-variant-area {
         position: relative; z-index: 3; flex: 1 1 100%;
@@ -1115,7 +1063,7 @@
       }
     }
 
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .vehicle-type-switch {
         display: grid !important;
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
@@ -1164,7 +1112,7 @@
     .profile-order-text-sections {
       width: 100%;
     }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .profile-order-text-sections {
         order: 7;
       }
@@ -1176,7 +1124,7 @@
       font-size: 15px;
       line-height: 1.45;
     }
-    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+    @media (max-width: 680px) {
       .profile-dynamic-section h3 {
         font-size: 24px !important;
         line-height: 1.25;
@@ -1261,8 +1209,8 @@
           <button class="gallery-btn next" id="galleryNext" type="button" onclick="changeGallery(1)" aria-label="Fotografia seguinte">›</button>
           <span class="gallery-counter" id="galleryCounter"></span>
         </div>
-        <h3 class="profile-order-videos-title profile-order-videos" id="profileVideosTitle">Videos</h3>
         <div class="profile-video-grid profile-order-videos" id="profileVideoGrid" aria-label="Vídeos da tipologia"></div>
+        <div class="profile-dynamic-sections profile-order-text-sections" id="profileTextSections"></div>
       </div>
 
       <div class="profile-right-column">
@@ -1272,8 +1220,6 @@
         <h3 class="profile-order-equipment-title" style="margin-top:30px;">Equipamentos Associados</h3>
         <div class="equipment-list profile-order-equipment" id="fvEquips"></div>
       </div>
-
-      <div class="profile-dynamic-sections profile-order-text-sections" id="profileTextSections"></div>
     </div>
   </div>
 
@@ -1418,6 +1364,8 @@
         shortTitle: profile.shortTitle || '',
         title: profile.title,
         sourcePath: profile.sourcePath,
+        variantGroup: profile.variantGroup || '',
+        variantLabel: profile.variantLabel || profile.shortTitle || profile.title,
         desc: profile.description || '',
         careBeforeAfter: profile.careBeforeAfter || '',
         attentionPoints: profile.attentionPoints || '',
@@ -1749,7 +1697,21 @@
       }
 
       const profiles = [];
-      for (const profilePath of Array.from(profilePaths).sort(compareNaturalPaths)) {
+      const candidateProfilePaths = Array.from(profilePaths);
+      const nestedProfilePaths = new Set(candidateProfilePaths.filter(profilePath =>
+        candidateProfilePaths.some(candidate =>
+          candidate !== profilePath && pathParent(candidate) === profilePath
+        )
+      ));
+      const selectedProfilePaths = candidateProfilePaths
+        .filter(profilePath => !nestedProfilePaths.has(profilePath))
+        .sort(compareNaturalPaths);
+      const variantSiblingCounts = new Map();
+      selectedProfilePaths.forEach(profilePath => {
+        const parent = pathParent(profilePath);
+        variantSiblingCounts.set(parent, (variantSiblingCounts.get(parent) || 0) + 1);
+      });
+      for (const profilePath of selectedProfilePaths) {
         const parts = profilePath.split('/');
         const typePath = parts.slice(0, 2).join('/');
         if (!typePaths.has(typePath) || parts.length < 4) continue;
@@ -1785,6 +1747,11 @@
           shortTitle: folder ? profileName : '',
           title: folder ? `${folder} — ${profileName}` : profileName,
           sourcePath: `./${profilePath}`,
+          variantGroup: candidateProfilePaths.includes(pathParent(profilePath)) &&
+            (variantSiblingCounts.get(pathParent(profilePath)) || 0) > 1
+            ? `./${pathParent(profilePath)}`
+            : '',
+          variantLabel: profileName,
           photos: photos.map(photo => `./${photo.path}`),
           equipment: equipmentPhotos.map(photo => ({
             name: pathName(photo.path).replace(/\.[^.]+$/, ''),
@@ -1825,7 +1792,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v8-registry-search';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v9-profile-groups';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
@@ -2340,11 +2307,9 @@
 
     function renderProfileVideos(vehicle) {
       const grid = document.getElementById('profileVideoGrid');
-      const title = document.getElementById('profileVideosTitle');
       const videos = Array.isArray(vehicle?.videos) ? vehicle.videos.filter(Boolean) : [];
       grid.innerHTML = '';
       grid.style.display = videos.length ? 'flex' : 'none';
-      title.style.display = videos.length ? '' : 'none';
       videos.forEach((link, index) => {
         const card = document.createElement('button');
         card.type = 'button';
@@ -2440,16 +2405,22 @@
       const selector = document.getElementById('profileVariantSelector');
       const label = document.getElementById('profileVariantLabel');
       const row = selector.closest('.profile-variant-row');
-      const profiles = getProfilesForCategory(getVehicleKind(activeVehicle), activeVehicle.cat);
+      const profiles = activeVehicle.variantGroup
+        ? dataset.filter(profile =>
+            profile.variantGroup === activeVehicle.variantGroup &&
+            getVehicleKind(profile) === getVehicleKind(activeVehicle) &&
+            profile.cat === activeVehicle.cat
+          )
+        : [];
       selector.innerHTML = '';
       selector.scrollLeft = 0;
       row.classList.remove('has-more-left', 'has-more-right');
-      label.textContent = `Selecionar tipo de ${activeVehicle.cat}`;
+      label.textContent = 'Selecionar subperfil';
       profiles.forEach(profile => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'profile-variant-btn' + (profile === activeVehicle ? ' active' : '');
-        button.textContent = profile.shortTitle || profile.title;
+        button.textContent = profile.variantLabel || profile.shortTitle || profile.title;
         button.title = profile.title;
         button.onclick = () => openFullModal(profile);
         selector.appendChild(button);
