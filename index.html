@@ -357,6 +357,14 @@
       width: 100%; margin-top: 14px; display: none;
       grid-template-columns: repeat(4, 76px); gap: 12px;
       justify-content: start; align-items: start;
+      color: var(--text-muted);
+    }
+    .profile-video-empty {
+      display: block;
+      font-size: 15px;
+      font-style: italic;
+      line-height: 1.4;
+      padding-top: 2px;
     }
     .profile-video-card {
       width: 76px; height: 76px; padding: 0; position: relative; overflow: hidden;
@@ -2513,8 +2521,20 @@
       const title = document.getElementById('profileVideosTitle');
       const videos = Array.isArray(vehicle?.videos) ? vehicle.videos.filter(Boolean) : [];
       grid.innerHTML = '';
-      grid.style.display = videos.length ? 'flex' : 'none';
-      title.style.display = videos.length ? '' : 'none';
+
+      // O título "Videos" aparece sempre. Se não houver vídeos,
+      // mostramos a mensagem no mesmo espaço onde apareceriam os vídeos.
+      title.style.display = '';
+      grid.style.display = 'flex';
+
+      if (!videos.length) {
+        const empty = document.createElement('span');
+        empty.className = 'profile-video-empty';
+        empty.textContent = 'Sem vídeos disponíveis';
+        grid.appendChild(empty);
+        return;
+      }
+
       videos.forEach((link, index) => {
         const card = document.createElement('button');
         card.type = 'button';
@@ -2691,9 +2711,48 @@
     function renderAxisSelectionPrompt() {
       const track = document.getElementById('galleryTrack');
       const noImgText = document.getElementById('noImgText');
+      const baseProfile = activeProfile?.parentProfile || activeProfile;
+      const variants = Array.isArray(baseProfile?.variants) ? baseProfile.variants : [];
+
+      const axisNames = variants
+        .map(variant => {
+          const rawName = String(variant?.name || '').trim();
+          const fallbackPath = String(variant?.sourcePath || '').split('/').filter(Boolean).pop() || '';
+          return rawName || fallbackPath;
+        })
+        .filter(Boolean);
+
+      const axisNumbers = axisNames
+        .map(name => {
+          const match = name.match(/(\d+)\s*eixos?/i);
+          return match ? Number(match[1]) : null;
+        })
+        .filter(number => Number.isFinite(number));
+
+      const uniqueAxisNumbers = [...new Set(axisNumbers)].sort((a, b) => a - b);
+
+      let prompt = 'Selecione o modelo que pretende consultar';
+
+      if (uniqueAxisNumbers.length === 1) {
+        const n = uniqueAxisNumbers[0];
+        prompt = `Esta tipologia possui um modelo de ${n} ${n === 1 ? 'eixo' : 'eixos'}. Selecione o modelo que pretende consultar`;
+      } else if (uniqueAxisNumbers.length > 1) {
+        const formatted = uniqueAxisNumbers.length === 2
+          ? `${uniqueAxisNumbers[0]} e ${uniqueAxisNumbers[1]}`
+          : `${uniqueAxisNumbers.slice(0, -1).join(', ')} e ${uniqueAxisNumbers.at(-1)}`;
+        prompt = `Esta tipologia possui modelos de ${formatted} eixos. Selecione o modelo que pretende consultar`;
+      } else if (axisNames.length === 1) {
+        prompt = `Esta tipologia possui um modelo de ${axisNames[0]}. Selecione o modelo que pretende consultar`;
+      } else if (axisNames.length > 1) {
+        const formattedNames = axisNames.length === 2
+          ? `${axisNames[0]} e ${axisNames[1]}`
+          : `${axisNames.slice(0, -1).join(', ')} e ${axisNames.at(-1)}`;
+        prompt = `Esta tipologia possui os modelos ${formattedNames}. Selecione o modelo que pretende consultar`;
+      }
+
       track.innerHTML = '';
       track.style.display = 'none';
-      noImgText.textContent = 'Selecione o eixo que pretende consultar';
+      noImgText.textContent = prompt;
       noImgText.className = 'axis-selection-prompt';
       noImgText.style.display = 'flex';
       document.getElementById('galleryPrev').style.display = 'none';
