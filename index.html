@@ -1807,25 +1807,69 @@
         };
       };
 
+      /*
+       * Uma pasta que contém Fotos/Equipamentos/Excel é um perfil.
+       * Se esse perfil tiver subpastas com a mesma estrutura (por exemplo
+       * "2 Eixos", "3 Eixos", etc.), essas subpastas são VARIANTES do
+       * perfil e não devem aparecer como perfis separados na barra de cima.
+       */
+      const profileCandidates = Array.from(profilePaths);
+
+      const isNestedProfileVariant = profilePath => {
+        let parent = pathParent(profilePath);
+        while (parent) {
+          if (profilePaths.has(parent)) return true;
+          parent = pathParent(parent);
+        }
+        return false;
+      };
+
+      /* Mantemos apenas os perfis de nível superior. */
+      const baseProfilePaths = profileCandidates
+        .filter(profilePath => !isNestedProfileVariant(profilePath))
+        .sort(compareNaturalPaths);
+
       const profiles = [];
-      for (const profilePath of Array.from(profilePaths).sort(compareNaturalPaths)) {
+      for (const profilePath of baseProfilePaths) {
         const parts = profilePath.split('/');
         const typePath = parts.slice(0, 2).join('/');
         if (!typePaths.has(typePath) || parts.length < 4) continue;
+
         const typeName = pathName(typePath);
         const category = parts[2];
         const hierarchy = parts.slice(3, -1);
         const folder = hierarchy.join(' / ');
         const profileName = parts.at(-1);
         const baseData = readGithubFolderData(profilePath);
+
+        /* Subpastas com dados são variantes e não entram na navegação superior. */
         const variantEntries = directories
-          .filter(entry => entry.type === 'tree' && pathParent(entry.path) === profilePath)
-          .filter(entry => !['fotos', 'equipamentos associados'].includes(normalizeFolderText(pathName(entry.path))));
-        const variants = variantEntries.map(entry => {
-          const data = readGithubFolderData(entry.path);
-          const hasData = Boolean(data.photos.length || data.equipment.length || data.excelPath || data.linkExcelPath);
-          return hasData ? { name: pathName(entry.path), ...data } : null;
-        }).filter(Boolean).sort((a, b) => compareNaturalPaths(a.name, b.name));
+          .filter(entry =>
+            entry.type === 'tree' &&
+            pathParent(entry.path) === profilePath
+          )
+          .filter(entry =>
+            !['fotos', 'equipamentos associados'].includes(
+              normalizeFolderText(pathName(entry.path))
+            )
+          );
+
+        const variants = variantEntries
+          .map(entry => {
+            const data = readGithubFolderData(entry.path);
+            const hasData = Boolean(
+              data.photos.length ||
+              data.equipment.length ||
+              data.excelPath ||
+              data.linkExcelPath
+            );
+            return hasData
+              ? { name: pathName(entry.path), ...data }
+              : null;
+          })
+          .filter(Boolean)
+          .sort((a, b) => compareNaturalPaths(a.name, b.name));
+
         profiles.push({
           kind: typeName,
           cat: category,
@@ -1859,7 +1903,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v9-axis-variants';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v10-axis-variants';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
