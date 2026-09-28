@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-16T10:00:06.683802Z",
+  "generatedAt": "2026-09-28T00:00:00.000Z",
   "types": [
     {
       "name": "Tipos de Furgão",
@@ -65,7 +65,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Furgão",
@@ -85,7 +86,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -110,7 +112,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -130,7 +133,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -150,7 +154,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -170,7 +175,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -190,7 +196,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -210,7 +217,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -230,7 +238,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -250,7 +259,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -270,7 +280,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -310,7 +321,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -330,7 +342,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -350,7 +363,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -370,7 +384,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -390,7 +405,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -410,7 +426,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -430,7 +447,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -452,7 +470,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -472,7 +491,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -492,7 +512,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -512,7 +533,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -554,7 +576,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Reboque",
@@ -574,7 +597,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -594,7 +618,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -614,7 +639,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -634,7 +660,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -654,7 +681,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -674,7 +702,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -694,7 +723,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -714,7 +744,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -734,7 +765,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -754,7 +786,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -774,7 +807,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -794,7 +828,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -814,7 +849,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -834,7 +870,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -854,7 +891,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -874,7 +912,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -894,7 +933,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -914,7 +954,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -934,7 +975,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     },
     {
       "kind": "Tipos de Rígido",
@@ -954,7 +996,8 @@
       "detailsLoaded": false,
       "linkExcelPath": "",
       "videos": [],
-      "videosLoaded": true
+      "videosLoaded": true,
+      "variants": []
     }
   ]
 }
