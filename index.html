@@ -1809,27 +1809,50 @@
 
       /*
        * Uma pasta que contém Fotos/Equipamentos/Excel é um perfil.
-       * Se esse perfil tiver subpastas com a mesma estrutura (por exemplo
-       * "2 Eixos", "3 Eixos", etc.), essas subpastas são VARIANTES do
-       * perfil e não devem aparecer como perfis separados na barra de cima.
+       * Pastas como "2 Eixos", "3 Eixos", etc. são variantes do
+       * perfil imediatamente acima e NÃO devem aparecer na barra superior.
+       *
+       * Importante: o perfil principal pode não ter Fotos/Excel próprios;
+       * basta existirem subpastas de eixos para ele ser criado como perfil.
        */
-      const profileCandidates = Array.from(profilePaths);
+      const profileCandidates = new Set(profilePaths);
 
+      /* Deteta pastas de variantes pelo nome (2 Eixos, 3 Eixos, 4 Eixos...). */
+      const axisVariantPaths = directories
+        .filter(entry => entry.type === 'tree')
+        .filter(entry => /\beixos\b/i.test(pathName(entry.path)))
+        .map(entry => entry.path);
+
+      /* O pai de cada pasta de eixos passa a ser o perfil principal. */
+      for (const variantPath of axisVariantPaths) {
+        const parent = pathParent(variantPath);
+        if (!parent) continue;
+
+        const parentParts = parent.split('/');
+        if (parentParts.length >= 4) {
+          profileCandidates.add(parent);
+        }
+      }
+
+      /*
+       * Um perfil que esteja dentro de outro perfil principal é uma variante
+       * interna e não deve ser apresentado na navegação superior.
+       */
       const isNestedProfileVariant = profilePath => {
         let parent = pathParent(profilePath);
         while (parent) {
-          if (profilePaths.has(parent)) return true;
+          if (profileCandidates.has(parent)) return true;
           parent = pathParent(parent);
         }
         return false;
       };
 
-      /* Mantemos apenas os perfis de nível superior. */
-      const baseProfilePaths = profileCandidates
+      const baseProfilePaths = Array.from(profileCandidates)
         .filter(profilePath => !isNestedProfileVariant(profilePath))
         .sort(compareNaturalPaths);
 
       const profiles = [];
+
       for (const profilePath of baseProfilePaths) {
         const parts = profilePath.split('/');
         const typePath = parts.slice(0, 2).join('/');
@@ -1842,17 +1865,17 @@
         const profileName = parts.at(-1);
         const baseData = readGithubFolderData(profilePath);
 
-        /* Subpastas com dados são variantes e não entram na navegação superior. */
+        /*
+         * Variantes são apenas subpastas diretas do perfil principal.
+         * Isto permite ter 2 Eixos, 3 Eixos, 4 Eixos, etc.
+         */
         const variantEntries = directories
           .filter(entry =>
             entry.type === 'tree' &&
             pathParent(entry.path) === profilePath
           )
-          .filter(entry =>
-            !['fotos', 'equipamentos associados'].includes(
-              normalizeFolderText(pathName(entry.path))
-            )
-          );
+          .filter(entry => /\beixos\b/i.test(pathName(entry.path)))
+          .sort((a, b) => compareNaturalPaths(a.path, b.path));
 
         const variants = variantEntries
           .map(entry => {
@@ -1863,12 +1886,12 @@
               data.excelPath ||
               data.linkExcelPath
             );
+
             return hasData
               ? { name: pathName(entry.path), ...data }
               : null;
           })
-          .filter(Boolean)
-          .sort((a, b) => compareNaturalPaths(a.name, b.name));
+          .filter(Boolean);
 
         profiles.push({
           kind: typeName,
@@ -1903,7 +1926,7 @@
       return buildGithubManifest(payload);
     }
 
-    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v10-axis-variants';
+    const MANIFEST_CACHE_KEY = 'tja-tipologias-manifest-v11-axis-variants';
 
     function applyManifest(manifest) {
       availableTypes = Array.isArray(manifest?.types)
