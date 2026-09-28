@@ -361,11 +361,6 @@
     .profile-description-title { margin-top: 25px; }
     .profile-order-videos-title { margin: 30px 0 0; }
     @media (min-width: 851px) {
-      .fullscreen-body {
-        column-gap: 40px;
-        row-gap: 9px;
-        grid-template-rows: auto minmax(0, 1fr) auto auto auto;
-      }
       .profile-left-column,
       .profile-right-column { display: contents; }
       .profile-order-image {
@@ -375,22 +370,15 @@
       .profile-order-specs-title {
         grid-column: 2;
         grid-row: 1;
-        margin: 0;
       }
       .profile-order-specs {
         grid-column: 2;
         grid-row: 2;
-        align-content: space-between;
-        margin: 0;
-      }
-      .profile-order-specs .spec-card {
-        min-height: 69px;
-        padding-block: 23px;
       }
       .profile-order-videos-title,
       .profile-order-equipment-title {
         grid-row: 3;
-        margin: 0 !important;
+        margin-top: 0 !important;
       }
       .profile-order-videos-title { grid-column: 1; }
       .profile-order-equipment-title { grid-column: 2; }
@@ -398,14 +386,8 @@
       .profile-order-equipment {
         grid-row: 4;
       }
-      .profile-video-grid {
-        grid-column: 1;
-        margin-top: 0;
-      }
-      .profile-order-equipment {
-        grid-column: 2;
-        margin-top: 0 !important;
-      }
+      .profile-video-grid { grid-column: 1; }
+      .profile-order-equipment { grid-column: 2; }
       .profile-order-text-sections { grid-row: 5; }
     }
     .video-player-modal {
