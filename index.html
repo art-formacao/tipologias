@@ -683,6 +683,7 @@
     .profile-heading { flex: 0 0 auto; min-width: 170px; }
     .profile-variant-area { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
     .profile-subvariant-area { width: 100%; margin-bottom: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    #profileSubvariantArea[hidden] { display: none; }
     .profile-subvariant-area .profile-variant-selector { justify-content: center; }
     .profile-variant-label { color: var(--text-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
     .profile-variant-selector { width: 100%; display: flex; justify-content: flex-end; gap: 7px; overflow-x: auto; padding: 1px 2px 4px; scrollbar-width: thin; }
@@ -894,9 +895,9 @@
         padding: 9px 8px 26px; gap: 0;
       }
       .profile-left-column, .profile-right-column { display: contents; }
+      .profile-order-subvariants { order: 0; }
       .profile-order-image { order: 1; }
       .profile-order-videos { order: 2; }
-      .profile-order-subvariants { order: 3; }
       .profile-order-specs-title { order: 4; }
       .profile-order-specs { order: 5; }
       .profile-order-equipment-title { order: 6; }
@@ -2446,7 +2447,9 @@
       profiles.forEach(profile => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'profile-variant-btn' + (profile === parentProfile ? ' active' : '');
+        button.className = 'profile-variant-btn' + (
+          profile.sourcePath === parentProfile?.sourcePath ? ' active' : ''
+        );
         button.textContent = profile.variantLabel || profile.shortTitle || profile.title;
         button.title = profile.title;
         button.onclick = () => openFullModal(profile);
@@ -2496,7 +2499,7 @@
             profile.cat === v.cat
           )
         : null;
-      const profileTitle = parentProfile?.shortTitle || parentProfile?.title || v.title;
+      const profileTitle = parentProfile?.variantLabel || parentProfile?.shortTitle || parentProfile?.title || v.title;
       document.getElementById('fvTitle').innerText = profileTitle;
       if (v.detailsLoaded || !v.excelPath) {
         renderTechnicalSpecs(v);
