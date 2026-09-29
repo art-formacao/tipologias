@@ -3076,12 +3076,23 @@
     function toggleEquipmentImage(button, event) {
       event.stopPropagation();
       const wasEnlarged = button.classList.contains('enlarged');
-      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => item.classList.remove('enlarged'));
-      if (!wasEnlarged) button.classList.add('enlarged');
+      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => {
+        item.classList.remove('enlarged');
+        item.style.removeProperty('--equipment-center-y');
+      });
+      if (!wasEnlarged) {
+        const rect = button.getBoundingClientRect();
+        // No mobile: centra apenas na horizontal, mantendo a mesma linha vertical da miniatura.
+        button.style.setProperty('--equipment-center-y', `${rect.top + rect.height / 2}px`);
+        button.classList.add('enlarged');
+      }
     }
 
     document.addEventListener('click', () => {
-      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => item.classList.remove('enlarged'));
+      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => {
+        item.classList.remove('enlarged');
+        item.style.removeProperty('--equipment-center-y');
+      });
     });
 
     function closeFullModal() {
@@ -3098,12 +3109,12 @@
   </script>
 
 <style>
-/* Mobile: equipamento ampliado sempre centrado no ecrã */
+/* Mobile: equipamento ampliado centrado na horizontal, mantendo a mesma linha vertical da miniatura */
 @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
   .equipment-photo.enlarged {
     position: fixed !important;
     left: 50% !important;
-    top: 50% !important;
+    top: var(--equipment-center-y) !important;
     transform: translate(-50%, -50%) scale(3.36) !important;
     transform-origin: center center !important;
     z-index: 1000 !important;
