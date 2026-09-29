@@ -3073,26 +3073,40 @@
       if (event.key === 'ArrowRight') changeLightbox(1);
     });
 
+    function closeEnlargedEquipment() {
+      document.querySelectorAll('.equipment-card.enlarged').forEach(item => {
+        item.classList.remove('enlarged');
+        item.style.removeProperty('--equipment-top-y');
+      });
+      document.querySelectorAll('.equipment-photo-overlay').forEach(item => item.remove());
+    }
+
     function toggleEquipmentImage(button, event) {
       event.stopPropagation();
-      const wasEnlarged = button.classList.contains('enlarged');
-      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => {
-        item.classList.remove('enlarged');
-        item.style.removeProperty('--equipment-center-y');
-      });
+      const card = button.closest('.equipment-card');
+      if (!card) return;
+      const wasEnlarged = card.classList.contains('enlarged');
+      closeEnlargedEquipment();
       if (!wasEnlarged) {
         const rect = button.getBoundingClientRect();
-        // No mobile: centra apenas na horizontal, mantendo a mesma linha vertical da miniatura.
-        button.style.setProperty('--equipment-center-y', `${rect.top + rect.height / 2}px`);
-        button.classList.add('enlarged');
+        card.style.setProperty('--equipment-top-y', `${rect.top}px`);
+        card.classList.add('enlarged');
+
+        // Mantém a miniatura original no seu lugar e cria apenas uma cópia
+        // ampliada da imagem, centrada horizontalmente no ecrã.
+        const overlay = button.cloneNode(true);
+        overlay.className = 'equipment-photo-overlay';
+        overlay.style.setProperty('--equipment-top-y', `${rect.top}px`);
+        overlay.removeAttribute('onclick');
+        overlay.onclick = e => { e.stopPropagation(); closeEnlargedEquipment(); };
+        document.body.appendChild(overlay);
       }
     }
 
-    document.addEventListener('click', () => {
-      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => {
-        item.classList.remove('enlarged');
-        item.style.removeProperty('--equipment-center-y');
-      });
+    document.addEventListener('click', event => {
+      if (event.target.closest('.equipment-photo-overlay')) return;
+      if (event.target.closest('.equipment-photo')) return;
+      closeEnlargedEquipment();
     });
 
     function closeFullModal() {
@@ -3109,15 +3123,27 @@
   </script>
 
 <style>
-/* Mobile: equipamento ampliado centrado na horizontal, mantendo a mesma linha vertical da miniatura */
+/* Mobile: mantém a miniatura no lugar e mostra uma cópia ampliada apenas da imagem */
 @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
-  .equipment-photo.enlarged {
+  .equipment-card.enlarged {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    z-index: 1 !important;
+  }
+
+  .equipment-photo-overlay {
     position: fixed !important;
     left: 50% !important;
-    top: var(--equipment-center-y) !important;
-    transform: translate(-50%, -50%) scale(3.36) !important;
-    transform-origin: center center !important;
-    z-index: 1000 !important;
+    top: var(--equipment-top-y, 50%) !important;
+    width: 84px !important;
+    height: 84px !important;
+    transform: translateX(-50%) scale(3.36) !important;
+    transform-origin: top center !important;
+    z-index: 10000 !important;
+    margin: 0 !important;
+    pointer-events: auto !important;
   }
 }
 </style>
