@@ -1331,6 +1331,16 @@
         font-weight: 700 !important;
       }
     }
+
+    /* Ajuste final mobile: texto dos botões de eixos igual ao texto dos botões da barra superior */
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+      .profile-axis-btn {
+        font-family: inherit !important;
+        font-size: clamp(11px, 3.8vw, 17px) !important;
+        font-weight: 600 !important;
+        line-height: 1.15 !important;
+      }
+    }
 </style>
 </head>
 <body>
