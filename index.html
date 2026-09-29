@@ -3075,23 +3075,26 @@
 
     function toggleEquipmentImage(button, event) {
       event.stopPropagation();
-      const wasEnlarged = button.classList.contains('enlarged');
-      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => {
+      const card = button.closest('.equipment-card');
+      if (!card) return;
+      const wasEnlarged = card.classList.contains('enlarged');
+      document.querySelectorAll('.equipment-card.enlarged').forEach(item => {
         item.classList.remove('enlarged');
-        item.style.removeProperty('--equipment-center-y');
+        item.style.removeProperty('--equipment-top-y');
       });
       if (!wasEnlarged) {
         const rect = button.getBoundingClientRect();
-        // No mobile: centra apenas na horizontal, mantendo a mesma linha vertical da miniatura.
-        button.style.setProperty('--equipment-center-y', `${rect.top + rect.height / 2}px`);
-        button.classList.add('enlarged');
+        // No mobile: centra o conjunto (imagem + texto) na horizontal,
+        // mantendo a imagem ampliada na mesma linha vertical da miniatura.
+        card.style.setProperty('--equipment-top-y', `${rect.top}px`);
+        card.classList.add('enlarged');
       }
     }
 
     document.addEventListener('click', () => {
-      document.querySelectorAll('.equipment-photo.enlarged').forEach(item => {
+      document.querySelectorAll('.equipment-card.enlarged').forEach(item => {
         item.classList.remove('enlarged');
-        item.style.removeProperty('--equipment-center-y');
+        item.style.removeProperty('--equipment-top-y');
       });
     });
 
@@ -3109,15 +3112,22 @@
   </script>
 
 <style>
-/* Mobile: equipamento ampliado centrado na horizontal, mantendo a mesma linha vertical da miniatura */
+/* Mobile: amplia a imagem juntamente com o texto abaixo, centrando o conjunto na horizontal */
 @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
-  .equipment-photo.enlarged {
+  .equipment-card.enlarged {
     position: fixed !important;
     left: 50% !important;
-    top: var(--equipment-center-y) !important;
-    transform: translate(-50%, -50%) scale(3.36) !important;
-    transform-origin: center center !important;
+    top: var(--equipment-top-y) !important;
+    transform: translateX(-50%) scale(3.36) !important;
+    transform-origin: top center !important;
     z-index: 1000 !important;
+    width: 96px !important;
+    max-width: 96px !important;
+    flex: 0 0 96px !important;
+  }
+  .equipment-card.enlarged .equipment-photo {
+    transform: none !important;
+    z-index: 1 !important;
   }
 }
 </style>
