@@ -1269,6 +1269,47 @@
         line-height: normal !important;
       }
     }
+
+    /* Ajustes finais para telemóvel: eixos e títulos com a mesma escala visual */
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+      /* Botões 2 Eixos / 3 Eixos: mesma altura, tipografia e proporções dos botões superiores */
+      .profile-axis-btn {
+        height: 57px !important;
+        min-height: 57px !important;
+        max-height: 57px !important;
+        padding: 6px 2px !important;
+        border-radius: 9px !important;
+        font-family: inherit !important;
+        font-size: clamp(11px, 3.8vw, 17px) !important;
+        font-weight: 600 !important;
+        line-height: 1.15 !important;
+        box-sizing: border-box !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      /* Videos e Especificações Técnicas com o mesmo tamanho visual de Equipamentos Associados */
+      .profile-order-videos-title,
+      .profile-order-specs-title,
+      .profile-order-equipment-title {
+        font-size: 24px !important;
+        line-height: 1.25 !important;
+        font-weight: 700 !important;
+      }
+
+      .profile-order-videos-title,
+      .profile-order-equipment-title {
+        margin-top: 15px !important;
+        margin-bottom: 7px !important;
+      }
+
+      .profile-order-specs-title {
+        margin-top: 15px !important;
+        margin-bottom: 7px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
