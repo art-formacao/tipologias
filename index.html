@@ -1398,6 +1398,21 @@
         line-height: 1.15 !important;
       }
     }
+
+    /* Ajuste mobile: botão Voltar alinhado com o título do perfil */
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+      .fullscreen-header > .profile-close-btn {
+        top: 50px !important; right: 16px !important;
+        width: 76px !important; height: 36px !important; min-width: 76px !important; flex-basis: 76px !important;
+        border: 1px solid var(--border) !important; border-radius: 9px !important;
+        background: #f1f1f4 !important; color: var(--text) !important; box-shadow: none !important;
+        font-size: 0 !important; font-weight: 600 !important; line-height: 1 !important; transform: none !important;
+      }
+      .fullscreen-header > .profile-close-btn::after {
+        content: 'Voltar'; font-size: 14px; font-weight: 600; line-height: 1;
+      }
+    }
+
 </style>
 </head>
 <body>
