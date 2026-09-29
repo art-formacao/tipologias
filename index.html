@@ -490,6 +490,63 @@
         background: #ef3340; color: #fff;
       }
     }
+    /* Controlos móveis: ficam sempre na parte inferior do vídeo, sem alterar o player no PC */
+    .mobile-video-controls {
+      display: none;
+    }
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+      .video-player-panel {
+        position: relative;
+      }
+      .mobile-video-controls {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 8;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 52px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+        background: linear-gradient(to top, rgba(0,0,0,.88), rgba(0,0,0,.18));
+        color: #fff;
+        border-radius: 0 0 9px 9px;
+      }
+      .mobile-video-controls button {
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #fff;
+        font-size: 18px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .mobile-video-time {
+        flex: 0 0 auto;
+        min-width: 66px;
+        font-size: 12px;
+        line-height: 1;
+        white-space: nowrap;
+        text-align: center;
+      }
+      .mobile-video-progress {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin: 0;
+        accent-color: #fff;
+      }
+      .mobile-video-fullscreen {
+        font-size: 22px !important;
+      }
+    }
     .profile-note { color: var(--text-muted); line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
     .profile-note-section { margin-top: 30px; }
     .profile-note-section h3 { margin: 0 0 1em; }
@@ -1449,6 +1506,12 @@
   <div class="video-player-modal" id="videoPlayerModal" onclick="closeProfileVideo(event)">
     <div class="video-player-panel" onclick="event.stopPropagation()">
       <video class="video-player-video" id="videoPlayerVideo" controls playsinline preload="metadata"></video>
+      <div class="mobile-video-controls" id="mobileVideoControls" aria-label="Controlos do vídeo">
+        <button type="button" class="mobile-video-play" id="mobileVideoPlay" aria-label="Reproduzir">▶</button>
+        <span class="mobile-video-time" id="mobileVideoTime">0:00 / 0:00</span>
+        <input class="mobile-video-progress" id="mobileVideoProgress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Progresso do vídeo">
+        <button type="button" class="mobile-video-fullscreen" id="mobileVideoFullscreen" aria-label="Ecrã inteiro">↗</button>
+      </div>
       <iframe class="video-player-frame" id="videoPlayerFrame" src="" title="Leitor de vídeo" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
     </div>
   </div>
@@ -2629,6 +2692,69 @@
       });
     }
 
+    function isMobileVideoLayout() {
+      return window.matchMedia('(max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse)').matches;
+    }
+
+    function setupMobileVideoControls() {
+      const video = document.getElementById('videoPlayerVideo');
+      const controls = document.getElementById('mobileVideoControls');
+      const playBtn = document.getElementById('mobileVideoPlay');
+      const progress = document.getElementById('mobileVideoProgress');
+      const time = document.getElementById('mobileVideoTime');
+      const fullscreenBtn = document.getElementById('mobileVideoFullscreen');
+      if (!video || !controls || !playBtn || !progress || !time || !fullscreenBtn) return;
+
+      const formatTime = seconds => {
+        if (!Number.isFinite(seconds) || seconds < 0) seconds = 0;
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+      };
+
+      const sync = () => {
+        const duration = Number.isFinite(video.duration) ? video.duration : 0;
+        const current = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+        progress.value = duration ? ((current / duration) * 100).toFixed(2) : 0;
+        time.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+        playBtn.textContent = video.paused ? '▶' : '❚❚';
+        playBtn.setAttribute('aria-label', video.paused ? 'Reproduzir' : 'Pausa');
+      };
+
+      playBtn.onclick = () => {
+        if (video.paused) video.play().catch(() => {});
+        else video.pause();
+        sync();
+      };
+
+      progress.oninput = () => {
+        if (Number.isFinite(video.duration) && video.duration > 0) {
+          video.currentTime = (Number(progress.value) / 100) * video.duration;
+        }
+      };
+
+      fullscreenBtn.onclick = () => {
+        if (video.requestFullscreen) {
+          video.requestFullscreen().catch(() => {});
+        } else if (video.webkitEnterFullscreen) {
+          video.webkitEnterFullscreen();
+        }
+      };
+
+      ['loadedmetadata', 'timeupdate', 'durationchange', 'play', 'pause', 'ended', 'loadeddata'].forEach(eventName => {
+        video.addEventListener(eventName, sync);
+      });
+
+      if (isMobileVideoLayout()) {
+        video.controls = false;
+        controls.style.display = 'flex';
+      } else {
+        video.controls = true;
+        controls.style.display = 'none';
+      }
+      sync();
+    }
+
     function openProfileVideo(index) {
       const link = activeProfile?.videos?.[index] || '';
       const previewUrl = googleDrivePreviewUrl(link);
@@ -2636,6 +2762,7 @@
       if (!previewUrl || !fileId) return;
       const video = document.getElementById('videoPlayerVideo');
       const frame = document.getElementById('videoPlayerFrame');
+      const mobileControls = document.getElementById('mobileVideoControls');
       const directVideoUrl = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(fileId)}`;
       video.pause();
       video.style.display = 'block';
@@ -2645,14 +2772,17 @@
         video.style.display = 'none';
         frame.style.display = 'block';
         frame.src = `${previewUrl}?autoplay=1&rm=minimal`;
+        if (mobileControls) mobileControls.style.display = 'none';
       };
       video.onloadeddata = () => {
         video.style.display = 'block';
         frame.style.display = 'none';
         frame.src = '';
+        setupMobileVideoControls();
       };
       video.src = directVideoUrl;
       video.load();
+      setupMobileVideoControls();
       frame.title = `Vídeo ${index + 1} de ${activeProfile?.title || 'tipologia'}`;
       document.getElementById('videoPlayerModal').classList.add('open');
     }
@@ -2664,6 +2794,8 @@
       video.pause();
       video.removeAttribute('src');
       video.load();
+      const mobileControls = document.getElementById('mobileVideoControls');
+      if (mobileControls) mobileControls.style.display = 'none';
       document.getElementById('videoPlayerFrame').src = '';
       document.getElementById('videoPlayerFrame').style.display = 'none';
     }
