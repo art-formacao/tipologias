@@ -1406,13 +1406,25 @@
         width: 76px !important; height: 36px !important; min-width: 76px !important; flex-basis: 76px !important;
         border: 1px solid var(--border) !important; border-radius: 9px !important;
         background: #f1f1f4 !important; color: var(--text) !important; box-shadow: none !important;
-        font-size: 0 !important; font-weight: 600 !important; line-height: 1 !important; transform: translateY(-38px) !important;
+        font-size: 0 !important; font-weight: 600 !important; line-height: 1 !important; transform: translateY(-5px) !important;
       }
       .fullscreen-header > .profile-close-btn::after {
         content: 'Voltar'; font-size: 14px; font-weight: 600; line-height: 1;
       }
     }
 
+
+    /* Ajuste mobile: botões de eixos mais compridos, mantendo exatamente a mesma altura */
+    @media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+      .profile-axis-btn {
+        width: 70px !important;
+        min-width: 70px !important;
+        max-width: 70px !important;
+        height: 46px !important;
+        min-height: 46px !important;
+        max-height: 46px !important;
+      }
+    }
 </style>
 </head>
 <body>
