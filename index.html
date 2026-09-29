@@ -3096,5 +3096,19 @@
 
     loadFolderData();
   </script>
+
+<style>
+/* Mobile: equipamento ampliado sempre centrado no ecrã */
+@media (max-width: 680px), (max-device-width: 680px), (orientation: landscape) and (max-width: 900px) and (pointer: coarse) {
+  .equipment-photo.enlarged {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) scale(3.36) !important;
+    transform-origin: center center !important;
+    z-index: 1000 !important;
+  }
+}
+</style>
 </body>
 </html>
